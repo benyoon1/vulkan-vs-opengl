@@ -1,0 +1,347 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Vulkan: CMake configure (Debug)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "vulkan",
+                "-B",
+                "vulkan/build/Debug",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake build (Debug)",
+            "type": "shell",
+            "command": "cmake --build vulkan/build/Debug --parallel && ln -sf ../vulkan/build/Debug/compile_commands.json vulkan/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: configure && build && run (Debug)",
+            "dependsOn": [
+                "Vulkan: CMake configure (Debug)",
+                "Vulkan: CMake build (Debug)",
+                "Vulkan: Run vulkan (Debug)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake clean (Debug)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "vulkan/build/Debug", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake configure (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "vulkan",
+                "-B",
+                "vulkan/build/Release",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake build (Release)",
+            "type": "shell",
+            "command": "cmake --build vulkan/build/Release --parallel && ln -sf ../vulkan/build/Release/compile_commands.json vulkan/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: configure && build && run (Release)",
+            "dependsOn": [
+                "Vulkan: CMake configure (Release)",
+                "Vulkan: CMake build (Release)",
+                "Vulkan: Run vulkan (Release)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake clean (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "vulkan/build/Release", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake configure (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "vulkan",
+                "-B",
+                "vulkan/build/RelWithDebInfo",
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake build (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake --build vulkan/build/RelWithDebInfo --parallel && ln -sf ../vulkan/build/RelWithDebInfo/compile_commands.json vulkan/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: configure && build && run (RelWithDebInfo)",
+            "dependsOn": [
+                "Vulkan: CMake configure (RelWithDebInfo)",
+                "Vulkan: CMake build (RelWithDebInfo)",
+                "Vulkan: Run vulkan (RelWithDebInfo)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: CMake clean (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "vulkan/build/RelWithDebInfo", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Vulkan: Run vulkan (Debug)",
+            "type": "shell",
+            "command": "${workspaceFolder}/vulkan/build/Debug/vulkan",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/vulkan/build/Debug"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Vulkan: Run vulkan (Release)",
+            "type": "shell",
+            "command": "${workspaceFolder}/vulkan/build/Release/vulkan",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/vulkan/build/Release"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Vulkan: Run vulkan (RelWithDebInfo)",
+            "type": "shell",
+            "command": "${workspaceFolder}/vulkan/build/RelWithDebInfo/vulkan",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/vulkan/build/RelWithDebInfo"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "OpenGL: CMake configure (Debug)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "opengl",
+                "-B",
+                "opengl/build/Debug",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake build (Debug)",
+            "type": "shell",
+            "command": "cmake --build opengl/build/Debug --parallel && ln -sf ../opengl/build/Debug/compile_commands.json opengl/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: configure && build && run (Debug)",
+            "dependsOn": [
+                "OpenGL: CMake configure (Debug)",
+                "OpenGL: CMake build (Debug)",
+                "OpenGL: Run opengl (Debug)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake clean (Debug)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "opengl/build/Debug", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake configure (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "opengl",
+                "-B",
+                "opengl/build/Release",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake build (Release)",
+            "type": "shell",
+            "command": "cmake --build opengl/build/Release --parallel && ln -sf ../opengl/build/Release/compile_commands.json opengl/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: configure && build && run (Release)",
+            "dependsOn": [
+                "OpenGL: CMake configure (Release)",
+                "OpenGL: CMake build (Release)",
+                "OpenGL: Run opengl (Release)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake clean (Release)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "opengl/build/Release", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake configure (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "opengl",
+                "-B",
+                "opengl/build/RelWithDebInfo",
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+                "-G",
+                "Ninja"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake build (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake --build opengl/build/RelWithDebInfo --parallel && ln -sf ../opengl/build/RelWithDebInfo/compile_commands.json opengl/compile_commands.json",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: configure && build && run (RelWithDebInfo)",
+            "dependsOn": [
+                "OpenGL: CMake configure (RelWithDebInfo)",
+                "OpenGL: CMake build (RelWithDebInfo)",
+                "OpenGL: Run opengl (RelWithDebInfo)"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: CMake clean (RelWithDebInfo)",
+            "type": "shell",
+            "command": "cmake",
+            "args": ["--build", "opengl/build/RelWithDebInfo", "--target", "clean"],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenGL: Run opengl (Debug)",
+            "type": "shell",
+            "command": "${workspaceFolder}/opengl/build/Debug/opengl",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/opengl/build/Debug"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "OpenGL: Run opengl (Release)",
+            "type": "shell",
+            "command": "${workspaceFolder}/opengl/build/Release/opengl",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/opengl/build/Release"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "OpenGL: Run opengl (RelWithDebInfo)",
+            "type": "shell",
+            "command": "${workspaceFolder}/opengl/build/RelWithDebInfo/opengl",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/opengl/build/RelWithDebInfo"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        }
+    ]
+}

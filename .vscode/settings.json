@@ -1,0 +1,11 @@
+{
+    "clangd.arguments": [],
+    "editor.formatOnSave": true,
+    "glsllint.additionalStageAssociations": {
+        ".vert": "vert",
+        ".frag": "frag",
+        ".comp": "comp"
+    },
+    "glsllint.fallBackStage": "frag",
+    "glsllint.glslangValidatorArgs": ["-V"]
+}

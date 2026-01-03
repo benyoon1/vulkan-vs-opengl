@@ -1,0 +1,5 @@
+# Ignore GLSL/Vulkan shader sources so Prettier doesn't try to format them
+# **/*.vert
+# **/*.frag
+# **/*.comp
+# **/*.glsl

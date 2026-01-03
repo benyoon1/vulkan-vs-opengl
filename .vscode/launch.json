@@ -1,0 +1,53 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "OpenGL (Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/opengl/build/Debug/opengl",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/opengl/build/Debug",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "OpenGL: CMake build (Debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Vulkan (Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/vulkan/build/Debug/vulkan",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/vulkan/build/Debug",
+            "environment": [
+                {
+                    "name": "MVK_CONFIG_USE_METAL_ARGUMENT_BUFFERS",
+                    "value": "1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Vulkan: CMake build (Debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

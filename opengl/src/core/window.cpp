@@ -1,0 +1,170 @@
+#include "core/window.h"
+#include "scene/camera.h"
+#include "scene/robotArm.h"
+#include <iostream>
+
+Window::Window() : m_lastX(kScreenWidth / 2.0f), m_lastY(kScreenHeight / 2.0f)
+{
+    if (!glfwInit())
+    {
+        throw std::runtime_error("Failed to initialize GLFW");
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    m_window = glfwCreateWindow(m_width, m_height, "OpenGL", NULL, NULL);
+    if (m_window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        throw std::runtime_error("Failed to create GLFW window");
+    }
+    glfwMakeContextCurrent(m_window);
+    // glfwSwapInterval(1);                      // Enable vsync
+    glfwSwapInterval(0);                      // Disable vsync
+    glfwSetWindowUserPointer(m_window, this); // Set the user pointer to the instance
+
+    glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+    glfwSetCursorPosCallback(m_window, mouseCallback);
+    glfwSetScrollCallback(m_window, scrollCallback);
+
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::setCamera(Camera* camera)
+{
+    m_camera = camera;
+}
+
+void Window::setRobotArm(RobotArm* robotArm)
+{
+    m_robotArm = robotArm;
+}
+
+void Window::processInput(float& outSunSpeed, float& spotlightGain)
+{
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(m_window, true);
+    }
+
+    float sprint{1.0f};
+
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        sprint *= 3.0f;
+    }
+
+    // get WASD keys
+    if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        m_camera->processKeyboard(FORWARD, m_deltaTime * sprint);
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        m_camera->processKeyboard(BACKWARD, m_deltaTime * sprint);
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        m_camera->processKeyboard(LEFT, m_deltaTime * sprint);
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        m_camera->processKeyboard(RIGHT, m_deltaTime * sprint);
+    }
+
+    if (m_robotArm)
+    {
+        if (glfwGetKey(m_window, GLFW_KEY_U) == GLFW_PRESS)
+        {
+            m_robotArm->setLowerArmAngle(m_robotArm->getLowerArmAngle() + 2.0f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
+        {
+            m_robotArm->setLowerArmAngle(m_robotArm->getLowerArmAngle() - 2.0f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_I) == GLFW_PRESS)
+        {
+            m_robotArm->setUpperArmAngle(m_robotArm->getUpperArmAngle() + 2.0f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS)
+        {
+            m_robotArm->setUpperArmAngle(m_robotArm->getUpperArmAngle() - 2.0f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS)
+        {
+            m_robotArm->setWristAngle(m_robotArm->getWristAngle() + 1.0f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            m_robotArm->setWristAngle(m_robotArm->getWristAngle() - 1.0f);
+        }
+    }
+
+    if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        outSunSpeed *= 10.0f;
+    }
+    if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        spotlightGain = 5.0f;
+    }
+}
+
+Window::~Window()
+{
+    glfwTerminate();
+}
+
+void Window::updateFrame()
+{
+    m_currentFrame = static_cast<float>(glfwGetTime());
+    m_deltaTime = m_currentFrame - m_lastFrame;
+    m_lastFrame = m_currentFrame;
+}
+
+void Window::framebufferSizeCallback(GLFWwindow* /*window*/, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void Window::mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (instance)
+    {
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
+
+        if (instance->m_firstMouse)
+        {
+            instance->m_lastX = xpos;
+            instance->m_lastY = ypos;
+            instance->m_firstMouse = false;
+        }
+
+        float xoffset = xpos - instance->m_lastX;
+        float yoffset = instance->m_lastY - ypos;
+
+        instance->m_lastX = xpos;
+        instance->m_lastY = ypos;
+
+        instance->m_camera->processMouseMovement(xoffset, yoffset);
+    }
+}
+
+void Window::scrollCallback(GLFWwindow* window, double /*xoffset*/, double yoffset)
+{
+    Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (instance)
+    {
+        instance->m_camera->processMouseScroll(static_cast<float>(yoffset));
+    }
+}
