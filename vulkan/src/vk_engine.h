@@ -284,15 +284,16 @@ public:
     TextureCache texCache;
     uint32_t _maxSampledImageDescriptors{0};
 
-    GPUMeshBuffers rectangle;
-    DrawContext drawCommands;
+    GPUMeshBuffers _debugRectangle;
+    DrawContext _drawCommands;
 
-    GPUSceneData sceneData;
+    GPUSceneData _sceneData;
 
-    Camera mainCamera;
-    DirectionalLight sunLight;
-    SpotlightState spotlight;
-    RobotArm robotArm;
+    Camera _mainCamera;
+    DirectionalLight _sunLight;
+    SpotlightState _spotlight;
+    RobotArm _robotArm;
+    float _asteroidTime{0.0f};
 
     EngineStats stats;
 
