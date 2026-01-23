@@ -22,19 +22,19 @@ void Camera::processInput(VulkanEngine* engine)
 
     if (keys[SDL_SCANCODE_W])
     {
-        processKeyboard(FORWARD, engine->get_delta_time() * sprint);
+        processKeyboard(FORWARD, engine->getDeltaTime() * sprint);
     }
     if (keys[SDL_SCANCODE_S])
     {
-        processKeyboard(BACKWARD, engine->get_delta_time() * sprint);
+        processKeyboard(BACKWARD, engine->getDeltaTime() * sprint);
     }
     if (keys[SDL_SCANCODE_A])
     {
-        processKeyboard(LEFT, engine->get_delta_time() * sprint);
+        processKeyboard(LEFT, engine->getDeltaTime() * sprint);
     }
     if (keys[SDL_SCANCODE_D])
     {
-        processKeyboard(RIGHT, engine->get_delta_time() * sprint);
+        processKeyboard(RIGHT, engine->getDeltaTime() * sprint);
     }
 
     processMouseMovement();

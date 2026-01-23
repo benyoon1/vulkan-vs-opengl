@@ -171,7 +171,7 @@ struct MeshNode : public Node
 
     std::shared_ptr<MeshAsset> mesh;
 
-    virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) override;
+    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx) override;
 };
 struct TextureID
 {
@@ -203,6 +203,7 @@ class VulkanEngine
 public:
     static constexpr ImS32 kSliderMin{0};
     static constexpr ImS32 kSliderMax{30000};
+
     VkDevice device;
     VkPhysicalDevice chosenGPU;
     VkDescriptorSetLayout gpuSceneDataDescriptorLayout;
@@ -216,53 +217,24 @@ public:
     AllocatedImage drawImage;
     AllocatedImage depthImage;
 
-    // singleton style getter.multiple engines is not supported
-    static VulkanEngine& Get();
-
-    void init(); // initializes everything in the engine
-    void run();  // run main loop
-    void update_scene();
+    void init();    // initializes everything in the engine
+    void run();     // run main loop
     void cleanup(); // shuts down the engine
 
-    // draw loop
-    void draw();
-    void draw_main(VkCommandBuffer cmd);
-    void draw_geometry(VkCommandBuffer cmd);
-    void draw_shadow_map(VkCommandBuffer cmd);
-    void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
-    void draw_debug_texture(VkCommandBuffer cmd);
-
-    void init_shadow_resources();
-    void init_shadow_pipeline();
-    void init_light_debug_pipeline();
-    void init_debug_texture_pipeline();
-
-    void render_nodes();
+    // singleton style getter.multiple engines is not supported
+    static VulkanEngine& Get();
+    float getDeltaTime() { return _deltaTime; }
 
     // upload a mesh into a pair of gpu buffers. If descriptor allocator is not
     // null, it will also create a descriptor that points to the vertex buffer
     GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
+    AllocatedBuffer createBuffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+    AllocatedImage createImage(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
+    AllocatedImage createImage(void* data, VkExtent3D size, VkFormat format, VkImageUsageFlags usage,
+                               bool mipmapped = false);
 
-    FrameData& get_current_frame();
-    FrameData& get_last_frame();
-    float get_delta_time() { return _deltaTime; }
-
-    AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
-
-    AllocatedImage create_image(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
-    AllocatedImage create_image(void* data, VkExtent3D size, VkFormat format, VkImageUsageFlags usage,
-                                bool mipmapped = false);
-
-    void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
-
-    std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedAssets;
-    std::vector<std::shared_ptr<LoadedGLTF>> brickadiaScene;
-
-    void destroy_image(const AllocatedImage& img);
-    void destroy_buffer(const AllocatedBuffer& buffer);
-
-    bool resize_requested{false};
-    bool freeze_rendering{false};
+    void destroyImage(const AllocatedImage& img);
+    void destroyBuffer(const AllocatedBuffer& buffer);
 
 private:
     bool _isInitialized{false};
@@ -271,7 +243,7 @@ private:
 
     VkExtent2D _windowExtent{1920, 1080};
     VkInstance _instance;
-    VkDebugUtilsMessengerEXT _debug_messenger;
+    VkDebugUtilsMessengerEXT _debugMessenger;
 
     VkQueue _graphicsQueue;
     uint32_t _graphicsQueueFamily;
@@ -358,20 +330,43 @@ private:
 
     std::vector<ComputeEffect> _backgroundEffects;
     int _currentBackgroundEffect{0};
+    bool resizeRequested{false};
+    bool freezeRendering{false};
+    std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedAssets;
 
-    void init_vulkan();
-    void init_swapchain();
-    void create_swapchain(uint32_t width, uint32_t height);
-    void resize_swapchain();
-    void destroy_swapchain();
-    void init_commands();
-    void init_pipelines();
-    void init_background_pipelines();
-    void init_descriptors();
-    void init_sync_structures();
-    void init_renderables();
-    void init_imgui();
-    void init_default_data();
-    void process_slider_event();
-    void update_frame();
+    void initVulkan();
+    void initSwapchain();
+    void createSwapchain(uint32_t width, uint32_t height);
+    void resizeSwapchain();
+    void destroySwapchain();
+    void initCommands();
+    void initPipelines();
+    void initBackgroundPipelines();
+    void initDescriptors();
+    void initSyncStructures();
+    void initRenderables();
+    void initImgui();
+    void initDefaultData();
+    void processSliderEvent();
+    void updateFrame();
+
+    void updateScene();
+
+    // draw loop
+    void draw();
+    void drawMain(VkCommandBuffer cmd);
+    void drawGeometry(VkCommandBuffer cmd);
+    void drawShadowMap(VkCommandBuffer cmd);
+    void drawImgui(VkCommandBuffer cmd, VkImageView targetImageView);
+    void drawDebugTexture(VkCommandBuffer cmd);
+
+    void initShadowResources();
+    void initShadowPipeline();
+    void initLightDebugPipeline();
+    void initDebugTexturePipeline();
+
+    void immediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
+
+    FrameData& getCurrentFrame();
+    FrameData& getLastFrame();
 };

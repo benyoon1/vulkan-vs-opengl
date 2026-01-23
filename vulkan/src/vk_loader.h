@@ -61,7 +61,7 @@ struct LoadedGLTF : public IRenderable
 
     ~LoadedGLTF() { clearAll(); };
 
-    virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx);
+    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx);
 
 private:
     void clearAll();

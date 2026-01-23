@@ -122,7 +122,7 @@ struct DrawContext;
 class IRenderable
 {
 
-    virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) = 0;
+    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx) = 0;
 };
 
 // implementation of a drawable scene node.
@@ -147,12 +147,12 @@ struct Node : public IRenderable
         }
     }
 
-    virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx)
+    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx)
     {
         // draw children
         for (auto& c : children)
         {
-            c->Draw(topMatrix, ctx);
+            c->addToDrawCommands(topMatrix, ctx);
         }
     }
 };
