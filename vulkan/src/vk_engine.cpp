@@ -1107,7 +1107,7 @@ void VulkanEngine::run()
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::Text("avg FPS (5s): %.1f", _stats.avg_fps);
         ImGui::Separator();
-        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S16, &_numAsteroids, &kSliderMin, &kSliderMax, "%u");
+        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &_numAsteroids, &kSliderMin, &kSliderMax, "%u");
         // ImGui::Text("fence: %.2f ms", _stats.fence_time);
         // ImGui::Text("flush: %.2f ms", _stats.flush_time);
         // ImGui::Text("submit: %.2f ms", _stats.submit_time);
@@ -1203,19 +1203,12 @@ void VulkanEngine::update_scene()
     _drawCommands.viewProj = projection * view;
     auto it = loadedAssets.find("asset1");
 
-    // asteroid belt parameters
-    float majorRadius{35.0f};  // distance from center to the inside of tube
-    float minorRadius{7.5f};   // tube radius (belt thickness)
-    float verticalScale{0.3f}; // make the belt thin vertically
-    float minScale{0.05f};     // min asteroid size
-    float maxScale{0.15f};     // max asteroid size
-
     if (it != loadedAssets.end() && it->second)
     {
         std::mt19937 rng(42);
         std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
         std::uniform_real_distribution<float> radiusDist(0.0f, 1.0f);
-        std::uniform_real_distribution<float> scaleDist(minScale, maxScale);
+        std::uniform_real_distribution<float> scaleDist(_minScale, _maxScale);
         std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
 
         for (int i = 0; i < _numAsteroids; ++i)
@@ -1224,12 +1217,12 @@ void VulkanEngine::update_scene()
             float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
 
             // add random variation in [0,1] range
-            float randomVariation = minorRadius * radiusDist(rng);
+            float randomVariation = _minorRadius * radiusDist(rng);
 
             // polar coordinates to XZ
-            float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
-            float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
-            float y = randomVariation * std::sin(v) * verticalScale;
+            float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+            float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+            float y = randomVariation * std::sin(v) * _verticalScale;
 
             float scale = scaleDist(rng);
 
@@ -1247,7 +1240,8 @@ void VulkanEngine::update_scene()
             it->second->Draw(T * R * S, _drawCommands);
         }
         // wrap around every 2 pi because of floating point precision
-        _asteroidTime -= 0.001f; // asteroid belt rotates counter-clockwise viewed from north pole
+        // asteroid belt rotates counter-clockwise viewed from north pole
+        _asteroidTime -= 0.05f * _deltaTime;
         if (_asteroidTime < -glm::two_pi<float>())
         {
             _asteroidTime += glm::two_pi<float>();
@@ -2221,7 +2215,7 @@ void VulkanEngine::process_slider_event()
         _numAsteroids += _deltaTime * 5000;
         if (_numAsteroids > kSliderMax)
         {
-            _numAsteroids = 0;
+            _numAsteroids = kSliderMax;
         }
     }
 }

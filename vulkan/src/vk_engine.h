@@ -201,8 +201,8 @@ struct TextureCache
 class VulkanEngine
 {
 public:
-    static constexpr ImS16 kSliderMin{0};
-    static constexpr ImS16 kSliderMax{30000};
+    static constexpr ImS32 kSliderMin{0};
+    static constexpr ImS32 kSliderMax{30000};
     VkDevice device;
     VkPhysicalDevice chosenGPU;
     VkDescriptorSetLayout gpuSceneDataDescriptorLayout;
@@ -340,7 +340,14 @@ private:
     SpotlightState _spotlight;
     RobotArm _robotArm;
     float _asteroidTime{0.0f};
-    ImS16 _numAsteroids{15000};
+
+    // asteroid belt parameters
+    ImS32 _numAsteroids{15000};
+    float _majorRadius{35.0f};  // distance from center to the inside of tube
+    float _minorRadius{7.5f};   // tube radius (belt thickness)
+    float _verticalScale{0.3f}; // make the belt thin vertically
+    float _minScale{0.02f};     // min asteroid size
+    float _maxScale{0.07f};     // max asteroid size
 
     // delta time for consistency regardless of fps
     float _deltaTime{0.0f};
