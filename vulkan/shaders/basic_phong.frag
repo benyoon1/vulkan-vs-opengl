@@ -39,7 +39,7 @@ vec3 calcLight(vec3 lightPos, vec3 fragPos, vec3 normal, vec3 viewDir)
 void main()
 {
     float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * vec3(0.8, 0.85, 0.95);
+    vec3 ambient = ambientStrength * vec3(0.5, 0.5, 0.5);
     vec3 viewDir = normalize(sceneData.cameraPosition.xyz - inWorldPos);
 
     vec3 sunResult = calcLight(sceneData.sunlightPosition.xyz, inWorldPos, inNormal, viewDir);

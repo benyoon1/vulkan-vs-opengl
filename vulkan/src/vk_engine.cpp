@@ -441,7 +441,7 @@ void VulkanEngine::init_background_pipelines()
 
 void VulkanEngine::draw_main(VkCommandBuffer cmd)
 {
-    VkClearValue clearValue = {.color = {{0.1f, 0.1f, 0.1f, 1.0f}}}; // dark gray background
+    VkClearValue clearValue = {.color = {{0.0f, 0.0f, 0.0f, 1.0f}}};
 
     VkRenderingAttachmentInfo colorAttachment =
         vkinit::attachment_info(_drawImage.imageView, &clearValue, VK_IMAGE_LAYOUT_GENERAL);
@@ -1187,8 +1187,9 @@ void VulkanEngine::update_scene()
     glm::mat4 view = _mainCamera.getViewMatrix();
 
     // camera projection
-    glm::mat4 projection =
-        glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
+    glm::mat4 projection = glm::perspective(glm::radians(_mainCamera.getFOV()),
+                                            (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
+    // glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.f, 0.1f);
 
     // invert the Y direction on projection matrix so that we are more similar
     // to opengl and gltf axis

@@ -16,7 +16,7 @@ void DirectionalLight::update()
     m_simTime += dt * m_sunSpeed;
     m_lastTime = now;
 
-    m_sunPos = glm::vec3(0.0f, cos(m_simTime) * m_sunRadius, sin(m_simTime) * m_sunRadius);
+    m_sunPos = glm::vec3(0.0f, 0.0f, 0.0f);
     m_sunDirection = glm::normalize(m_sunPos);
     m_lightView = glm::lookAt(m_sunPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 }
