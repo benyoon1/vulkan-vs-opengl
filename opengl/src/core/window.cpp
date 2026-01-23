@@ -1,4 +1,5 @@
 #include "core/window.h"
+#include "core/application.h"
 #include "scene/camera.h"
 #include "scene/robotArm.h"
 #include <iostream>
@@ -48,7 +49,7 @@ void Window::setRobotArm(RobotArm* robotArm)
     m_robotArm = robotArm;
 }
 
-void Window::processInput(float& outSunSpeed, float& spotlightGain)
+void Window::processInput(Application* app)
 {
     if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
@@ -65,69 +66,51 @@ void Window::processInput(float& outSunSpeed, float& spotlightGain)
     // get WASD keys
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        m_camera->processKeyboard(FORWARD, m_deltaTime * sprint);
+        m_camera->processKeyboard(FORWARD, app->deltaTime * sprint);
     }
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        m_camera->processKeyboard(BACKWARD, m_deltaTime * sprint);
+        m_camera->processKeyboard(BACKWARD, app->deltaTime * sprint);
     }
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        m_camera->processKeyboard(LEFT, m_deltaTime * sprint);
+        m_camera->processKeyboard(LEFT, app->deltaTime * sprint);
     }
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        m_camera->processKeyboard(RIGHT, m_deltaTime * sprint);
+        m_camera->processKeyboard(RIGHT, app->deltaTime * sprint);
     }
 
-    if (m_robotArm)
+    if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
     {
-        if (glfwGetKey(m_window, GLFW_KEY_U) == GLFW_PRESS)
+        app->numAsteroids -= app->deltaTime * 5000;
+        if (app->numAsteroids < kSliderMin)
         {
-            m_robotArm->setLowerArmAngle(m_robotArm->getLowerArmAngle() + 2.0f);
+            app->numAsteroids = 0;
         }
-        if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
+    }
+    if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS)
+    {
+        app->numAsteroids += app->deltaTime * 5000;
+        if (app->numAsteroids > kSliderMax)
         {
-            m_robotArm->setLowerArmAngle(m_robotArm->getLowerArmAngle() - 2.0f);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_I) == GLFW_PRESS)
-        {
-            m_robotArm->setUpperArmAngle(m_robotArm->getUpperArmAngle() + 2.0f);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS)
-        {
-            m_robotArm->setUpperArmAngle(m_robotArm->getUpperArmAngle() - 2.0f);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS)
-        {
-            m_robotArm->setWristAngle(m_robotArm->getWristAngle() + 1.0f);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            m_robotArm->setWristAngle(m_robotArm->getWristAngle() - 1.0f);
+            app->numAsteroids = kSliderMax;
         }
     }
 
-    if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        outSunSpeed *= 10.0f;
-    }
-    if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        spotlightGain = 5.0f;
-    }
+    // if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    // {
+    //     outSunSpeed *= 10.0f;
+    // }
+    // if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    // {
+    //     spotlightGain = 5.0f;
+    // }
 }
 
 Window::~Window()
 {
     glfwTerminate();
-}
-
-void Window::updateFrame()
-{
-    m_currentFrame = static_cast<float>(glfwGetTime());
-    m_deltaTime = m_currentFrame - m_lastFrame;
-    m_lastFrame = m_currentFrame;
 }
 
 void Window::framebufferSizeCallback(GLFWwindow* /*window*/, int width, int height)

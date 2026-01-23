@@ -114,14 +114,21 @@ void Application::run()
     }
 }
 
+void Application::updateFrame()
+{
+    m_currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = m_currentFrame - m_lastFrame;
+    m_lastFrame = m_currentFrame;
+}
+
 void Application::update()
 {
     // reset values every frame
     m_sunSpeed = 0.1f;
     m_spotlightGain = 1.0f;
 
-    m_window.updateFrame();
-    m_window.processInput(m_sunSpeed, m_spotlightGain);
+    updateFrame();
+    m_window.processInput(this);
 
     // scene update
     m_sunLight.update(m_sunSpeed);
@@ -160,18 +167,10 @@ void Application::renderMainPass()
 
     m_asset1->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, *m_robotArm, m_spotlightGain);
 
-    // asteroid belt parameters
-    int numAsteroids{15000};
-    float majorRadius{35.0f};  // distance from center to the inside of tube
-    float minorRadius{7.5f};   // tube radius (belt thickness)
-    float verticalScale{0.3f}; // make the belt thin vertically
-    float minScale{0.05f};     // min asteroid size
-    float maxScale{0.15f};     // max asteroid size
-
     std::mt19937 rng(42);
     std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
     std::uniform_real_distribution<float> radiusDist(0.0f, 1.0f);
-    std::uniform_real_distribution<float> scaleDist(minScale, maxScale);
+    std::uniform_real_distribution<float> scaleDist(_minScale, _maxScale);
     std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
 
     for (int i = 0; i < numAsteroids; ++i)
@@ -180,12 +179,12 @@ void Application::renderMainPass()
         float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
 
         // add random variation in [0,1] range
-        float randomVariation = minorRadius * radiusDist(rng);
+        float randomVariation = _minorRadius * radiusDist(rng);
 
         // polar coordinates to XZ
-        float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
-        float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
-        float y = randomVariation * std::sin(v) * verticalScale;
+        float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+        float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+        float y = randomVariation * std::sin(v) * _verticalScale;
 
         float scale = scaleDist(rng);
 
@@ -198,12 +197,12 @@ void Application::renderMainPass()
         R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
         R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
         glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
-
         m_modelShader->setMat4("model", T * R * S);
         m_asset1->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
     }
     // wrap around every 2 pi because of floating point precision
-    _asteroidTime -= 0.001f; // asteroid belt rotates counter-clockwise viewed from north pole
+    // asteroid belt rotates counter-clockwise viewed from north pole
+    _asteroidTime -= 0.05f * deltaTime;
     if (_asteroidTime < -glm::two_pi<float>())
     {
         _asteroidTime += glm::two_pi<float>();
@@ -226,9 +225,9 @@ void Application::renderImGui()
     // ImGui::Text("draws %i", stats.drawcall_count);
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
     ImGui::Text("avg FPS (5s): %.1f", m_avgFps);
-    ImGui::Text("sun speed: %.2f", m_sunSpeed);
-    ImGui::Text("sun height: %.1f", glm::normalize(m_sunLight.getSunPosition()).y);
-    ImGui::Text("swap time: %.2f ms", m_swapTime);
+    // ImGui::Text("swap time: %.2f ms", m_swapTime);
+    ImGui::Separator();
+    ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &numAsteroids, &kSliderMin, &kSliderMax, "%u");
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
@@ -242,12 +241,8 @@ void Application::renderImGui()
         const std::array<std::pair<const char*, const char*>, 8> controls = {{
             {"WASD", "Move camera"},
             {"Mouse drag", "Pan camera"},
-            {"Mouse left click", "Boost flashlight intensity"},
-            {"I / K", "Raise / lower the upper arm"},
-            {"U / J", "Raise / lower the lower arm"},
-            {"O / L", "Raise / lower the wrist (flashlight)"},
+            {"J / K", "Increase / Decrease num of asteroids"},
             {"Left Shift", "Run / speed boost while moving"},
-            {"Space", "Speed up Sun rotation"},
         }};
         for (const auto& [key, desc] : controls)
         {

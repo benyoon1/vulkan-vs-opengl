@@ -4,11 +4,13 @@
 // clang-format off
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 #include <cstdint>
 // clang-format on
 
 class Camera;
 class RobotArm;
+class Application;
 
 class Window
 {
@@ -18,10 +20,12 @@ public:
 
     static constexpr uint32_t kScreenWidth{1920};
     static constexpr uint32_t kScreenHeight{1080};
+    static constexpr ImS32 kSliderMin{0};
+    static constexpr ImS32 kSliderMax{30000};
 
     void setCamera(Camera* camera);
     void setRobotArm(RobotArm* robotArm);
-    void processInput(float& outSpeed, float& intensity);
+    void processInput(Application* app);
     void updateFrame();
 
     GLFWwindow* getGlfwWindow() const { return m_window; }
@@ -32,9 +36,6 @@ private:
     uint32_t m_height{kScreenHeight};
     float m_lastX{0.0f};
     float m_lastY{0.0f};
-    float m_deltaTime{0.0f};
-    float m_currentFrame{0.0f};
-    float m_lastFrame{0.0f};
     bool m_firstMouse{true};
     Camera* m_camera{nullptr};
     RobotArm* m_robotArm{nullptr};
