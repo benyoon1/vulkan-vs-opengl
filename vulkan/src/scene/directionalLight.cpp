@@ -1,5 +1,6 @@
 #include "directionalLight.h"
 #include "SDL_timer.h"
+#include <SDL_events.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 DirectionalLight::DirectionalLight()
@@ -24,4 +25,18 @@ void DirectionalLight::update()
 glm::mat4 DirectionalLight::getLightSpaceMatrix() const
 {
     return m_lightProjection * m_lightView;
+}
+
+void DirectionalLight::processSDLEvent()
+{
+    const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
+
+    if (keyboardState[SDL_SCANCODE_SPACE])
+    {
+        m_sunSpeed = 1.0f;
+    }
+    else
+    {
+        m_sunSpeed = 0.1f;
+    }
 }

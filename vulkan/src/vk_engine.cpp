@@ -124,23 +124,14 @@ void VulkanEngine::init()
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     init_vulkan();
-
     init_swapchain();
-
     init_commands();
-
     init_sync_structures();
-
     init_descriptors();
-
     init_shadow_resources();
-
     init_pipelines();
-
     init_default_data();
-
     init_renderables();
-
     init_imgui();
 
     // everything went fine
@@ -1077,16 +1068,8 @@ void VulkanEngine::run()
         }
 
         _robotArm.processSDLEvent();
-
-        const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
-        if (keyboardState[SDL_SCANCODE_SPACE])
-        {
-            _sunLight.setSunSpeed(1.0f);
-        }
-        else
-        {
-            _sunLight.setSunSpeed(0.1f);
-        }
+        _sunLight.processSDLEvent();
+        process_slider_event();
 
         // calculate avg fps over 5 sec
         auto currframetime = std::chrono::high_resolution_clock::now();
@@ -1123,12 +1106,12 @@ void VulkanEngine::run()
         ImGui::Text("draws %i", _stats.drawcall_count);
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::Text("avg FPS (5s): %.1f", _stats.avg_fps);
-        ImGui::Text("sun height: %.1f", glm::normalize(_sceneData.sunlightPosition).y);
         ImGui::Separator();
-        ImGui::Text("fence: %.2f ms", _stats.fence_time);
-        ImGui::Text("flush: %.2f ms", _stats.flush_time);
-        ImGui::Text("submit: %.2f ms", _stats.submit_time);
-        ImGui::Text("present: %.2f ms", _stats.present_time);
+        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S16, &_numAsteroids, &kSliderMin, &kSliderMax, "%u");
+        // ImGui::Text("fence: %.2f ms", _stats.fence_time);
+        // ImGui::Text("flush: %.2f ms", _stats.flush_time);
+        // ImGui::Text("submit: %.2f ms", _stats.submit_time);
+        // ImGui::Text("present: %.2f ms", _stats.present_time);
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
@@ -1142,12 +1125,8 @@ void VulkanEngine::run()
             const std::array<std::pair<const char*, const char*>, 8> controls = {{
                 {"WASD", "Move camera"},
                 {"Mouse drag", "Pan camera"},
-                {"Mouse left click", "Boost flashlight intensity"},
-                {"I / K", "Raise / lower the upper arm"},
-                {"U / J", "Raise / lower the lower arm"},
-                {"O / L", "Raise / lower the wrist (flashlight)"},
+                {"J / K", "Increase / Decrease num of asteroids"},
                 {"Left Shift", "Run / speed boost while moving"},
-                {"Space", "Speed up Sun rotation"},
             }};
             for (const auto& [key, desc] : controls)
             {
@@ -1179,7 +1158,8 @@ void VulkanEngine::run()
 
 void VulkanEngine::update_scene()
 {
-    _mainCamera.update();
+    update_frame();
+    _mainCamera.processInput(this);
     _sunLight.update();
     // robotArm.update(mainCamera);
 
@@ -1224,7 +1204,6 @@ void VulkanEngine::update_scene()
     auto it = loadedAssets.find("asset1");
 
     // asteroid belt parameters
-    int numAsteroids{15000};
     float majorRadius{35.0f};  // distance from center to the inside of tube
     float minorRadius{7.5f};   // tube radius (belt thickness)
     float verticalScale{0.3f}; // make the belt thin vertically
@@ -1239,7 +1218,7 @@ void VulkanEngine::update_scene()
         std::uniform_real_distribution<float> scaleDist(minScale, maxScale);
         std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
 
-        for (int i = 0; i < numAsteroids; ++i)
+        for (int i = 0; i < _numAsteroids; ++i)
         {
             float u = angleDist(rng) + _asteroidTime; // angle around the major circle [0, 2π]
             float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
@@ -2215,6 +2194,35 @@ void VulkanEngine::init_descriptors()
         _frames[i]._frameDescriptors = DescriptorAllocatorGrowable{};
         _frames[i]._frameDescriptors.init(device, 1000, frame_sizes, VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT);
         _mainDeletionQueue.push_function([&, i]() { _frames[i]._frameDescriptors.destroy_pools(device); });
+    }
+}
+
+void VulkanEngine::update_frame()
+{
+    _currentFrame = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
+    _deltaTime = _currentFrame - _lastFrame;
+    _lastFrame = _currentFrame;
+}
+
+void VulkanEngine::process_slider_event()
+{
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+    if (keys[SDL_SCANCODE_J])
+    {
+        _numAsteroids -= _deltaTime * 5000;
+        if (_numAsteroids < kSliderMin)
+        {
+            _numAsteroids = 0;
+        }
+    }
+    if (keys[SDL_SCANCODE_K])
+    {
+        _numAsteroids += _deltaTime * 5000;
+        if (_numAsteroids > kSliderMax)
+        {
+            _numAsteroids = 0;
+        }
     }
 }
 

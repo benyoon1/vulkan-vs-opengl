@@ -4,8 +4,6 @@
 #pragma once
 
 #include <chrono>
-#include <vk_types.h>
-
 #include <deque>
 #include <functional>
 #include <limits>
@@ -14,15 +12,16 @@
 #include <unordered_map>
 #include <vector>
 
-#include <vk_mem_alloc.h>
-
 #include "scene/robotArm.h"
 #include "scene/spotlight.h"
 #include <camera.h>
+#include <imgui.h>
 #include <scene/directionalLight.h>
 #include <vk_descriptors.h>
 #include <vk_loader.h>
+#include <vk_mem_alloc.h>
 #include <vk_pipelines.h>
+#include <vk_types.h>
 
 struct MeshAsset;
 namespace fastgltf
@@ -202,6 +201,8 @@ struct TextureCache
 class VulkanEngine
 {
 public:
+    static constexpr ImS16 kSliderMin{0};
+    static constexpr ImS16 kSliderMax{30000};
     VkDevice device;
     VkPhysicalDevice chosenGPU;
     VkDescriptorSetLayout gpuSceneDataDescriptorLayout;
@@ -218,11 +219,10 @@ public:
     // singleton style getter.multiple engines is not supported
     static VulkanEngine& Get();
 
-    // initializes everything in the engine
-    void init();
-
-    // shuts down the engine
-    void cleanup();
+    void init(); // initializes everything in the engine
+    void run();  // run main loop
+    void update_scene();
+    void cleanup(); // shuts down the engine
 
     // draw loop
     void draw();
@@ -239,17 +239,13 @@ public:
 
     void render_nodes();
 
-    // run main loop
-    void run();
-
-    void update_scene();
-
     // upload a mesh into a pair of gpu buffers. If descriptor allocator is not
     // null, it will also create a descriptor that points to the vertex buffer
     GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
 
     FrameData& get_current_frame();
     FrameData& get_last_frame();
+    float get_delta_time() { return _deltaTime; }
 
     AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 
@@ -344,6 +340,12 @@ private:
     SpotlightState _spotlight;
     RobotArm _robotArm;
     float _asteroidTime{0.0f};
+    ImS16 _numAsteroids{15000};
+
+    // delta time for consistency regardless of fps
+    float _deltaTime{0.0f};
+    float _currentFrame{0.0f};
+    float _lastFrame{0.0f};
 
     EngineStats _stats;
 
@@ -363,4 +365,6 @@ private:
     void init_renderables();
     void init_imgui();
     void init_default_data();
+    void process_slider_event();
+    void update_frame();
 };

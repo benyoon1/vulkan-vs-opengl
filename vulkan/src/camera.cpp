@@ -1,28 +1,16 @@
 #include "camera.h"
+#include "vk_engine.h"
 #include <SDL_events.h>
 #include <SDL_scancode.h>
 #include <SDL_timer.h>
 #include <glm/gtx/quaternion.hpp>
-
-void Camera::update()
-{
-    updateFrame();
-    processInput();
-}
-
-void Camera::updateFrame()
-{
-    m_currentFrame = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
-    m_deltaTime = m_currentFrame - m_lastFrame;
-    m_lastFrame = m_currentFrame;
-}
 
 glm::mat4 Camera::getViewMatrix() const
 {
     return glm::lookAt(m_position, m_position + m_front, m_up);
 }
 
-void Camera::processInput()
+void Camera::processInput(VulkanEngine* engine)
 {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
     float sprint{1.0f};
@@ -34,19 +22,19 @@ void Camera::processInput()
 
     if (keys[SDL_SCANCODE_W])
     {
-        processKeyboard(FORWARD, m_deltaTime * sprint);
+        processKeyboard(FORWARD, engine->get_delta_time() * sprint);
     }
     if (keys[SDL_SCANCODE_S])
     {
-        processKeyboard(BACKWARD, m_deltaTime * sprint);
+        processKeyboard(BACKWARD, engine->get_delta_time() * sprint);
     }
     if (keys[SDL_SCANCODE_A])
     {
-        processKeyboard(LEFT, m_deltaTime * sprint);
+        processKeyboard(LEFT, engine->get_delta_time() * sprint);
     }
     if (keys[SDL_SCANCODE_D])
     {
-        processKeyboard(RIGHT, m_deltaTime * sprint);
+        processKeyboard(RIGHT, engine->get_delta_time() * sprint);
     }
 
     processMouseMovement();

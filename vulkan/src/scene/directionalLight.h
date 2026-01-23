@@ -14,6 +14,7 @@ public:
     static constexpr glm::vec3 kSunColor{1.0f, 1.0f, 1.0f};
 
     void update();
+    void processSDLEvent();
     glm::vec3 getSunPosition() const { return m_sunPos; }
     glm::vec3 getSunDirection() const { return m_sunDirection; }
     glm::mat4 getLightSpaceMatrix() const;

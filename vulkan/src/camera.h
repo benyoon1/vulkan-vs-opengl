@@ -11,6 +11,8 @@ enum CameraMovement
     RIGHT
 };
 
+class VulkanEngine;
+
 class Camera
 {
 public:
@@ -20,14 +22,14 @@ public:
     static constexpr float kSpeed{10.0f};
     static constexpr float kSensitivity{0.1f};
     static constexpr float kZoom{60.0f};
+
     glm::mat4 getViewMatrix() const;
     glm::vec3 getPosition() const { return m_position; }
     float getZoom() const { return m_zoom; }
     float getFOV() const { return m_FOV; }
     void processKeyboard(CameraMovement direction, float deltaTime);
     void processMouseMovement();
-    void processInput();
-
+    void processInput(VulkanEngine* engine);
     void update();
     void updateFrame();
 
@@ -41,9 +43,6 @@ private:
     float m_pitch{kPitch};
     float m_mouseSensitivity{kSensitivity};
     float m_zoom{kZoom};
-    float m_deltaTime{0.0f};
-    float m_currentFrame{0.0f};
-    float m_lastFrame{0.0f};
     float m_FOV{80.0f};
 
     void updateCameraVectors();
