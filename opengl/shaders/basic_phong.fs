@@ -48,7 +48,7 @@ void main() {
     vec3 viewDir = normalize(viewPos - FragPos);
 
     float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * vec3(0.8, 0.85, 0.95);
+    vec3 ambient = ambientStrength * vec3(0.5, 0.5, 0.5);
 
     vec3 sunResult = calcLight(sunPos, lightColor, FragPos, Normal, viewDir);
 

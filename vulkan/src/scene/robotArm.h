@@ -9,7 +9,7 @@ public:
     static constexpr glm::vec3 kUpperArmModelPos{1.0f, -0.5f, -1.1f};
     static constexpr glm::vec3 kLowerArmModelPos{-0.087621f, 0.891389f, -0.68283f};
     static constexpr glm::vec3 kWristModelPos{0.0063f, -0.5445f, -1.664f};
-    static constexpr float kMuzzleOffset = -0.3f;
+    static constexpr float kMuzzleOffset{-0.3f};
 
     // pose interface
     float getLowerArmAngle() const { return m_lowerArmAngle; }

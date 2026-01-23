@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <array>
 #include <chrono>
+#include <random>
 
 #include "core/application.h"
 // clang-format on
@@ -88,7 +89,7 @@ void Application::run()
         update();
 
         // render
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // renderDepthPass();
@@ -159,27 +160,54 @@ void Application::renderMainPass()
 
     m_asset1->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, *m_robotArm, m_spotlightGain);
 
-    constexpr int numObjPerAxis{30};
-    for (int x = 0; x < numObjPerAxis; ++x)
+    // asteroid belt parameters
+    int numAsteroids{15000};
+    float majorRadius{35.0f};  // distance from center to the inside of tube
+    float minorRadius{7.5f};   // tube radius (belt thickness)
+    float verticalScale{0.3f}; // make the belt thin vertically
+    float minScale{0.05f};     // min asteroid size
+    float maxScale{0.15f};     // max asteroid size
+
+    std::mt19937 rng(42);
+    std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
+    std::uniform_real_distribution<float> radiusDist(0.0f, 1.0f);
+    std::uniform_real_distribution<float> scaleDist(minScale, maxScale);
+    std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
+
+    for (int i = 0; i < numAsteroids; ++i)
     {
-        for (int y = 0; y < numObjPerAxis; ++y)
-        {
-            for (int z = 0; z < numObjPerAxis; ++z)
-            {
-                glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-                glm::mat4 S = glm::scale(T, glm::vec3(0.1f));
-                m_modelShader->setMat4("model", S);
-                m_asset1->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
-                               m_robotArm->getSpotlightPos());
-            }
-        }
+        float u = angleDist(rng) + _asteroidTime; // angle around the major circle [0, 2π]
+        float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
+
+        // add random variation in [0,1] range
+        float randomVariation = minorRadius * radiusDist(rng);
+
+        // polar coordinates to XZ
+        float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+        float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+        float y = randomVariation * std::sin(v) * verticalScale;
+
+        float scale = scaleDist(rng);
+
+        float rotX = rotDist(rng) + _asteroidTime;
+        float rotY = rotDist(rng) + _asteroidTime;
+        float rotZ = rotDist(rng) + _asteroidTime;
+
+        glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+        glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
+        R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
+        R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
+        glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+
+        m_modelShader->setMat4("model", T * R * S);
+        m_asset1->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
     }
-
-    // m_robotArm->configureShader(*m_modelShader);
-    // m_robotArm->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
-    //                  m_robotArm->getSpotlightPos());
-
-    // m_skybox->draw(*m_skyboxShader, projection, m_camera, m_sunLight.getSunDirection(), glm::vec2(width, height));
+    // wrap around every 2 pi because of floating point precision
+    _asteroidTime -= 0.001f; // asteroid belt rotates counter-clockwise viewed from north pole
+    if (_asteroidTime < -glm::two_pi<float>())
+    {
+        _asteroidTime += glm::two_pi<float>();
+    }
 }
 
 void Application::renderImGui()

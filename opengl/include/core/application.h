@@ -36,6 +36,7 @@ private:
     double m_swapTime{0.0};
     int m_fpsFrameCount{0};
     float m_avgFps{0.0f};
+    float _asteroidTime{0.0f};
     std::chrono::high_resolution_clock::time_point m_fpsWindowStart{};
 
     // GL-dependent resources are deferred

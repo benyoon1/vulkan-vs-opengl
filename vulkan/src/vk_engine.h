@@ -202,103 +202,18 @@ struct TextureCache
 class VulkanEngine
 {
 public:
-    bool _isInitialized{false};
-    int _frameNumber{0};
-
-    VkExtent2D _windowExtent{1920, 1080};
-
-    struct SDL_Window* _window{nullptr};
-
-    VkInstance _instance;
-    VkDebugUtilsMessengerEXT _debug_messenger;
-    VkPhysicalDevice _chosenGPU;
-    VkDevice _device;
-
-    VkQueue _graphicsQueue;
-    uint32_t _graphicsQueueFamily;
-
-    AllocatedBuffer _defaultGLTFMaterialData;
-
-    FrameData _frames[FRAME_OVERLAP];
-
-    VkSurfaceKHR _surface;
-    VkSwapchainKHR _swapchain;
-    VkFormat _swapchainImageFormat;
-    VkExtent2D _swapchainExtent;
-    VkExtent2D _drawExtent;
-    VkDescriptorPool _descriptorPool;
-
-    DescriptorAllocator globalDescriptorAllocator;
-
-    VkPipeline _gradientPipeline;
-    VkPipelineLayout _skyboxPipelineLayout;
-
-    std::vector<VkImage> _swapchainImages;
-    std::vector<VkImageView> _swapchainImageViews;
-    // One render-finished semaphore per swapchain image (used for present)
-    std::vector<VkSemaphore> _presentSemaphores;
-
-    VkDescriptorSet _drawImageDescriptors;
-    VkDescriptorSetLayout _drawImageDescriptorLayout;
-
-    DeletionQueue _mainDeletionQueue;
-
-    VmaAllocator _allocator; // vma lib allocator
-
-    VkDescriptorSetLayout _gpuSceneDataDescriptorLayout;
-
+    VkDevice device;
+    VkPhysicalDevice chosenGPU;
+    VkDescriptorSetLayout gpuSceneDataDescriptorLayout;
     GLTFMetallic_Roughness metalRoughMaterial;
+    AllocatedImage whiteImage;
+    AllocatedImage errorCheckerboardImage;
+    TextureCache texCache;
+    VkSampler defaultSamplerLinear;
 
     // draw resources
-    AllocatedImage _drawImage;
-    AllocatedImage _depthImage;
-
-    // Shadow map
-    AllocatedImage _shadowImage{};
-    VkExtent2D _shadowExtent{2048, 2048};
-    VkSampler _shadowSampler{VK_NULL_HANDLE};
-    TextureID _shadowTexId{};
-    VkPipeline _shadowPipeline{VK_NULL_HANDLE};
-    VkPipelineLayout _shadowPipelineLayout{VK_NULL_HANDLE};
-
-    // Debug: visualize sunlight position
-    GPUMeshBuffers _debugCube{};
-    VkPipeline _lightDebugPipeline{VK_NULL_HANDLE};
-    VkPipelineLayout _lightDebugPipelineLayout{VK_NULL_HANDLE};
-    VkPipeline _textureDebugPipeline{VK_NULL_HANDLE};
-    VkPipelineLayout _textureDebugPipelineLayout{VK_NULL_HANDLE};
-
-    // immediate submit structures
-    VkFence _immFence;
-    VkCommandBuffer _immCommandBuffer;
-    VkCommandPool _immCommandPool;
-
-    AllocatedImage _whiteImage;
-    AllocatedImage _blackImage;
-    AllocatedImage _greyImage;
-    AllocatedImage _errorCheckerboardImage;
-
-    VkSampler _defaultSamplerLinear;
-    VkSampler _defaultSamplerNearest;
-
-    TextureCache texCache;
-    uint32_t _maxSampledImageDescriptors{0};
-
-    GPUMeshBuffers _debugRectangle;
-    DrawContext _drawCommands;
-
-    GPUSceneData _sceneData;
-
-    Camera _mainCamera;
-    DirectionalLight _sunLight;
-    SpotlightState _spotlight;
-    RobotArm _robotArm;
-    float _asteroidTime{0.0f};
-
-    EngineStats stats;
-
-    std::vector<ComputeEffect> backgroundEffects;
-    int currentBackgroundEffect{0};
+    AllocatedImage drawImage;
+    AllocatedImage depthImage;
 
     // singleton style getter.multiple engines is not supported
     static VulkanEngine& Get();
@@ -354,28 +269,98 @@ public:
     bool freeze_rendering{false};
 
 private:
+    bool _isInitialized{false};
+    int _frameNumber{0};
+    struct SDL_Window* _window{nullptr};
+
+    VkExtent2D _windowExtent{1920, 1080};
+    VkInstance _instance;
+    VkDebugUtilsMessengerEXT _debug_messenger;
+
+    VkQueue _graphicsQueue;
+    uint32_t _graphicsQueueFamily;
+
+    AllocatedBuffer _defaultGLTFMaterialData;
+
+    FrameData _frames[FRAME_OVERLAP];
+
+    VkSurfaceKHR _surface;
+    VkSwapchainKHR _swapchain;
+    VkFormat _swapchainImageFormat;
+    VkExtent2D _swapchainExtent;
+    VkExtent2D _drawExtent;
+    VkDescriptorPool _descriptorPool;
+
+    DescriptorAllocator _globalDescriptorAllocator;
+
+    VkPipeline _gradientPipeline;
+    VkPipelineLayout _skyboxPipelineLayout;
+
+    std::vector<VkImage> _swapchainImages;
+    std::vector<VkImageView> _swapchainImageViews;
+    // One render-finished semaphore per swapchain image (used for present)
+    std::vector<VkSemaphore> _presentSemaphores;
+
+    VkDescriptorSet _drawImageDescriptors;
+    VkDescriptorSetLayout _drawImageDescriptorLayout;
+
+    DeletionQueue _mainDeletionQueue;
+
+    VmaAllocator _allocator; // vma lib allocator
+
+    // Shadow map
+    AllocatedImage _shadowImage{};
+    VkExtent2D _shadowExtent{2048, 2048};
+    VkSampler _shadowSampler{VK_NULL_HANDLE};
+    TextureID _shadowTexId{};
+    VkPipeline _shadowPipeline{VK_NULL_HANDLE};
+    VkPipelineLayout _shadowPipelineLayout{VK_NULL_HANDLE};
+
+    // Debug: visualize sunlight position
+    GPUMeshBuffers _debugCube{};
+    VkPipeline _lightDebugPipeline{VK_NULL_HANDLE};
+    VkPipelineLayout _lightDebugPipelineLayout{VK_NULL_HANDLE};
+    VkPipeline _textureDebugPipeline{VK_NULL_HANDLE};
+    VkPipelineLayout _textureDebugPipelineLayout{VK_NULL_HANDLE};
+
+    // immediate submit structures
+    VkFence _immFence;
+    VkCommandBuffer _immCommandBuffer;
+    VkCommandPool _immCommandPool;
+
+    AllocatedImage _blackImage;
+    AllocatedImage _greyImage;
+
+    VkSampler _defaultSamplerNearest;
+    uint32_t _maxSampledImageDescriptors{0};
+
+    GPUMeshBuffers _debugRectangle;
+    DrawContext _drawCommands;
+
+    GPUSceneData _sceneData;
+
+    Camera _mainCamera;
+    DirectionalLight _sunLight;
+    SpotlightState _spotlight;
+    RobotArm _robotArm;
+    float _asteroidTime{0.0f};
+
+    EngineStats _stats;
+
+    std::vector<ComputeEffect> _backgroundEffects;
+    int _currentBackgroundEffect{0};
+
     void init_vulkan();
-
     void init_swapchain();
-
     void create_swapchain(uint32_t width, uint32_t height);
-
     void resize_swapchain();
-
     void destroy_swapchain();
-
     void init_commands();
-
     void init_pipelines();
     void init_background_pipelines();
-
     void init_descriptors();
-
     void init_sync_structures();
-
     void init_renderables();
-
     void init_imgui();
-
     void init_default_data();
 };

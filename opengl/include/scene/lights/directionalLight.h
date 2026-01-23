@@ -8,9 +8,9 @@ class DirectionalLight
 public:
     DirectionalLight();
 
-    static constexpr float kNearPlane = 1.0f;
-    static constexpr float kFarPlane = 400.0f;
-    static constexpr float kOrthoSize = 100.0f;
+    static constexpr float kNearPlane{1.0f};
+    static constexpr float kFarPlane{400.0f};
+    static constexpr float kOrthoSize{100.0f};
     static constexpr glm::vec3 kSunColor{1.0f, 1.0f, 1.0f};
 
     void update(float sunSpeed);
@@ -22,7 +22,6 @@ public:
 
 private:
     float m_simTime{0.0f};
-    float m_sunRadius{150.0f};
     double m_lastTime{0.0f};
     glm::vec3 m_sunPos{0.0f};
     glm::vec3 m_sunDirection{0.0f};
