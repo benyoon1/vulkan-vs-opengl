@@ -7,10 +7,9 @@
 #include <fmt/printf.h>
 #include <iostream>
 #include <limits>
-#include <vk_loader.h>
 
 #include "vk_engine.h"
-#include "vk_initializers.h"
+#include "vk_loader.h"
 #include "vk_types.h"
 #include <glm/gtx/quaternion.hpp>
 

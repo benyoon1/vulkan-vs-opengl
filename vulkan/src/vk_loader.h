@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include <vk_types.h>
-
 #include "vk_descriptors.h"
-#include <filesystem>
+#include "vk_types.h"
 #include <unordered_map>
 
 class VulkanEngine;

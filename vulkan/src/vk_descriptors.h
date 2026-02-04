@@ -1,12 +1,10 @@
 ﻿#pragma once
 
-#include <vk_types.h>
-#pragma once
+#include "vk_types.h"
 
 #include <deque>
 #include <span>
 #include <vector>
-#include <vk_types.h>
 
 //> descriptor_layout
 struct DescriptorLayoutBuilder

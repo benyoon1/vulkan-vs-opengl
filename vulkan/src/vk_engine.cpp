@@ -1,26 +1,23 @@
 ﻿
 #include "vk_engine.h"
 
+#include "VkBootstrap.h"
 #include "fmt/core.h"
 #include "vk_descriptors.h"
 #include "vk_images.h"
+#include "vk_initializers.h"
 #include "vk_loader.h"
-
-#include <SDL.h>
-#include <SDL_vulkan.h>
-
-#include <chrono>
-#include <random>
-#include <vk_initializers.h>
-#include <vk_types.h>
-
-#include "VkBootstrap.h"
+#include "vk_types.h"
 
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_vulkan.h"
-
-#include <filesystem>
+#include <SDL.h>
+#include <SDL_vulkan.h>
 #include <glm/gtx/transform.hpp>
+
+#include <chrono>
+#include <filesystem>
+#include <random>
 
 #define VMA_IMPLEMENTATION
 #include "vk_mem_alloc.h"
