@@ -1030,7 +1030,6 @@ void VulkanEngine::run()
             resizeSwapchain();
         }
 
-        _robotArm.processSDLEvent();
         _sunLight.processSDLEvent();
         processSliderEvent();
 
@@ -1124,7 +1123,6 @@ void VulkanEngine::updateScene()
     updateFrame();
     _mainCamera.processInput(this);
     _sunLight.update();
-    // robotArm.update(mainCamera);
 
     glm::mat4 view = _mainCamera.getViewMatrix();
 
@@ -1145,8 +1143,6 @@ void VulkanEngine::updateScene()
     _sceneData.shadowParams = glm::uvec4(_shadowTexId.Index, 0, 0, 0);
 
     // spotlight
-    _sceneData.spotlightPos = glm::vec4(_robotArm.getSpotlightPos(), 1.0f);
-    _sceneData.spotlightDir = glm::vec4(_robotArm.getSpotlightDir(), 0.0f);
     _sceneData.spotColor = glm::vec4(SpotlightConstants::kSpotColor, 1.0f);
     float innerCutoff = glm::cos(glm::radians(SpotlightConstants::kInnerCutDeg));
     float outerCutoff = glm::cos(glm::radians(SpotlightConstants::kOuterCutDeg));

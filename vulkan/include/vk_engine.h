@@ -3,6 +3,16 @@
 
 #pragma once
 
+#include "camera.h"
+#include "directionalLight.h"
+#include "spotlight.h"
+#include "vk_descriptors.h"
+#include "vk_loader.h"
+#include "vk_pipelines.h"
+#include "vk_types.h"
+#include <imgui.h>
+#include <vk_mem_alloc.h>
+
 #include <chrono>
 #include <deque>
 #include <functional>
@@ -11,17 +21,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "scene/robotArm.h"
-#include "scene/spotlight.h"
-#include <camera.h>
-#include <imgui.h>
-#include <scene/directionalLight.h>
-#include <vk_descriptors.h>
-#include <vk_loader.h>
-#include <vk_mem_alloc.h>
-#include <vk_pipelines.h>
-#include <vk_types.h>
 
 struct MeshAsset;
 namespace fastgltf
@@ -310,7 +309,6 @@ private:
     Camera _mainCamera;
     DirectionalLight _sunLight;
     SpotlightState _spotlight;
-    RobotArm _robotArm;
     float _asteroidTime{0.0f};
 
     // asteroid belt parameters

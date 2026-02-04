@@ -2,10 +2,6 @@
 
 A simple renderer to compare the performance (fps) of two graphics APIs: Vulkan and OpenGL. The scene features a star with an asteroid belt. Every object (asteroid) is a single draw call and it is intentional; compute shaders or instancing would be far more performant but the purpose of this test is to quantify the driver overhead of each graphics API, on different platforms.
 
-## Preview
-
-![vulkan vs opengl gif](/assets/gif/shot1.jpg)
-
 ## Features
 
 - Shadow mapping (off for now)
