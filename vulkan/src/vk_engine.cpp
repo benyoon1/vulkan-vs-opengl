@@ -7,6 +7,7 @@
 #include "vk_images.h"
 #include "vk_initializers.h"
 #include "vk_loader.h"
+#include "vk_pipelines.h"
 #include "vk_types.h"
 
 #include "imgui_impl_sdl2.h"

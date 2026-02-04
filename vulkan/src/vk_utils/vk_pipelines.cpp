@@ -1,5 +1,7 @@
 ﻿#include "vk_pipelines.h"
 #include "vk_initializers.h"
+#include <fmt/core.h>
+
 #include <fstream>
 
 //> pipe_clear
