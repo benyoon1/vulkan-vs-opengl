@@ -10,8 +10,9 @@ Window::Window() : m_lastX(kScreenWidth / 2.0f), m_lastY(kScreenHeight / 2.0f)
     {
         throw std::runtime_error("Failed to initialize GLFW");
     }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // TODO: change to 4.6 for linux/windows
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 

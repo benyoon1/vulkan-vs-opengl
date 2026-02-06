@@ -38,7 +38,7 @@ Application::Application() : m_window(), m_camera(), m_sunLight(), m_spotlight()
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(m_window.getGlfwWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 330"); // TODO: change to version 4.1?
+    ImGui_ImplOpenGL3_Init("#version 410"); // TODO: match GL version with window
 
     // construct GL-dependent resources AFTER GLAD
     m_robotArm = std::make_unique<RobotArm>("../assets/robot_arm/wrist.obj", "../assets/robot_arm/lower_arm.obj",
