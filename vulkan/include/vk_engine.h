@@ -5,6 +5,7 @@
 
 #include "camera.h"
 #include "directionalLight.h"
+#include "scene.h"
 #include "spotlight.h"
 #include "vk_context.h"
 #include "vk_descriptors.h"
@@ -17,10 +18,7 @@
 #include <vk_mem_alloc.h>
 
 #include <chrono>
-#include <limits>
-#include <span>
-#include <string>
-#include <unordered_map>
+
 #include <vector>
 
 struct MeshAsset;
@@ -93,13 +91,11 @@ struct EngineStats
 class VulkanEngine
 {
 public:
-    static constexpr ImS32 kSliderMin{0};
-    static constexpr ImS32 kSliderMax{30000};
-
     VulkanContext ctx;
     Swapchain swapchain;
     ResourceManager resources;
     GLTFMetallic_Roughness metalRoughMaterial;
+    Scene scene;
 
     VkDescriptorSetLayout gpuSceneDataDescriptorLayout{VK_NULL_HANDLE};
 
@@ -109,7 +105,6 @@ public:
 
     // singleton style getter.multiple engines is not supported
     static VulkanEngine& Get();
-    float getDeltaTime() { return _deltaTime; }
 
 private:
     bool _isInitialized{false};
@@ -149,25 +144,9 @@ private:
     GPUMeshBuffers _debugRectangle;
     DrawContext _drawCommands;
 
-    GPUSceneData _sceneData;
-
     Camera _mainCamera;
     DirectionalLight _sunLight;
     SpotlightState _spotlight;
-    float _asteroidTime{0.0f};
-
-    // asteroid belt parameters
-    ImS32 _numAsteroids{15000};
-    float _majorRadius{35.0f};  // distance from center to the inside of tube
-    float _minorRadius{7.5f};   // tube radius (belt thickness)
-    float _verticalScale{0.3f}; // make the belt thin vertically
-    float _minScale{0.02f};     // min asteroid size
-    float _maxScale{0.07f};     // max asteroid size
-
-    // delta time for consistency regardless of fps
-    float _deltaTime{0.0f};
-    float _currentFrame{0.0f};
-    float _lastFrame{0.0f};
 
     EngineStats _stats;
 
@@ -175,7 +154,6 @@ private:
     int _currentBackgroundEffect{0};
     bool resizeRequested{false};
     bool freezeRendering{false};
-    std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedAssets;
 
     void initSwapchain();
     void resizeSwapchain();
@@ -184,11 +162,8 @@ private:
     void initBackgroundPipelines();
     void initDescriptors();
     void initSyncStructures();
-    void initRenderables();
     void initImgui();
     void initDefaultData();
-    void processSliderEvent();
-    void updateFrame();
 
     void updateScene();
 

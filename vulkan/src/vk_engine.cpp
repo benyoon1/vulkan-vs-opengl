@@ -1,7 +1,6 @@
 ﻿
 #include "vk_engine.h"
 
-#include "VkBootstrap.h"
 #include "fmt/core.h"
 #include "vk_context.h"
 #include "vk_descriptors.h"
@@ -18,8 +17,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <chrono>
-#include <filesystem>
-#include <random>
 
 #ifndef ENABLE_VALIDATION_LAYERS
 #define ENABLE_VALIDATION_LAYERS 0
@@ -50,7 +47,7 @@ void VulkanEngine::init()
     initShadowResources();
     initPipelines();
     initDefaultData();
-    initRenderables();
+    scene.initRenderables(ctx, resources, metalRoughMaterial);
     initImgui();
 
     // everything went fine
@@ -145,7 +142,7 @@ void VulkanEngine::cleanup()
         // make sure the gpu has stopped doing its things
         vkDeviceWaitIdle(ctx.device);
 
-        loadedAssets.clear();
+        scene.cleanup();
 
         // Destroy engine-owned GPU resources that might not be tied to deletion
         // queues
@@ -299,8 +296,8 @@ void VulkanEngine::drawShadowMap(VkCommandBuffer cmd)
     AllocatedBuffer& shadowBuffer = getCurrentFrame().shadowSceneDataBuffer;
     GPUSceneData* ptr = (GPUSceneData*)shadowBuffer.info.pMappedData;
 
-    GPUSceneData lightScene = _sceneData;
-    lightScene.viewproj = _sceneData.sunlightViewProj;
+    GPUSceneData lightScene = scene.sceneData;
+    lightScene.viewproj = scene.sceneData.sunlightViewProj;
     *ptr = lightScene;
 
     // Allocate set=0 with only the UBO (no images needed for depth-only)
@@ -609,7 +606,7 @@ void VulkanEngine::drawDebugTexture(VkCommandBuffer cmd)
 
         // write the buffer
         GPUSceneData* sceneUniformData = (GPUSceneData*)gpuSceneDataBuffer.info.pMappedData;
-        *sceneUniformData = _sceneData;
+        *sceneUniformData = scene.sceneData;
 
         VkDescriptorSetVariableDescriptorCountAllocateInfo allocArrayInfo{
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO, .pNext = nullptr};
@@ -680,7 +677,7 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
 
     AllocatedBuffer& gpuSceneDataBuffer = getCurrentFrame().sceneDataBuffer;
     GPUSceneData* sceneUniformData = (GPUSceneData*)gpuSceneDataBuffer.info.pMappedData;
-    *sceneUniformData = _sceneData;
+    *sceneUniformData = scene.sceneData;
 
     VkDescriptorSetVariableDescriptorCountAllocateInfo allocArrayInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO, .pNext = nullptr};
@@ -858,7 +855,7 @@ void VulkanEngine::run()
         }
 
         _sunLight.processSDLEvent();
-        processSliderEvent();
+        scene.processSliderEvent();
 
         // calculate avg fps over 5 sec
         auto currframetime = std::chrono::high_resolution_clock::now();
@@ -896,7 +893,8 @@ void VulkanEngine::run()
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::Text("avg FPS (5s): %.1f", _stats.avg_fps);
         ImGui::Separator();
-        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &_numAsteroids, &kSliderMin, &kSliderMax, "%u");
+        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
+                            &scene.kSliderMax, "%u");
         // ImGui::Text("fence: %.2f ms", _stats.fence_time);
         // ImGui::Text("flush: %.2f ms", _stats.flush_time);
         // ImGui::Text("submit: %.2f ms", _stats.submit_time);
@@ -934,7 +932,7 @@ void VulkanEngine::run()
         // imgui commands
         // ImGui::ShowDemoWindow();
 
-        updateScene();
+        scene.update(ctx.windowExtent, _drawCommands, _mainCamera, _sunLight);
 
         draw();
 
@@ -942,97 +940,6 @@ void VulkanEngine::run()
         auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
         _stats.frametime = elapsed.count() / 1000.f;
-    }
-}
-
-void VulkanEngine::updateScene()
-{
-    updateFrame();
-    _mainCamera.processInput(_deltaTime);
-    _sunLight.update();
-
-    glm::mat4 view = _mainCamera.getViewMatrix();
-
-    // camera projection
-    glm::mat4 projection =
-        glm::perspective(glm::radians(_mainCamera.getFOV()),
-                         (float)ctx.windowExtent.width / (float)ctx.windowExtent.height, 10000.f, 0.1f);
-
-    // invert the Y direction on projection matrix so that we are more similar
-    // to opengl and gltf axis
-    projection[1][1] *= -1;
-
-    _sceneData.sunlightPosition = glm::vec4(_sunLight.getSunPosition(), 1.0f);
-    _sceneData.cameraPosition = glm::vec4(_mainCamera.getPosition(), 1.0f);
-    _sceneData.sunlightColor = glm::vec4(1.0f);
-
-    _sceneData.sunlightViewProj = _sunLight.getLightSpaceMatrix();
-    // Make shadow map index visible to shaders
-    _sceneData.shadowParams = glm::uvec4(_shadowTexId.Index, 0, 0, 0);
-
-    // spotlight
-    _sceneData.spotColor = glm::vec4(SpotlightConstants::kSpotColor, 1.0f);
-    float innerCutoff = glm::cos(glm::radians(SpotlightConstants::kInnerCutDeg));
-    float outerCutoff = glm::cos(glm::radians(SpotlightConstants::kOuterCutDeg));
-    float intensity = SpotlightConstants::kIntensity * _spotlight.spotGain;
-    _sceneData.spotCutoffAndIntensity = glm::vec4(innerCutoff, outerCutoff, intensity, 0.0f);
-
-    // update skybox
-    ComputeEffect& effect = _backgroundEffects[_currentBackgroundEffect];
-    glm::mat4 rotationOnlyView = glm::mat4(glm::mat3(_mainCamera.getViewMatrix()));
-    glm::mat4 invProjection = glm::inverse(projection);
-    glm::mat4 invView = glm::inverse(rotationOnlyView);
-    effect.data.inverseProjection = invProjection;
-    effect.data.inverseView = invView;
-    effect.data.sunDirection = glm::vec4(_sunLight.getSunDirection(), 0.0f);
-    effect.data.screenSize = glm::vec4(swapchain.drawExtent.width, swapchain.drawExtent.height, 0.0f, 0.0f);
-
-    _drawCommands.viewProj = projection * view;
-    auto it = loadedAssets.find("asset1");
-
-    if (it != loadedAssets.end() && it->second)
-    {
-        std::mt19937 rng(42);
-        std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
-        std::uniform_real_distribution<float> radiusDist(0.0f, 1.0f);
-        std::uniform_real_distribution<float> scaleDist(_minScale, _maxScale);
-        std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
-
-        for (int i = 0; i < _numAsteroids; ++i)
-        {
-            float u = angleDist(rng) + _asteroidTime; // angle around the major circle [0, 2π]
-            float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
-
-            // add random variation in [0,1] range
-            float randomVariation = _minorRadius * radiusDist(rng);
-
-            // polar coordinates to XZ
-            float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
-            float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
-            float y = randomVariation * std::sin(v) * _verticalScale;
-
-            float scale = scaleDist(rng);
-
-            float rotX = rotDist(rng) + _asteroidTime;
-            float rotY = rotDist(rng) + _asteroidTime;
-            float rotZ = rotDist(rng) + _asteroidTime;
-
-            glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-            glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
-            R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
-            R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
-            glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
-
-            // TODO: change Draw name to addToDrawCommands?
-            it->second->addToDrawCommands(T * R * S, _drawCommands);
-        }
-        // wrap around every 2 pi because of floating point precision
-        // asteroid belt rotates counter-clockwise viewed from north pole
-        _asteroidTime -= 0.05f * _deltaTime;
-        if (_asteroidTime < -glm::two_pi<float>())
-        {
-            _asteroidTime += glm::two_pi<float>();
-        }
     }
 }
 
@@ -1117,20 +1024,6 @@ void VulkanEngine::initSyncStructures()
                 vkDestroySemaphore(ctx.device, swapSemaphore, nullptr);
                 // no per-frame render semaphore
             });
-    }
-}
-
-void VulkanEngine::initRenderables()
-{
-    const std::string asset1 = asset_path("icosahedron-low.obj");
-    auto scene1 = loadAssimpAssets(ctx, resources, metalRoughMaterial, asset1);
-    if (scene1.has_value())
-    {
-        loadedAssets["asset1"] = *scene1;
-    }
-    else
-    {
-        fmt::print("Warning: failed to load icosahedron-low.obj from '{}'.\n", asset1);
     }
 }
 
@@ -1552,34 +1445,5 @@ void VulkanEngine::initDescriptors()
         _frames[i]._frameDescriptors.init(ctx.device, 1000, frame_sizes,
                                           VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT);
         _mainDeletionQueue.push_function([&, i]() { _frames[i]._frameDescriptors.destroy_pools(ctx.device); });
-    }
-}
-
-void VulkanEngine::updateFrame()
-{
-    _currentFrame = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
-    _deltaTime = _currentFrame - _lastFrame;
-    _lastFrame = _currentFrame;
-}
-
-void VulkanEngine::processSliderEvent()
-{
-    const Uint8* keys = SDL_GetKeyboardState(NULL);
-
-    if (keys[SDL_SCANCODE_J])
-    {
-        _numAsteroids -= _deltaTime * 5000;
-        if (_numAsteroids < kSliderMin)
-        {
-            _numAsteroids = 0;
-        }
-    }
-    if (keys[SDL_SCANCODE_K])
-    {
-        _numAsteroids += _deltaTime * 5000;
-        if (_numAsteroids > kSliderMax)
-        {
-            _numAsteroids = kSliderMax;
-        }
     }
 }

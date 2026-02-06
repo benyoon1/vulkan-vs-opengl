@@ -2,7 +2,6 @@
 
 #include "camera.h"
 #include "directionalLight.h"
-#include "spotlight.h"
 #include "vk_loader.h"
 #include "vk_types.h"
 
@@ -21,11 +20,6 @@ public:
     static constexpr ImS32 kSliderMin{0};
     static constexpr ImS32 kSliderMax{30000};
 
-    Camera mainCamera;
-    DirectionalLight sunLight;
-    SpotlightState spotlight;
-
-    DrawContext drawCommands;
     GPUSceneData sceneData{};
 
     std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedAssets;
@@ -39,10 +33,16 @@ public:
     float maxScale{0.07f};
 
     void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material);
-    void update(float deltaTime, VkExtent2D windowExtent);
-    void processSliderEvent(float deltaTime);
+    void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight);
+    void processSliderEvent();
+    void updateFrame();
     void cleanup();
 
 private:
     float _asteroidTime{0.0f};
+
+    // delta time for consistency regardless of fps
+    float _deltaTime{0.0f};
+    float _currentFrame{0.0f};
+    float _lastFrame{0.0f};
 };

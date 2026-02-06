@@ -1,9 +1,11 @@
 #include "scene.h"
 
+#include "camera.h"
 #include "vk_context.h"
 #include "vk_material.h"
 #include "vk_resources.h"
 
+#include "SDL_timer.h"
 #include <SDL_keyboard.h>
 #include <SDL_scancode.h>
 #include <glm/gtx/transform.hpp>
@@ -12,21 +14,40 @@
 
 void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material)
 {
-    const std::string asset1 = asset_path("icosahedron-low.obj");
-    auto scene1 = loadAssimpAssets(ctx, resources, material, asset1);
-    if (scene1.has_value())
+    const std::string icosahedron = asset_path("icosahedron-low.obj");
+    auto asset1 = loadAssimpAssets(ctx, resources, material, icosahedron);
+    if (asset1.has_value())
     {
-        loadedAssets["asset1"] = *scene1;
+        loadedAssets["icosahedron"] = *asset1;
     }
     else
     {
-        fmt::print("Warning: failed to load icosahedron-low.obj from '{}'.\n", asset1);
+        fmt::print("Warning: failed to load icosahedron-low.obj from '{}'.\n", icosahedron);
+    }
+
+    const std::string planet = asset_path("planet/planet.obj");
+    auto asset2 = loadAssimpAssets(ctx, resources, material, planet);
+    if (asset2.has_value())
+    {
+        loadedAssets["planet"] = *asset2;
+    }
+    else
+    {
+        fmt::print("Warning: failed to load planet/planet.obj from '{}'.\n", planet);
     }
 }
 
-void Scene::update(float deltaTime, VkExtent2D windowExtent)
+void Scene::updateFrame()
 {
-    mainCamera.processInput(deltaTime);
+    _currentFrame = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
+    _deltaTime = _currentFrame - _lastFrame;
+    _lastFrame = _currentFrame;
+}
+
+void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight)
+{
+    updateFrame();
+    mainCamera.processInput(_deltaTime);
     sunLight.update();
 
     glm::mat4 view = mainCamera.getViewMatrix();
@@ -45,15 +66,15 @@ void Scene::update(float deltaTime, VkExtent2D windowExtent)
     sceneData.sunlightViewProj = sunLight.getLightSpaceMatrix();
 
     // spotlight
-    sceneData.spotColor = glm::vec4(SpotlightConstants::kSpotColor, 1.0f);
-    float innerCutoff = glm::cos(glm::radians(SpotlightConstants::kInnerCutDeg));
-    float outerCutoff = glm::cos(glm::radians(SpotlightConstants::kOuterCutDeg));
-    float intensity = SpotlightConstants::kIntensity * spotlight.spotGain;
-    sceneData.spotCutoffAndIntensity = glm::vec4(innerCutoff, outerCutoff, intensity, 0.0f);
+    // sceneData.spotColor = glm::vec4(SpotlightConstants::kSpotColor, 1.0f);
+    // float innerCutoff = glm::cos(glm::radians(SpotlightConstants::kInnerCutDeg));
+    // float outerCutoff = glm::cos(glm::radians(SpotlightConstants::kOuterCutDeg));
+    // float intensity = SpotlightConstants::kIntensity * spotlight.spotGain;
+    // sceneData.spotCutoffAndIntensity = glm::vec4(innerCutoff, outerCutoff, intensity, 0.0f);
 
     drawCommands.viewProj = projection * view;
-    auto it = loadedAssets.find("asset1");
 
+    auto it = loadedAssets.find("icosahedron");
     if (it != loadedAssets.end() && it->second)
     {
         std::mt19937 rng(42);
@@ -87,21 +108,28 @@ void Scene::update(float deltaTime, VkExtent2D windowExtent)
 
             it->second->addToDrawCommands(T * R * S, drawCommands);
         }
-        _asteroidTime -= 0.05f * deltaTime;
+        _asteroidTime -= 0.05f * _deltaTime;
         if (_asteroidTime < -glm::two_pi<float>())
         {
             _asteroidTime += glm::two_pi<float>();
         }
     }
+
+    it = loadedAssets.find("planet");
+    if (it != loadedAssets.end() && it->second)
+    {
+        glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
+        it->second->addToDrawCommands(model, drawCommands);
+    }
 }
 
-void Scene::processSliderEvent(float deltaTime)
+void Scene::processSliderEvent()
 {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
     if (keys[SDL_SCANCODE_J])
     {
-        numAsteroids -= deltaTime * 5000;
+        numAsteroids -= _deltaTime * 5000;
         if (numAsteroids < kSliderMin)
         {
             numAsteroids = 0;
@@ -109,7 +137,7 @@ void Scene::processSliderEvent(float deltaTime)
     }
     if (keys[SDL_SCANCODE_K])
     {
-        numAsteroids += deltaTime * 5000;
+        numAsteroids += _deltaTime * 5000;
         if (numAsteroids > kSliderMax)
         {
             numAsteroids = kSliderMax;
