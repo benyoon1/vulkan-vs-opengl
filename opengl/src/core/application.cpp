@@ -43,7 +43,8 @@ Application::Application() : m_window(), m_camera(), m_sunLight(), m_spotlight()
     // construct GL-dependent resources AFTER GLAD
     m_window.setCamera(&m_camera);
 
-    m_asset1 = std::make_unique<Model>("../assets/icosahedron-low.obj");
+    m_icosahedron = std::make_unique<Model>("../assets/icosahedron-low.obj");
+    m_planet = std::make_unique<Model>("../assets/planet/planet.obj");
     m_skybox = std::make_unique<Skybox>();
 
     m_sunShadow = std::make_unique<ShadowMap>();
@@ -136,7 +137,7 @@ void Application::renderDepthPass()
 {
     // 1. sun depth pass
     m_sunShadow->bind();
-    m_asset1->drawShadowMap(*m_depthShader, m_sunLight.getLightSpaceMatrix(), m_asset1->getModelMatrix());
+    m_icosahedron->drawShadowMap(*m_depthShader, m_sunLight.getLightSpaceMatrix(), m_icosahedron->getModelMatrix());
     m_sunShadow->unbind();
 
     // // 2. spotlight depth pass
@@ -160,7 +161,7 @@ void Application::renderMainPass()
     m_sunShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSunShadowTextureNum);
     m_spotShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSpotShadowTextureNum);
 
-    m_asset1->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
+    m_icosahedron->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
 
     std::mt19937 rng(42);
     std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
@@ -193,7 +194,7 @@ void Application::renderMainPass()
         R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
         glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
         m_modelShader->setMat4("model", T * R * S);
-        m_asset1->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
+        m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
     }
     // wrap around every 2 pi because of floating point precision
     // asteroid belt rotates counter-clockwise viewed from north pole
@@ -202,6 +203,11 @@ void Application::renderMainPass()
     {
         _asteroidTime += glm::two_pi<float>();
     }
+
+    m_planet->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
+    glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
+    m_modelShader->setMat4("model", model);
+    m_planet->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
 }
 
 void Application::renderImGui()

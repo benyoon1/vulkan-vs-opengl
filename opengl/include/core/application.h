@@ -46,8 +46,8 @@ private:
     float _asteroidTime{0.0f};
 
     // asteroid belt parameters
-    float _majorRadius{35.0f};  // distance from center to the inside of tube
-    float _minorRadius{7.5f};   // tube radius (belt thickness)
+    float _majorRadius{25.0f};  // distance from center to the inside of tube
+    float _minorRadius{4.0f};   // tube radius (belt thickness)
     float _verticalScale{0.3f}; // make the belt thin vertically
     float _minScale{0.02f};     // min asteroid size
     float _maxScale{0.07f};     // max asteroid size
@@ -58,7 +58,8 @@ private:
     std::chrono::high_resolution_clock::time_point m_fpsWindowStart{};
 
     // GL-dependent resources are deferred
-    std::unique_ptr<Model> m_asset1;
+    std::unique_ptr<Model> m_icosahedron;
+    std::unique_ptr<Model> m_planet;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<ShadowMap> m_sunShadow;
     std::unique_ptr<ShadowMap> m_spotShadow;

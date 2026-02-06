@@ -26,11 +26,11 @@ public:
 
     // asteroid belt parameters
     ImS32 numAsteroids{15000};
-    float majorRadius{35.0f};
-    float minorRadius{7.5f};
-    float verticalScale{0.3f};
-    float minScale{0.02f};
-    float maxScale{0.07f};
+    float majorRadius{25.0f};  // distance from center to the inside of tube
+    float minorRadius{4.0f};   // tube radius (belt thickness)
+    float verticalScale{0.3f}; // make the belt thin vertically
+    float minScale{0.02f};     // min asteroid size
+    float maxScale{0.07f};     // max asteroid size
 
     void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material);
     void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight);
