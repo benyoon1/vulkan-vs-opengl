@@ -1,5 +1,4 @@
 #include "scene/lights/spotlight.h"
-#include "scene/robotArm.h"
 
 Spotlight::Spotlight()
 {
@@ -10,9 +9,9 @@ Spotlight::Spotlight()
     m_spotProj = glm::perspective(kSpotFov, 1.0f, kSpotNear, kSpotFar);
 }
 
-void Spotlight::update(const RobotArm& robotArm)
+void Spotlight::update()
 {
-    m_spotView = glm::lookAt(robotArm.getSpotlightPos(), robotArm.getSpotlightPos() + robotArm.getSpotlightDir(),
-                             glm::vec3(0, 1, 0));
+    // m_spotView = glm::lookAt(robotArm.getSpotlightPos(), robotArm.getSpotlightPos() + robotArm.getSpotlightDir(),
+    //                          glm::vec3(0, 1, 0));
     m_spotLightSpace = m_spotProj * m_spotView;
 }

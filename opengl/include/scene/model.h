@@ -9,7 +9,6 @@ class Camera;
 class Shader;
 class DirectionalLight;
 class Spotlight;
-class RobotArm;
 
 class Model
 {
@@ -20,7 +19,7 @@ public:
     static constexpr glm::vec3 kValleyTint{0.85f, 0.553f, 0.133f};
 
     void configureShader(Shader& shader, const Camera& camera, const DirectionalLight& sunLight,
-                         const Spotlight& spotlight, const RobotArm& robotArm, float spotlightGain) const;
+                         const Spotlight& spotlight, float spotlightGain) const;
     void draw(Shader& modelShader, const glm::mat4& projection, const glm::mat4& view, const Camera& camera,
               const glm::vec3 sunPos, const glm::vec3 spotlightPos);
     void drawShadowMap(Shader& depthShader, const glm::mat4& lightSpaceMatrix, const glm::mat4& modelMatrix);

@@ -4,7 +4,6 @@
 #include "scene/camera.h"
 #include "scene/lights/directionalLight.h"
 #include "scene/lights/spotlight.h"
-#include "scene/robotArm.h"
 #include <core/utils.h>
 
 #include <assimp/Importer.hpp>
@@ -34,7 +33,7 @@ Model::~Model()
 }
 
 void Model::configureShader(Shader& shader, const Camera& camera, const DirectionalLight& sunLight,
-                            const Spotlight& spotlight, const RobotArm& robotArm, float spotlightGain) const
+                            const Spotlight& spotlight, float spotlightGain) const
 {
     shader.use();
     shader.setInt("sunShadowMapTextureNum", ShadowMap::kSunShadowTextureNum);
@@ -44,14 +43,12 @@ void Model::configureShader(Shader& shader, const Camera& camera, const Directio
     shader.setMat4("spotLightSpaceMatrix", spotlight.getSpotLightSpaceMatrix());
 
     shader.setVec3("sunPos", sunLight.getSunPosition());
-    shader.setVec3("spotlightPos", robotArm.getSpotlightPos());
     shader.setVec3("sunColor", DirectionalLight::kSunColor);
     shader.setVec3("viewPos", camera.getPosition());
     shader.setMat4("model", this->getModelMatrix());
     shader.setVec3("sunColor", glm::vec3(1.0f, 1.0f, 1.0f)); // white light
 
     shader.setInt("spotEnabled", 1);
-    shader.setVec3("spotlightDir", robotArm.getSpotlightDir());
     shader.setVec3("spotColor", Spotlight::kSpotColor);
     shader.setFloat("spotInnerCutoff", glm::cos(glm::radians(Spotlight::kInnerCutDeg)));
     shader.setFloat("spotOuterCutoff", glm::cos(glm::radians(Spotlight::kOuterCutDeg)));

@@ -5,8 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class RobotArm;
-
 class Spotlight
 {
 public:
@@ -24,7 +22,7 @@ public:
     glm::mat4 getSpotLightProjection() const { return m_spotProj; }
     glm::mat4 getSpotLightView() const { return m_spotView; }
 
-    void update(const RobotArm& robotArm);
+    void update();
 
 private:
     glm::mat4 m_spotProj{1.0f};

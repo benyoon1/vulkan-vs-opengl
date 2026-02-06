@@ -9,7 +9,6 @@
 // clang-format on
 
 class Camera;
-class RobotArm;
 class Application;
 
 class Window
@@ -24,7 +23,6 @@ public:
     static constexpr ImS32 kSliderMax{30000};
 
     void setCamera(Camera* camera);
-    void setRobotArm(RobotArm* robotArm);
     void processInput(Application* app);
     void updateFrame();
 
@@ -38,7 +36,6 @@ private:
     float m_lastY{0.0f};
     bool m_firstMouse{true};
     Camera* m_camera{nullptr};
-    RobotArm* m_robotArm{nullptr};
 
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     static void mouseCallback(GLFWwindow* window, double xpos, double ypos);

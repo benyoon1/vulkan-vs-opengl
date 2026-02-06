@@ -8,7 +8,6 @@
 #include "scene/lights/directionalLight.h"
 #include "scene/lights/spotlight.h"
 #include "scene/model.h"
-#include "scene/robotArm.h"
 #include "scene/skybox.h"
 #include "scene/sphere.h"
 #include <chrono>
@@ -59,7 +58,6 @@ private:
     std::chrono::high_resolution_clock::time_point m_fpsWindowStart{};
 
     // GL-dependent resources are deferred
-    std::unique_ptr<RobotArm> m_robotArm;
     std::unique_ptr<Model> m_asset1;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<ShadowMap> m_sunShadow;

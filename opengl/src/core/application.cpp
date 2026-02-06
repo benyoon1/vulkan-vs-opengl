@@ -41,10 +41,7 @@ Application::Application() : m_window(), m_camera(), m_sunLight(), m_spotlight()
     ImGui_ImplOpenGL3_Init("#version 410"); // TODO: match GL version with window
 
     // construct GL-dependent resources AFTER GLAD
-    m_robotArm = std::make_unique<RobotArm>("../assets/robot_arm/wrist.obj", "../assets/robot_arm/lower_arm.obj",
-                                            "../assets/robot_arm/upper_arm.obj");
     m_window.setCamera(&m_camera);
-    m_window.setRobotArm(m_robotArm.get());
 
     m_asset1 = std::make_unique<Model>("../assets/icosahedron-low.obj");
     m_skybox = std::make_unique<Skybox>();
@@ -132,8 +129,7 @@ void Application::update()
 
     // scene update
     m_sunLight.update(m_sunSpeed);
-    m_robotArm->updateWristPose(m_camera);
-    m_spotlight.update(*m_robotArm);
+    // m_spotlight.update();
 }
 
 void Application::renderDepthPass()
@@ -141,7 +137,6 @@ void Application::renderDepthPass()
     // 1. sun depth pass
     m_sunShadow->bind();
     m_asset1->drawShadowMap(*m_depthShader, m_sunLight.getLightSpaceMatrix(), m_asset1->getModelMatrix());
-    m_robotArm->drawShadowMap(*m_depthShader, m_sunLight.getLightSpaceMatrix());
     m_sunShadow->unbind();
 
     // // 2. spotlight depth pass
@@ -165,7 +160,7 @@ void Application::renderMainPass()
     m_sunShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSunShadowTextureNum);
     m_spotShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSpotShadowTextureNum);
 
-    m_asset1->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, *m_robotArm, m_spotlightGain);
+    m_asset1->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
 
     std::mt19937 rng(42);
     std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());

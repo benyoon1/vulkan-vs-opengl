@@ -1,7 +1,6 @@
 #include "core/window.h"
 #include "core/application.h"
 #include "scene/camera.h"
-#include "scene/robotArm.h"
 #include <iostream>
 
 Window::Window() : m_lastX(kScreenWidth / 2.0f), m_lastY(kScreenHeight / 2.0f)
@@ -43,11 +42,6 @@ Window::Window() : m_lastX(kScreenWidth / 2.0f), m_lastY(kScreenHeight / 2.0f)
 void Window::setCamera(Camera* camera)
 {
     m_camera = camera;
-}
-
-void Window::setRobotArm(RobotArm* robotArm)
-{
-    m_robotArm = robotArm;
 }
 
 void Window::processInput(Application* app)
