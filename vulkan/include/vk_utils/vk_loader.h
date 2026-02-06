@@ -1,6 +1,3 @@
-﻿// vulkan_guide.h : Include file for standard system include files,
-// or project specific include files.
-
 #pragma once
 
 #include "vk_descriptors.h"
@@ -8,14 +5,9 @@
 
 #include <unordered_map>
 
-class VulkanEngine;
-
-struct Bounds
-{
-    glm::vec3 origin;
-    float sphereRadius;
-    glm::vec3 extents;
-};
+class VulkanContext;
+class ResourceManager;
+struct GLTFMetallic_Roughness;
 
 struct GLTFMaterial
 {
@@ -38,9 +30,15 @@ struct MeshAsset
     GPUMeshBuffers meshBuffers;
 };
 
+struct MeshNode : public Node
+{
+    std::shared_ptr<MeshAsset> mesh;
+
+    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx) override;
+};
+
 struct LoadedGLTF : public IRenderable
 {
-
     // storage for all the data on a given gltf file
     std::unordered_map<std::string, std::shared_ptr<MeshAsset>> meshes;
     std::unordered_map<std::string, std::shared_ptr<Node>> nodes;
@@ -56,7 +54,8 @@ struct LoadedGLTF : public IRenderable
 
     AllocatedBuffer materialDataBuffer;
 
-    VulkanEngine* creator;
+    VulkanContext* creatorCtx;
+    ResourceManager* creatorResources;
 
     ~LoadedGLTF() { clearAll(); };
 
@@ -66,5 +65,8 @@ private:
     void clearAll();
 };
 
-std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanEngine* engine, std::string_view filePath);
-std::optional<std::shared_ptr<LoadedGLTF>> loadAssimpAssets(VulkanEngine* engine, std::string_view filePath);
+std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanContext& ctx, ResourceManager& resources,
+                                                     GLTFMetallic_Roughness& material, std::string_view filePath);
+std::optional<std::shared_ptr<LoadedGLTF>> loadAssimpAssets(VulkanContext& ctx, ResourceManager& resources,
+                                                            GLTFMetallic_Roughness& material,
+                                                            std::string_view filePath);

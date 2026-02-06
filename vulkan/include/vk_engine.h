@@ -6,15 +6,17 @@
 #include "camera.h"
 #include "directionalLight.h"
 #include "spotlight.h"
+#include "vk_context.h"
 #include "vk_descriptors.h"
 #include "vk_loader.h"
+#include "vk_material.h"
+#include "vk_resources.h"
+#include "vk_swapchain.h"
 #include "vk_types.h"
 #include <imgui.h>
 #include <vk_mem_alloc.h>
 
 #include <chrono>
-#include <deque>
-#include <functional>
 #include <limits>
 #include <span>
 #include <string>
@@ -26,24 +28,6 @@ namespace fastgltf
 {
 struct Mesh;
 }
-
-struct DeletionQueue
-{
-    std::deque<std::function<void()>> deletors;
-
-    void push_function(std::function<void()>&& function) { deletors.push_back(function); }
-
-    void flush()
-    {
-        // reverse iterate the deletion queue to execute all the functions
-        for (auto it = deletors.rbegin(); it != deletors.rend(); it++)
-        {
-            (*it)(); // call functors
-        }
-
-        deletors.clear();
-    }
-};
 
 struct ComputePushConstants
 {
@@ -63,19 +47,6 @@ struct ComputeEffect
     ComputePushConstants data;
 };
 
-struct RenderObject
-{
-    uint32_t indexCount;
-    uint32_t firstIndex;
-    VkBuffer indexBuffer;
-
-    MaterialInstance* material;
-    Bounds bounds;
-    glm::mat4 transform;
-    glm::mat4 viewProj;
-    VkDeviceAddress vertexBufferAddress;
-};
-
 struct FrameData
 {
     VkSemaphore _swapchainSemaphore;
@@ -92,13 +63,6 @@ struct FrameData
 };
 
 constexpr unsigned int FRAME_OVERLAP = 2;
-
-struct DrawContext
-{
-    std::vector<RenderObject> OpaqueSurfaces;
-    std::vector<RenderObject> TransparentSurfaces;
-    glm::mat4 viewProj{1.0f};
-};
 
 struct EngineStats
 {
@@ -126,135 +90,35 @@ struct EngineStats
     static constexpr int kSampleInterval = 30; // Update display every N frames
 };
 
-struct GLTFMetallic_Roughness
-{
-    MaterialPipeline opaquePipeline;
-    MaterialPipeline transparentPipeline;
-
-    VkDescriptorSetLayout materialLayout;
-
-    struct MaterialConstants
-    {
-        glm::vec4 colorFactors;
-        glm::vec4 metal_rough_factors;
-        // padding, we need it anyway for uniform buffers
-        uint32_t colorTexID;
-        uint32_t metalRoughTexID;
-        uint32_t pad1;
-        uint32_t pad2;
-        glm::vec4 extra[13];
-    };
-
-    struct MaterialResources
-    {
-        AllocatedImage colorImage;
-        VkSampler colorSampler;
-        AllocatedImage metalRoughImage;
-        VkSampler metalRoughSampler;
-        VkBuffer dataBuffer;
-        uint32_t dataBufferOffset;
-    };
-
-    DescriptorWriter writer;
-
-    void build_pipelines(VulkanEngine* engine);
-    void clear_resources(VkDevice device);
-
-    MaterialInstance write_material(VkDevice device, MaterialPass pass, const MaterialResources& resources,
-                                    DescriptorAllocatorGrowable& descriptorAllocator);
-};
-
-struct MeshNode : public Node
-{
-
-    std::shared_ptr<MeshAsset> mesh;
-
-    virtual void addToDrawCommands(const glm::mat4& topMatrix, DrawContext& ctx) override;
-};
-struct TextureID
-{
-    uint32_t Index;
-};
-
-struct TextureCache
-{
-
-    std::vector<VkDescriptorImageInfo> Cache;
-    std::unordered_map<std::string, TextureID> NameMap;
-    uint32_t maxDescriptors = std::numeric_limits<uint32_t>::max();
-    bool limitWarningEmitted = false;
-    TextureID fallbackTexture{0};
-
-    void set_max(uint32_t max)
-    {
-        maxDescriptors = max;
-        limitWarningEmitted = false;
-    }
-
-    void set_fallback(TextureID id) { fallbackTexture = id; }
-
-    TextureID AddTexture(const VkImageView& image, VkSampler sampler);
-};
-
 class VulkanEngine
 {
 public:
     static constexpr ImS32 kSliderMin{0};
     static constexpr ImS32 kSliderMax{30000};
 
-    VkDevice device;
-    VkPhysicalDevice chosenGPU;
-    VkDescriptorSetLayout gpuSceneDataDescriptorLayout;
+    VulkanContext ctx;
+    Swapchain swapchain;
+    ResourceManager resources;
     GLTFMetallic_Roughness metalRoughMaterial;
-    AllocatedImage whiteImage;
-    AllocatedImage errorCheckerboardImage;
-    TextureCache texCache;
-    VkSampler defaultSamplerLinear;
 
-    // draw resources
-    AllocatedImage drawImage;
-    AllocatedImage depthImage;
+    VkDescriptorSetLayout gpuSceneDataDescriptorLayout{VK_NULL_HANDLE};
 
-    void init();    // initializes everything in the engine
-    void run();     // run main loop
-    void cleanup(); // shuts down the engine
+    void init();
+    void run();
+    void cleanup();
 
     // singleton style getter.multiple engines is not supported
     static VulkanEngine& Get();
     float getDeltaTime() { return _deltaTime; }
 
-    // upload a mesh into a pair of gpu buffers. If descriptor allocator is not
-    // null, it will also create a descriptor that points to the vertex buffer
-    GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
-    AllocatedBuffer createBuffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
-    AllocatedImage createImage(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
-    AllocatedImage createImage(void* data, VkExtent3D size, VkFormat format, VkImageUsageFlags usage,
-                               bool mipmapped = false);
-
-    void destroyImage(const AllocatedImage& img);
-    void destroyBuffer(const AllocatedBuffer& buffer);
-
 private:
     bool _isInitialized{false};
     int _frameNumber{0};
-    struct SDL_Window* _window{nullptr};
-
-    VkExtent2D _windowExtent{1920, 1080};
-    VkInstance _instance;
-    VkDebugUtilsMessengerEXT _debugMessenger;
-
-    VkQueue _graphicsQueue;
-    uint32_t _graphicsQueueFamily;
 
     AllocatedBuffer _defaultGLTFMaterialData;
 
     FrameData _frames[FRAME_OVERLAP];
 
-    VkSurfaceKHR _surface;
-    VkSwapchainKHR _swapchain;
-    VkFormat _swapchainImageFormat;
-    VkExtent2D _swapchainExtent;
-    VkExtent2D _drawExtent;
     VkDescriptorPool _descriptorPool;
 
     DescriptorAllocator _globalDescriptorAllocator;
@@ -262,17 +126,10 @@ private:
     VkPipeline _gradientPipeline;
     VkPipelineLayout _skyboxPipelineLayout;
 
-    std::vector<VkImage> _swapchainImages;
-    std::vector<VkImageView> _swapchainImageViews;
-    // One render-finished semaphore per swapchain image (used for present)
-    std::vector<VkSemaphore> _presentSemaphores;
-
     VkDescriptorSet _drawImageDescriptors;
     VkDescriptorSetLayout _drawImageDescriptorLayout;
 
     DeletionQueue _mainDeletionQueue;
-
-    VmaAllocator _allocator; // vma lib allocator
 
     // Shadow map
     AllocatedImage _shadowImage{};
@@ -288,17 +145,6 @@ private:
     VkPipelineLayout _lightDebugPipelineLayout{VK_NULL_HANDLE};
     VkPipeline _textureDebugPipeline{VK_NULL_HANDLE};
     VkPipelineLayout _textureDebugPipelineLayout{VK_NULL_HANDLE};
-
-    // immediate submit structures
-    VkFence _immFence;
-    VkCommandBuffer _immCommandBuffer;
-    VkCommandPool _immCommandPool;
-
-    AllocatedImage _blackImage;
-    AllocatedImage _greyImage;
-
-    VkSampler _defaultSamplerNearest;
-    uint32_t _maxSampledImageDescriptors{0};
 
     GPUMeshBuffers _debugRectangle;
     DrawContext _drawCommands;
@@ -331,11 +177,8 @@ private:
     bool freezeRendering{false};
     std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedAssets;
 
-    void initVulkan();
     void initSwapchain();
-    void createSwapchain(uint32_t width, uint32_t height);
     void resizeSwapchain();
-    void destroySwapchain();
     void initCommands();
     void initPipelines();
     void initBackgroundPipelines();
@@ -361,8 +204,6 @@ private:
     void initShadowPipeline();
     void initLightDebugPipeline();
     void initDebugTexturePipeline();
-
-    void immediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
 
     FrameData& getCurrentFrame();
     FrameData& getLastFrame();

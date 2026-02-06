@@ -1,5 +1,4 @@
 #include "camera.h"
-#include "vk_engine.h"
 #include <SDL_events.h>
 #include <SDL_scancode.h>
 #include <SDL_timer.h>
@@ -10,7 +9,7 @@ glm::mat4 Camera::getViewMatrix() const
     return glm::lookAt(m_position, m_position + m_front, m_up);
 }
 
-void Camera::processInput(VulkanEngine* engine)
+void Camera::processInput(float deltaTime)
 {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
     float sprint{1.0f};
@@ -22,19 +21,19 @@ void Camera::processInput(VulkanEngine* engine)
 
     if (keys[SDL_SCANCODE_W])
     {
-        processKeyboard(FORWARD, engine->getDeltaTime() * sprint);
+        processKeyboard(FORWARD, deltaTime * sprint);
     }
     if (keys[SDL_SCANCODE_S])
     {
-        processKeyboard(BACKWARD, engine->getDeltaTime() * sprint);
+        processKeyboard(BACKWARD, deltaTime * sprint);
     }
     if (keys[SDL_SCANCODE_A])
     {
-        processKeyboard(LEFT, engine->getDeltaTime() * sprint);
+        processKeyboard(LEFT, deltaTime * sprint);
     }
     if (keys[SDL_SCANCODE_D])
     {
-        processKeyboard(RIGHT, engine->getDeltaTime() * sprint);
+        processKeyboard(RIGHT, deltaTime * sprint);
     }
 
     processMouseMovement();

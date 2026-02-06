@@ -5,12 +5,17 @@ add_executable(vulkan
   
   scene/camera.cpp
   scene/directionalLight.cpp
+  scene/scene.cpp
   
   vk_utils/vk_initializers.cpp
   vk_utils/vk_images.cpp
   vk_utils/vk_descriptors.cpp
   vk_utils/vk_pipelines.cpp
   vk_utils/vk_loader.cpp
+  vk_utils/vk_context.cpp
+  vk_utils/vk_swapchain.cpp
+  vk_utils/vk_resources.cpp
+  vk_utils/vk_material.cpp
 )
 
 set_property(TARGET vulkan PROPERTY CXX_STANDARD 20)

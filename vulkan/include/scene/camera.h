@@ -11,8 +11,6 @@ enum CameraMovement
     RIGHT
 };
 
-class VulkanEngine;
-
 class Camera
 {
 public:
@@ -29,7 +27,7 @@ public:
     float getFOV() const { return m_FOV; }
     void processKeyboard(CameraMovement direction, float deltaTime);
     void processMouseMovement();
-    void processInput(VulkanEngine* engine);
+    void processInput(float deltaTime);
     void update();
     void updateFrame();
 

@@ -12,6 +12,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
 
+#include <deque>
+#include <functional>
 #include <memory>
 #include <vector>
 //< intro
@@ -83,7 +85,6 @@ struct MaterialInstance
 //> vbuf_types
 struct Vertex
 {
-
     glm::vec3 position;
     float uv_x;
     glm::vec3 normal;
@@ -109,9 +110,52 @@ struct GPUDrawPushConstants
 };
 //< vbuf_types
 
-//> node_types
-struct DrawContext;
+struct DeletionQueue
+{
+    std::deque<std::function<void()>> deletors;
 
+    void push_function(std::function<void()>&& function) { deletors.push_back(function); }
+
+    void flush()
+    {
+        // reverse iterate the deletion queue to execute all the functions
+        for (auto it = deletors.rbegin(); it != deletors.rend(); it++)
+        {
+            (*it)(); // call functors
+        }
+
+        deletors.clear();
+    }
+};
+
+struct Bounds
+{
+    glm::vec3 origin;
+    float sphereRadius;
+    glm::vec3 extents;
+};
+
+struct RenderObject
+{
+    uint32_t indexCount;
+    uint32_t firstIndex;
+    VkBuffer indexBuffer;
+
+    MaterialInstance* material;
+    Bounds bounds;
+    glm::mat4 transform;
+    glm::mat4 viewProj;
+    VkDeviceAddress vertexBufferAddress;
+};
+
+struct DrawContext
+{
+    std::vector<RenderObject> OpaqueSurfaces;
+    std::vector<RenderObject> TransparentSurfaces;
+    glm::mat4 viewProj{1.0f};
+};
+
+//> node_types
 // base class for a renderable dynamic object
 class IRenderable
 {
