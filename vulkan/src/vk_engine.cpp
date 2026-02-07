@@ -721,6 +721,62 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
 
     writer.update_set(ctx.device, globalDescriptor);
 
+    _stats.drawcall_count = 0;
+    _stats.triangle_count = 0;
+
+    // instanced draw path
+    if (scene.useInstancing && !scene.asteroidTransforms.empty())
+    {
+        auto& meshInfo = scene.instancedMeshInfo;
+        uint32_t numInstances = static_cast<uint32_t>(scene.asteroidTransforms.size());
+
+        // upload transforms to per-frame instance buffer via SSBO
+        AllocatedBuffer& instanceBuf = getCurrentFrame().instanceBuffer;
+        memcpy(instanceBuf.info.pMappedData, scene.asteroidTransforms.data(), numInstances * sizeof(glm::mat4));
+
+        VkBufferDeviceAddressInfo addrInfo{.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO};
+        addrInfo.buffer = instanceBuf.buffer;
+        VkDeviceAddress instanceAddr = vkGetBufferDeviceAddress(ctx.device, &addrInfo);
+
+        vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _instancedPipeline);
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _instancedPipelineLayout, 0, 1, &globalDescriptor,
+                                0, nullptr);
+
+        VkViewport viewport = {};
+        viewport.x = 0;
+        viewport.y = 0;
+        viewport.width = (float)swapchain.drawExtent.width;
+        viewport.height = (float)swapchain.drawExtent.height;
+        viewport.minDepth = 0.f;
+        viewport.maxDepth = 1.f;
+        vkCmdSetViewport(cmd, 0, 1, &viewport);
+
+        VkRect2D scissor = {};
+        scissor.offset.x = 0;
+        scissor.offset.y = 0;
+        scissor.extent.width = swapchain.drawExtent.width;
+        scissor.extent.height = swapchain.drawExtent.height;
+        vkCmdSetScissor(cmd, 0, 1, &scissor);
+
+        vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _instancedPipelineLayout, 1, 1,
+                                &meshInfo.material->materialSet, 0, nullptr);
+
+        vkCmdBindIndexBuffer(cmd, meshInfo.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+        GPUInstancedPushConstants pc;
+        pc.viewProj = _drawCommands.viewProj;
+        pc.vertexBuffer = meshInfo.vertexBufferAddress;
+        pc.instanceBuffer = instanceAddr;
+        vkCmdPushConstants(cmd, _instancedPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0,
+                           sizeof(GPUInstancedPushConstants), &pc);
+
+        vkCmdDrawIndexed(cmd, meshInfo.indexCount, numInstances, meshInfo.firstIndex, 0, 0);
+
+        _stats.drawcall_count++;
+        _stats.triangle_count += (meshInfo.indexCount / 3) * numInstances;
+    }
+
+    // Non-instanced draw path for remaining objects (planet, or all objects when instancing is off)
     MaterialPipeline* lastPipeline = nullptr;
     MaterialInstance* lastMaterial = nullptr;
     VkBuffer lastIndexBuffer = VK_NULL_HANDLE;
@@ -778,9 +834,6 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
         _stats.triangle_count += r.indexCount / 3;
         vkCmdDrawIndexed(cmd, r.indexCount, 1, r.firstIndex, 0, 0);
     };
-
-    _stats.drawcall_count = 0;
-    _stats.triangle_count = 0;
 
     for (auto& r : opaque_draws)
     {
@@ -843,6 +896,14 @@ void VulkanEngine::run()
                 }
             }
 
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i && !e.key.repeat)
+            {
+                if (!ImGui::GetIO().WantCaptureKeyboard)
+                {
+                    scene.useInstancing = !scene.useInstancing;
+                }
+            }
+
             ImGui_ImplSDL2_ProcessEvent(&e);
         }
 
@@ -895,6 +956,7 @@ void VulkanEngine::run()
         ImGui::Separator();
         ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
                             &scene.kSliderMax, "%u");
+        ImGui::Checkbox("Instancing (I)", &scene.useInstancing);
         // ImGui::Text("fence: %.2f ms", _stats.fence_time);
         // ImGui::Text("flush: %.2f ms", _stats.flush_time);
         // ImGui::Text("submit: %.2f ms", _stats.submit_time);
@@ -909,11 +971,12 @@ void VulkanEngine::run()
             ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
             ImGui::TableHeadersRow();
-            const std::array<std::pair<const char*, const char*>, 8> controls = {{
+            const std::array<std::pair<const char*, const char*>, 5> controls = {{
                 {"WASD", "Move camera"},
                 {"Mouse drag", "Pan camera"},
                 {"J / K", "Increase / Decrease num of asteroids"},
                 {"Left Shift", "Run / speed boost while moving"},
+                {"I", "Toggle instanced rendering"},
             }};
             for (const auto& [key, desc] : controls)
             {
@@ -1014,12 +1077,17 @@ void VulkanEngine::initSyncStructures()
             ctx, sizeof(GPUSceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
         _frames[i].shadowSceneDataBuffer = resources.createBuffer(
             ctx, sizeof(GPUSceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+        _frames[i].instanceBuffer =
+            resources.createBuffer(ctx, Scene::kSliderMax * sizeof(glm::mat4),
+                                   VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+                                   VMA_MEMORY_USAGE_CPU_TO_GPU);
 
         _mainDeletionQueue.push_function(
             [this, renderFence, swapSemaphore, i]()
             {
                 resources.destroyBuffer(ctx, _frames[i].sceneDataBuffer);
                 resources.destroyBuffer(ctx, _frames[i].shadowSceneDataBuffer);
+                resources.destroyBuffer(ctx, _frames[i].instanceBuffer);
                 vkDestroyFence(ctx.device, renderFence, nullptr);
                 vkDestroySemaphore(ctx.device, swapSemaphore, nullptr);
                 // no per-frame render semaphore
@@ -1113,6 +1181,62 @@ void VulkanEngine::initShadowPipeline()
         });
 }
 
+void VulkanEngine::initInstancedPipeline()
+{
+    VkShaderModule instancedVertShader;
+    if (!vkutil::load_shader_module(shader_path("mesh_instanced.vert.spv").c_str(), ctx.device, &instancedVertShader))
+    {
+        fmt::println("Error when building instanced vertex shader module");
+    }
+
+    VkShaderModule meshFragShader;
+    if (!vkutil::load_shader_module(shader_path("basic_phong.frag.spv").c_str(), ctx.device, &meshFragShader))
+    {
+        fmt::println("Error when building fragment shader module for instanced pipeline");
+    }
+
+    VkPushConstantRange range{};
+    range.offset = 0;
+    range.size = sizeof(GPUInstancedPushConstants);
+    range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+    VkDescriptorSetLayout layouts[] = {gpuSceneDataDescriptorLayout, metalRoughMaterial.materialLayout};
+
+    VkPipelineLayoutCreateInfo plci = vkinit::pipeline_layout_create_info();
+    plci.setLayoutCount = 2;
+    plci.pSetLayouts = layouts;
+    plci.pushConstantRangeCount = 1;
+    plci.pPushConstantRanges = &range;
+
+    VK_CHECK(vkCreatePipelineLayout(ctx.device, &plci, nullptr, &_instancedPipelineLayout));
+
+    PipelineBuilder pb;
+    pb.set_shaders(instancedVertShader, meshFragShader);
+    pb.set_input_topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    pb.set_polygon_mode(VK_POLYGON_MODE_FILL);
+    pb.set_cull_mode(VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE);
+    pb.set_multisampling_none();
+    pb.disable_blending();
+    pb.enable_depthtest(true, VK_COMPARE_OP_GREATER_OR_EQUAL);
+    pb.set_color_attachment_format(swapchain.drawImage.imageFormat);
+    pb.set_depth_format(swapchain.depthImage.imageFormat);
+    pb._pipelineLayout = _instancedPipelineLayout;
+
+    _instancedPipeline = pb.build_pipeline(ctx.device);
+
+    vkDestroyShaderModule(ctx.device, instancedVertShader, nullptr);
+    vkDestroyShaderModule(ctx.device, meshFragShader, nullptr);
+
+    _mainDeletionQueue.push_function(
+        [=, this]()
+        {
+            if (_instancedPipeline)
+                vkDestroyPipeline(ctx.device, _instancedPipeline, nullptr);
+            if (_instancedPipelineLayout)
+                vkDestroyPipelineLayout(ctx.device, _instancedPipelineLayout, nullptr);
+        });
+}
+
 void VulkanEngine::initImgui()
 {
     // 1: create descriptor pool for IMGUI
@@ -1188,6 +1312,7 @@ void VulkanEngine::initPipelines()
     initDebugTexturePipeline();
     metalRoughMaterial.build_pipelines(ctx.device, gpuSceneDataDescriptorLayout, swapchain.drawImage.imageFormat,
                                        swapchain.depthImage.imageFormat);
+    initInstancedPipeline();
 }
 
 void VulkanEngine::initLightDebugPipeline()

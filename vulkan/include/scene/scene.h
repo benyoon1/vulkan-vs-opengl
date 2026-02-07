@@ -14,6 +14,15 @@ class ResourceManager;
 class VulkanContext;
 struct GLTFMetallic_Roughness;
 
+struct InstancedMeshInfo
+{
+    uint32_t indexCount{0};
+    uint32_t firstIndex{0};
+    VkBuffer indexBuffer{VK_NULL_HANDLE};
+    MaterialInstance* material{nullptr};
+    VkDeviceAddress vertexBufferAddress{0};
+};
+
 class Scene
 {
 public:
@@ -32,6 +41,11 @@ public:
     float minScale{0.02f};     // min asteroid size
     float maxScale{0.07f};     // max asteroid size
 
+    // instancing
+    bool useInstancing{false};
+    std::vector<glm::mat4> asteroidTransforms;
+    InstancedMeshInfo instancedMeshInfo;
+
     void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material);
     void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight);
     void processSliderEvent();
@@ -45,4 +59,6 @@ private:
     float _deltaTime{0.0f};
     float _currentFrame{0.0f};
     float _lastFrame{0.0f};
+
+    std::shared_ptr<MeshAsset> _icosahedronMesh;
 };

@@ -53,6 +53,8 @@ struct FrameData
     AllocatedBuffer sceneDataBuffer;
     AllocatedBuffer shadowSceneDataBuffer;
 
+    AllocatedBuffer instanceBuffer;
+
     DescriptorAllocatorGrowable _frameDescriptors;
     DeletionQueue _deletionQueue;
 
@@ -141,6 +143,9 @@ private:
     VkPipeline _textureDebugPipeline{VK_NULL_HANDLE};
     VkPipelineLayout _textureDebugPipelineLayout{VK_NULL_HANDLE};
 
+    VkPipeline _instancedPipeline{VK_NULL_HANDLE};
+    VkPipelineLayout _instancedPipelineLayout{VK_NULL_HANDLE};
+
     GPUMeshBuffers _debugRectangle;
     DrawContext _drawCommands;
 
@@ -177,6 +182,7 @@ private:
 
     void initShadowResources();
     void initShadowPipeline();
+    void initInstancedPipeline();
     void initLightDebugPipeline();
     void initDebugTexturePipeline();
 

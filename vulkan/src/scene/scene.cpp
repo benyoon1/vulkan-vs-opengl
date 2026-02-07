@@ -19,6 +19,15 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
     if (asset1.has_value())
     {
         loadedAssets["icosahedron"] = *asset1;
+        auto& gltf = *asset1;
+        for (auto& [name, mesh] : gltf->meshes)
+        {
+            if (mesh && !mesh->surfaces.empty())
+            {
+                _icosahedronMesh = mesh;
+                break;
+            }
+        }
     }
     else
     {
@@ -83,31 +92,75 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
         std::uniform_real_distribution<float> scaleDist(minScale, maxScale);
         std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
 
-        for (int i = 0; i < numAsteroids; ++i)
+        if (useInstancing && _icosahedronMesh && !_icosahedronMesh->surfaces.empty())
         {
-            float u = angleDist(rng) + _asteroidTime;
-            float v = angleDist(rng);
+            asteroidTransforms.clear();
+            asteroidTransforms.reserve(numAsteroids);
 
-            float randomVariation = minorRadius * radiusDist(rng);
+            for (int i = 0; i < numAsteroids; ++i)
+            {
+                float u = angleDist(rng) + _asteroidTime;
+                float v = angleDist(rng);
 
-            float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
-            float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
-            float y = randomVariation * std::sin(v) * verticalScale;
+                float randomVariation = minorRadius * radiusDist(rng);
 
-            float scale = scaleDist(rng);
+                float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+                float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+                float y = randomVariation * std::sin(v) * verticalScale;
 
-            float rotX = rotDist(rng) + _asteroidTime;
-            float rotY = rotDist(rng) + _asteroidTime;
-            float rotZ = rotDist(rng) + _asteroidTime;
+                float scale = scaleDist(rng);
 
-            glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-            glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
-            R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
-            R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
-            glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+                float rotX = rotDist(rng) + _asteroidTime;
+                float rotY = rotDist(rng) + _asteroidTime;
+                float rotZ = rotDist(rng) + _asteroidTime;
 
-            it->second->addToDrawCommands(T * R * S, drawCommands);
+                glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+                glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
+                R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
+                R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
+                glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+
+                asteroidTransforms.push_back(T * R * S);
+            }
+
+            auto& surface = _icosahedronMesh->surfaces[0];
+            instancedMeshInfo.indexCount = surface.count;
+            instancedMeshInfo.firstIndex = surface.startIndex;
+            instancedMeshInfo.indexBuffer = _icosahedronMesh->meshBuffers.indexBuffer.buffer;
+            instancedMeshInfo.material = &surface.material->data;
+            instancedMeshInfo.vertexBufferAddress = _icosahedronMesh->meshBuffers.vertexBufferAddress;
         }
+        else
+        {
+            asteroidTransforms.clear();
+
+            for (int i = 0; i < numAsteroids; ++i)
+            {
+                float u = angleDist(rng) + _asteroidTime;
+                float v = angleDist(rng);
+
+                float randomVariation = minorRadius * radiusDist(rng);
+
+                float x = (majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+                float z = (majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+                float y = randomVariation * std::sin(v) * verticalScale;
+
+                float scale = scaleDist(rng);
+
+                float rotX = rotDist(rng) + _asteroidTime;
+                float rotY = rotDist(rng) + _asteroidTime;
+                float rotZ = rotDist(rng) + _asteroidTime;
+
+                glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+                glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
+                R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
+                R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
+                glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+
+                it->second->addToDrawCommands(T * R * S, drawCommands);
+            }
+        }
+
         _asteroidTime -= 0.05f * _deltaTime;
         if (_asteroidTime < -glm::two_pi<float>())
         {

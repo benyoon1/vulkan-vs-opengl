@@ -108,6 +108,13 @@ struct GPUDrawPushConstants
     glm::mat4 viewProj;
     VkDeviceAddress vertexBuffer;
 };
+
+struct GPUInstancedPushConstants
+{
+    glm::mat4 viewProj;
+    VkDeviceAddress vertexBuffer;
+    VkDeviceAddress instanceBuffer;
+};
 //< vbuf_types
 
 struct DeletionQueue
