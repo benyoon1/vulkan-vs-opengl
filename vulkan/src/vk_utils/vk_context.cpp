@@ -87,9 +87,8 @@ void VulkanContext::init()
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
-    window =
-        SDL_CreateWindow("Vulkan Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowExtent.width,
-                         windowExtent.height, window_flags);
+    window = SDL_CreateWindow("Vulkan Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowExtent.width,
+                              windowExtent.height, window_flags);
 
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowGrab(window, SDL_TRUE);
@@ -134,7 +133,7 @@ void VulkanContext::initVulkan()
     features12.runtimeDescriptorArray = VK_TRUE;
 
     VkPhysicalDeviceFeatures features{};
-    features.samplerAnisotropy = VK_TRUE;
+    // features.samplerAnisotropy = VK_TRUE;
 
     vkb::PhysicalDeviceSelector selector{vkb_inst};
     auto selection_result = selector.set_minimum_version(1, 3)

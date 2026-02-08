@@ -62,7 +62,7 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
     glm::mat4 view = mainCamera.getViewMatrix();
 
     glm::mat4 projection = glm::perspective(glm::radians(mainCamera.getFOV()),
-                                            (float)windowExtent.width / (float)windowExtent.height, 10000.f, 0.1f);
+                                            (float)windowExtent.width / (float)windowExtent.height, 5000.f, 0.1f);
 
     // invert the Y direction on projection matrix so that we are more similar
     // to opengl and gltf axis

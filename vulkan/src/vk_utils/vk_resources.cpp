@@ -48,8 +48,8 @@ void ResourceManager::init(VulkanContext& ctx)
     sampl.maxLod = VK_LOD_CLAMP_NONE;
     sampl.mipLodBias = 0.0f;
 
-    sampl.anisotropyEnable = VK_TRUE;
-    sampl.maxAnisotropy = props.limits.maxSamplerAnisotropy > 0 ? props.limits.maxSamplerAnisotropy : 1.0f;
+    // sampl.anisotropyEnable = VK_TRUE;
+    // sampl.maxAnisotropy = props.limits.maxSamplerAnisotropy > 0 ? props.limits.maxSamplerAnisotropy : 1.0f;
 
     // Nearest sampler
     sampl.magFilter = VK_FILTER_NEAREST;

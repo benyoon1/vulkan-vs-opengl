@@ -549,9 +549,8 @@ std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanContext& ctx, Resource
 
         sampl.mipmapMode = extract_mipmap_mode(sampler.minFilter.value_or(fastgltf::Filter::Nearest));
 
-        // Enable anisotropy when available (feature enabled at device init)
-        sampl.anisotropyEnable = VK_TRUE;
-        sampl.maxAnisotropy = std::min(16.0f, props.limits.maxSamplerAnisotropy);
+        // sampl.anisotropyEnable = VK_TRUE;
+        // sampl.maxAnisotropy = std::min(16.0f, props.limits.maxSamplerAnisotropy);
 
         VkSampler newSampler;
         vkCreateSampler(ctx.device, &sampl, nullptr, &newSampler);
