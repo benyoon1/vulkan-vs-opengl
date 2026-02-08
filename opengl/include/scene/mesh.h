@@ -35,6 +35,9 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
 
     void draw(Shader& shader);
+    void setupInstanceBuffer(uint32_t maxInstances);
+    void updateInstanceData(const glm::mat4* data, uint32_t count);
+    void drawInstanced(Shader& shader, uint32_t instanceCount);
 
 private:
     std::vector<Vertex> m_vertices;
@@ -43,6 +46,7 @@ private:
     uint32_t m_VAO{0};
     uint32_t m_VBO{0};
     uint32_t m_EBO{0};
+    uint32_t m_instanceVBO{0};
 };
 
 #endif

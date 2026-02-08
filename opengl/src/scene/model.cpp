@@ -88,6 +88,40 @@ void Model::drawShadowMap(Shader& depthShader, const glm::mat4& lightSpaceMatrix
     }
 }
 
+void Model::setupInstanceBuffers(uint32_t maxInstances)
+{
+    for (auto& mesh : m_meshes)
+    {
+        mesh.setupInstanceBuffer(maxInstances);
+    }
+}
+
+void Model::updateInstanceData(const glm::mat4* data, uint32_t count)
+{
+    for (auto& mesh : m_meshes)
+    {
+        mesh.updateInstanceData(data, count);
+    }
+}
+
+void Model::drawInstanced(Shader& shader, uint32_t instanceCount)
+{
+    for (auto& mesh : m_meshes)
+    {
+        mesh.drawInstanced(shader, instanceCount);
+    }
+}
+
+void Model::drawShadowMapInstanced(Shader& depthShader, const glm::mat4& lightSpaceMatrix, uint32_t instanceCount)
+{
+    depthShader.use();
+    depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    for (auto& mesh : m_meshes)
+    {
+        mesh.drawInstanced(depthShader, instanceCount);
+    }
+}
+
 void Model::loadModel(std::string const& path)
 {
     Assimp::Importer importer;

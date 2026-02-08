@@ -24,6 +24,7 @@ public:
     ~Application();
 
     ImS32 numAsteroids{15000};
+    bool useInstancing{false};
     float deltaTime{0.0f};
 
     void run();
@@ -66,6 +67,10 @@ private:
     std::unique_ptr<Shader> m_modelShader;
     std::unique_ptr<Shader> m_skyboxShader;
     std::unique_ptr<Shader> m_depthShader;
+    std::unique_ptr<Shader> m_instancedModelShader;
+    std::unique_ptr<Shader> m_instancedDepthShader;
+
+    std::vector<glm::mat4> m_asteroidTransforms;
 };
 
 #endif // APPLICATION_H

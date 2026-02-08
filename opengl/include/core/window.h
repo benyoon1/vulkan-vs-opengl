@@ -36,6 +36,7 @@ private:
     float m_lastY{0.0f};
     bool m_firstMouse{true};
     Camera* m_camera{nullptr};
+    bool m_iPressedLastFrame{false};
 
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     static void mouseCallback(GLFWwindow* window, double xpos, double ypos);

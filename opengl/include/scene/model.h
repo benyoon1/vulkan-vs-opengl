@@ -23,6 +23,10 @@ public:
     void draw(Shader& modelShader, const glm::mat4& projection, const glm::mat4& view, const Camera& camera,
               const glm::vec3 sunPos, const glm::vec3 spotlightPos);
     void drawShadowMap(Shader& depthShader, const glm::mat4& lightSpaceMatrix, const glm::mat4& modelMatrix);
+    void setupInstanceBuffers(uint32_t maxInstances);
+    void updateInstanceData(const glm::mat4* data, uint32_t count);
+    void drawInstanced(Shader& shader, uint32_t instanceCount);
+    void drawShadowMapInstanced(Shader& depthShader, const glm::mat4& lightSpaceMatrix, uint32_t instanceCount);
     void setModelMatrix(const glm::mat4& modelMatrix) { m_modelMatrix = modelMatrix; }
     glm::mat4 getModelMatrix() const { return m_modelMatrix; }
 

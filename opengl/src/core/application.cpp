@@ -53,6 +53,11 @@ Application::Application() : m_window(), m_camera(), m_sunLight(), m_spotlight()
     m_modelShader = std::make_unique<Shader>("shaders/model.vs", "shaders/basic_phong.fs");
     m_skyboxShader = std::make_unique<Shader>("shaders/skybox.vs", "shaders/skybox.fs");
     m_depthShader = std::make_unique<Shader>("shaders/shadowMapping.vs", "shaders/shadowMapping.fs");
+    m_instancedModelShader = std::make_unique<Shader>("shaders/model_instanced.vs", "shaders/basic_phong.fs");
+    m_instancedDepthShader = std::make_unique<Shader>("shaders/shadowMapping_instanced.vs", "shaders/shadowMapping.fs");
+
+    m_icosahedron->setupInstanceBuffers(kSliderMax);
+    m_asteroidTransforms.reserve(kSliderMax);
 }
 
 Application::~Application()
@@ -161,40 +166,73 @@ void Application::renderMainPass()
     m_sunShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSunShadowTextureNum);
     m_spotShadow->bindTexture(GL_TEXTURE0 + ShadowMap::kSpotShadowTextureNum);
 
-    m_icosahedron->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
-
     std::mt19937 rng(42);
     std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
     std::uniform_real_distribution<float> radiusDist(0.0f, 1.0f);
     std::uniform_real_distribution<float> scaleDist(_minScale, _maxScale);
     std::uniform_real_distribution<float> rotDist(0.0f, glm::two_pi<float>());
 
-    for (int i = 0; i < numAsteroids; ++i)
+    // instanced path
+    if (useInstancing && numAsteroids > 0)
     {
-        float u = angleDist(rng) + _asteroidTime; // angle around the major circle [0, 2π]
-        float v = angleDist(rng);                 // angle around the minor circle [0, 2π]
+        m_asteroidTransforms.resize(numAsteroids);
+        for (int i = 0; i < numAsteroids; ++i)
+        {
+            float u = angleDist(rng) + _asteroidTime;
+            float v = angleDist(rng);
+            float randomVariation = _minorRadius * radiusDist(rng);
+            float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+            float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+            float y = randomVariation * std::sin(v) * _verticalScale;
+            float scale = scaleDist(rng);
+            float rotX = rotDist(rng) + _asteroidTime;
+            float rotY = rotDist(rng) + _asteroidTime;
+            float rotZ = rotDist(rng) + _asteroidTime;
 
-        // add random variation in [0,1] range
-        float randomVariation = _minorRadius * radiusDist(rng);
+            glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+            glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
+            R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
+            R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
+            glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+            m_asteroidTransforms[i] = T * R * S;
+        }
 
-        // polar coordinates to XZ
-        float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
-        float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
-        float y = randomVariation * std::sin(v) * _verticalScale;
+        m_icosahedron->updateInstanceData(m_asteroidTransforms.data(), numAsteroids);
 
-        float scale = scaleDist(rng);
+        m_icosahedron->configureShader(*m_instancedModelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
+        m_instancedModelShader->use();
+        m_instancedModelShader->setMat4("projection", projection);
+        m_instancedModelShader->setMat4("view", view);
+        m_icosahedron->drawInstanced(*m_instancedModelShader, numAsteroids);
+    }
+    // non-instanced path
+    else
+    {
+        m_icosahedron->configureShader(*m_modelShader, m_camera, m_sunLight, m_spotlight, m_spotlightGain);
+        for (int i = 0; i < numAsteroids; ++i)
+        {
+            float u = angleDist(rng) + _asteroidTime;
+            float v = angleDist(rng);
+            float randomVariation = _minorRadius * radiusDist(rng);
 
-        float rotX = rotDist(rng) + _asteroidTime;
-        float rotY = rotDist(rng) + _asteroidTime;
-        float rotZ = rotDist(rng) + _asteroidTime;
+            // polar coordinates to XZ
+            float x = (_majorRadius + randomVariation * std::cos(v)) * std::cos(u);
+            float z = (_majorRadius + randomVariation * std::cos(v)) * std::sin(u);
+            float y = randomVariation * std::sin(v) * _verticalScale;
+            float scale = scaleDist(rng);
+            float rotX = rotDist(rng) + _asteroidTime;
+            float rotY = rotDist(rng) + _asteroidTime;
+            float rotZ = rotDist(rng) + _asteroidTime;
 
-        glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-        glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
-        R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
-        R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
-        glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
-        m_modelShader->setMat4("model", T * R * S);
-        m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
+            glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+            glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
+            R = glm::rotate(R, rotY, glm::vec3(0, 1, 0));
+            R = glm::rotate(R, rotZ, glm::vec3(0, 0, 1));
+            glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+            m_modelShader->setMat4("model", T * R * S);
+            m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
+                                glm::vec3(0.0f));
+        }
     }
     // wrap around every 2 pi because of floating point precision
     // asteroid belt rotates counter-clockwise viewed from north pole
@@ -229,6 +267,7 @@ void Application::renderImGui()
     // ImGui::Text("swap time: %.2f ms", m_swapTime);
     ImGui::Separator();
     ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &numAsteroids, &kSliderMin, &kSliderMax, "%u");
+    ImGui::Checkbox("Instancing (I)", &useInstancing);
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
@@ -239,11 +278,12 @@ void Application::renderImGui()
         ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
         ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
         ImGui::TableHeadersRow();
-        const std::array<std::pair<const char*, const char*>, 8> controls = {{
+        const std::array<std::pair<const char*, const char*>, 5> controls = {{
             {"WASD", "Move camera"},
             {"Mouse drag", "Pan camera"},
             {"J / K", "Increase / Decrease num of asteroids"},
             {"Left Shift", "Run / speed boost while moving"},
+            {"I", "Toggle instanced rendering"},
         }};
         for (const auto& [key, desc] : controls)
         {

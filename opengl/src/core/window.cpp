@@ -93,14 +93,12 @@ void Window::processInput(Application* app)
         }
     }
 
-    // if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    // {
-    //     outSunSpeed *= 10.0f;
-    // }
-    // if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    // {
-    //     spotlightGain = 5.0f;
-    // }
+    bool iPressed = glfwGetKey(m_window, GLFW_KEY_I) == GLFW_PRESS;
+    if (iPressed && !m_iPressedLastFrame && !ImGui::GetIO().WantCaptureKeyboard)
+    {
+        app->useInstancing = !app->useInstancing;
+    }
+    m_iPressedLastFrame = iPressed;
 }
 
 Window::~Window()
