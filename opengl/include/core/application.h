@@ -16,10 +16,10 @@
 
 struct EngineStats
 {
-    float frametime{0.f};
-    float mesh_draw_time{0.f};
-    int triangle_count{0};
-    int drawcall_count{0};
+    float frameTime{0.f};
+    float meshDrawTime{0.f};
+    int triangleCount{0};
+    int drawcallCount{0};
 };
 
 class Application

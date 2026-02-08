@@ -103,7 +103,7 @@ void Application::run()
             renderMainPass();
             auto drawEnd = std::chrono::system_clock::now();
             auto drawElapsed = std::chrono::duration_cast<std::chrono::microseconds>(drawEnd - drawStart);
-            m_stats.mesh_draw_time = drawElapsed.count() / 1000.f;
+            m_stats.meshDrawTime = drawElapsed.count() / 1000.f;
         }
         renderImGui();
 
@@ -118,7 +118,7 @@ void Application::run()
 
         auto frameEnd = std::chrono::system_clock::now();
         auto frameElapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
-        m_stats.frametime = frameElapsed.count() / 1000.f;
+        m_stats.frameTime = frameElapsed.count() / 1000.f;
     }
 }
 
@@ -158,8 +158,8 @@ void Application::renderDepthPass()
 
 void Application::renderMainPass()
 {
-    m_stats.drawcall_count = 0;
-    m_stats.triangle_count = 0;
+    m_stats.drawcallCount = 0;
+    m_stats.triangleCount = 0;
 
     int width, height;
     glfwGetFramebufferSize(m_window.getGlfwWindow(), &width, &height); // high DPI bugfix
@@ -214,8 +214,8 @@ void Application::renderMainPass()
         m_instancedModelShader->setMat4("projection", projection);
         m_instancedModelShader->setMat4("view", view);
         m_icosahedron->drawInstanced(*m_instancedModelShader, numAsteroids);
-        m_stats.drawcall_count++;
-        m_stats.triangle_count += (m_icosahedron->getTotalIndexCount() / 3) * numAsteroids;
+        m_stats.drawcallCount++;
+        m_stats.triangleCount += (m_icosahedron->getTotalIndexCount() / 3) * numAsteroids;
     }
     // non-instanced path
     else
@@ -246,8 +246,8 @@ void Application::renderMainPass()
             m_modelShader->setMat4("model", T * R * S);
             m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
                                 glm::vec3(0.0f));
-            m_stats.drawcall_count++;
-            m_stats.triangle_count += m_icosahedron->getTotalIndexCount() / 3;
+            m_stats.drawcallCount++;
+            m_stats.triangleCount += m_icosahedron->getTotalIndexCount() / 3;
         }
     }
     // wrap around every 2 pi because of floating point precision
@@ -262,8 +262,8 @@ void Application::renderMainPass()
     glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
     m_modelShader->setMat4("model", model);
     m_planet->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
-    m_stats.drawcall_count++;
-    m_stats.triangle_count += m_planet->getTotalIndexCount() / 3;
+    m_stats.drawcallCount++;
+    m_stats.triangleCount += m_planet->getTotalIndexCount() / 3;
 }
 
 void Application::renderImGui()
@@ -285,25 +285,25 @@ void Application::renderImGui()
         ImGui::TableNextColumn();
         ImGui::TextUnformatted("frametime");
         ImGui::TableNextColumn();
-        ImGui::Text("%0.3f ms", m_stats.frametime);
+        ImGui::Text("%0.3f ms", m_stats.frameTime);
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
         ImGui::TextUnformatted("drawtime");
         ImGui::TableNextColumn();
-        ImGui::Text("%0.3f ms", m_stats.mesh_draw_time);
+        ImGui::Text("%0.3f ms", m_stats.meshDrawTime);
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
         ImGui::TextUnformatted("triangles");
         ImGui::TableNextColumn();
-        ImGui::Text("%i", m_stats.triangle_count);
+        ImGui::Text("%i", m_stats.triangleCount);
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
         ImGui::TextUnformatted("draws");
         ImGui::TableNextColumn();
-        ImGui::Text("%i", m_stats.drawcall_count);
+        ImGui::Text("%i", m_stats.drawcallCount);
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();

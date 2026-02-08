@@ -265,7 +265,7 @@ void VulkanEngine::drawMain(VkCommandBuffer cmd)
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    _stats.mesh_draw_time = elapsed.count() / 1000.f;
+    _stats.meshDrawTime = elapsed.count() / 1000.f;
 
     vkCmdEndRendering(cmd);
 }
@@ -496,23 +496,23 @@ void VulkanEngine::draw()
     auto t4 = std::chrono::high_resolution_clock::now();
 
     // Accumulate timing stats and update display values periodically
-    _stats.fence_time_accum += std::chrono::duration<float, std::milli>(t1 - t0).count();
-    _stats.flush_time_accum += std::chrono::duration<float, std::milli>(t2 - t1).count();
-    _stats.submit_time_accum += std::chrono::duration<float, std::milli>(t3 - t2).count();
-    _stats.present_time_accum += std::chrono::duration<float, std::milli>(t4 - t3).count();
-    _stats.sample_count++;
+    _stats.fenceTimeAccum += std::chrono::duration<float, std::milli>(t1 - t0).count();
+    _stats.flushTimeAccum += std::chrono::duration<float, std::milli>(t2 - t1).count();
+    _stats.submitTimeAccum += std::chrono::duration<float, std::milli>(t3 - t2).count();
+    _stats.presentTimeAccum += std::chrono::duration<float, std::milli>(t4 - t3).count();
+    _stats.sampleCount++;
 
-    if (_stats.sample_count >= EngineStats::kSampleInterval)
+    if (_stats.sampleCount >= EngineStats::kSampleInterval)
     {
-        _stats.fence_time = _stats.fence_time_accum / _stats.sample_count;
-        _stats.flush_time = _stats.flush_time_accum / _stats.sample_count;
-        _stats.submit_time = _stats.submit_time_accum / _stats.sample_count;
-        _stats.present_time = _stats.present_time_accum / _stats.sample_count;
-        _stats.fence_time_accum = 0.f;
-        _stats.flush_time_accum = 0.f;
-        _stats.submit_time_accum = 0.f;
-        _stats.present_time_accum = 0.f;
-        _stats.sample_count = 0;
+        _stats.fenceTime = _stats.fenceTimeAccum / _stats.sampleCount;
+        _stats.flushTime = _stats.flushTimeAccum / _stats.sampleCount;
+        _stats.submitTime = _stats.submitTimeAccum / _stats.sampleCount;
+        _stats.presentTime = _stats.presentTimeAccum / _stats.sampleCount;
+        _stats.fenceTimeAccum = 0.f;
+        _stats.flushTimeAccum = 0.f;
+        _stats.submitTimeAccum = 0.f;
+        _stats.presentTimeAccum = 0.f;
+        _stats.sampleCount = 0;
     }
 
     if (e == VK_ERROR_OUT_OF_DATE_KHR)
@@ -721,8 +721,8 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
 
     writer.update_set(ctx.device, globalDescriptor);
 
-    _stats.drawcall_count = 0;
-    _stats.triangle_count = 0;
+    _stats.drawcallCount = 0;
+    _stats.triangleCount = 0;
 
     // instanced draw path
     if (scene.useInstancing && !scene.asteroidTransforms.empty())
@@ -772,8 +772,8 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
 
         vkCmdDrawIndexed(cmd, meshInfo.indexCount, numInstances, meshInfo.firstIndex, 0, 0);
 
-        _stats.drawcall_count++;
-        _stats.triangle_count += (meshInfo.indexCount / 3) * numInstances;
+        _stats.drawcallCount++;
+        _stats.triangleCount += (meshInfo.indexCount / 3) * numInstances;
     }
 
     // Non-instanced draw path for remaining objects (planet, or all objects when instancing is off)
@@ -830,8 +830,8 @@ void VulkanEngine::drawGeometry(VkCommandBuffer cmd)
         vkCmdPushConstants(cmd, r.material->pipeline->layout, VK_SHADER_STAGE_VERTEX_BIT, 0,
                            sizeof(GPUDrawPushConstants), &push_constants);
 
-        _stats.drawcall_count++;
-        _stats.triangle_count += r.indexCount / 3;
+        _stats.drawcallCount++;
+        _stats.triangleCount += r.indexCount / 3;
         vkCmdDrawIndexed(cmd, r.indexCount, 1, r.firstIndex, 0, 0);
     };
 
@@ -921,20 +921,20 @@ void VulkanEngine::run()
         // calculate avg fps over 5 sec
         auto currframetime = std::chrono::high_resolution_clock::now();
 
-        if (_stats.fps_frame_count == 0 && _stats.fps_window_start.time_since_epoch().count() == 0)
+        if (_stats.fpsFrameCount == 0 && _stats.fpsWindowStart.time_since_epoch().count() == 0)
         {
-            _stats.fps_window_start = currframetime;
+            _stats.fpsWindowStart = currframetime;
         }
 
-        _stats.fps_frame_count++;
+        _stats.fpsFrameCount++;
 
-        float elapsed_sec = std::chrono::duration<float>(currframetime - _stats.fps_window_start).count();
+        float elapsed_sec = std::chrono::duration<float>(currframetime - _stats.fpsWindowStart).count();
 
         if (elapsed_sec >= 5.0f)
         {
-            _stats.avg_fps = _stats.fps_frame_count / elapsed_sec;
-            _stats.fps_frame_count = 0;
-            _stats.fps_window_start = currframetime;
+            _stats.avgFps = _stats.fpsFrameCount / elapsed_sec;
+            _stats.fpsFrameCount = 0;
+            _stats.fpsWindowStart = currframetime;
         }
 
         // imgui new frame
@@ -956,25 +956,25 @@ void VulkanEngine::run()
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("frametime");
             ImGui::TableNextColumn();
-            ImGui::Text("%0.3f ms", _stats.frametime);
+            ImGui::Text("%0.3f ms", _stats.frameTime);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("drawtime");
             ImGui::TableNextColumn();
-            ImGui::Text("%0.3f ms", _stats.mesh_draw_time);
+            ImGui::Text("%0.3f ms", _stats.meshDrawTime);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("triangles");
             ImGui::TableNextColumn();
-            ImGui::Text("%i", _stats.triangle_count);
+            ImGui::Text("%i", _stats.triangleCount);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("draws");
             ImGui::TableNextColumn();
-            ImGui::Text("%i", _stats.drawcall_count);
+            ImGui::Text("%i", _stats.drawcallCount);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
@@ -986,7 +986,7 @@ void VulkanEngine::run()
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("avg FPS (5 sec)");
             ImGui::TableNextColumn();
-            ImGui::Text("%.1f", _stats.avg_fps);
+            ImGui::Text("%.1f", _stats.avgFps);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
@@ -1054,7 +1054,7 @@ void VulkanEngine::run()
         auto end = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-        _stats.frametime = elapsed.count() / 1000.f;
+        _stats.frameTime = elapsed.count() / 1000.f;
     }
 }
 

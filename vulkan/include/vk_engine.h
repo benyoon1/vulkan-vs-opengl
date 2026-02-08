@@ -66,26 +66,26 @@ constexpr unsigned int FRAME_OVERLAP = 2;
 
 struct EngineStats
 {
-    float frametime;
-    int triangle_count;
-    int drawcall_count;
-    float mesh_draw_time;
-    float fence_time;
-    float flush_time;
-    float submit_time;
-    float present_time;
+    float frameTime;
+    int triangleCount;
+    int drawcallCount;
+    float meshDrawTime;
+    float fenceTime;
+    float flushTime;
+    float submitTime;
+    float presentTime;
 
     // accumulators for averaging
-    float fence_time_accum = 0.f;
-    float flush_time_accum = 0.f;
-    float submit_time_accum = 0.f;
-    float present_time_accum = 0.f;
-    int sample_count = 0;
+    float fenceTimeAccum = 0.f;
+    float flushTimeAccum = 0.f;
+    float submitTimeAccum = 0.f;
+    float presentTimeAccum = 0.f;
+    int sampleCount = 0;
 
     // fps averaging
-    float avg_fps{0.f};
-    uint32_t fps_frame_count{0};
-    std::chrono::high_resolution_clock::time_point fps_window_start{};
+    float avgFps{0.f};
+    uint32_t fpsFrameCount{0};
+    std::chrono::high_resolution_clock::time_point fpsWindowStart{};
 
     static constexpr int kSampleInterval = 30; // Update display every N frames
 };
