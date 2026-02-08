@@ -38,6 +38,7 @@ public:
     void setupInstanceBuffer(uint32_t maxInstances);
     void updateInstanceData(const glm::mat4* data, uint32_t count);
     void drawInstanced(Shader& shader, uint32_t instanceCount);
+    uint32_t indexCount() const { return static_cast<uint32_t>(m_indices.size()); }
 
 private:
     std::vector<Vertex> m_vertices;

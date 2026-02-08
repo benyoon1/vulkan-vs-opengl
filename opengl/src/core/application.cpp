@@ -73,6 +73,8 @@ void Application::run()
 {
     while (!glfwWindowShouldClose(m_window.getGlfwWindow()))
     {
+        auto frameStart = std::chrono::system_clock::now();
+
         auto currFrameTime = std::chrono::high_resolution_clock::now();
         if (m_fpsFrameCount == 0 && m_fpsWindowStart.time_since_epoch().count() == 0)
         {
@@ -88,8 +90,6 @@ void Application::run()
             m_fpsWindowStart = currFrameTime;
         }
 
-        // double frameStart = glfwGetTime();
-
         // update window and scene objects
         update();
 
@@ -98,24 +98,27 @@ void Application::run()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // renderDepthPass();
-        renderMainPass();
+        {
+            auto drawStart = std::chrono::system_clock::now();
+            renderMainPass();
+            auto drawEnd = std::chrono::system_clock::now();
+            auto drawElapsed = std::chrono::duration_cast<std::chrono::microseconds>(drawEnd - drawStart);
+            m_stats.mesh_draw_time = drawElapsed.count() / 1000.f;
+        }
         renderImGui();
 
         double beforeSwap = glfwGetTime();
         glfwSwapBuffers(m_window.getGlfwWindow());
         double afterSwap = glfwGetTime();
 
-        // Print occasionally to see where time is spent
-        // static int frameCount = 0;
-        // if (++frameCount % 300 == 0)
-        // {
-        //     printf("Render: %.2fms, Swap: %.2fms\n", (beforeSwap - frameStart) * 1000.0,
-        //            (afterSwap - beforeSwap) * 1000.0);
-        // }
         m_swapTime = (afterSwap - beforeSwap) * 1000.0;
 
         // glfwSwapBuffers(m_window.getGlfwWindow());
         glfwPollEvents();
+
+        auto frameEnd = std::chrono::system_clock::now();
+        auto frameElapsed = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+        m_stats.frametime = frameElapsed.count() / 1000.f;
     }
 }
 
@@ -155,6 +158,9 @@ void Application::renderDepthPass()
 
 void Application::renderMainPass()
 {
+    m_stats.drawcall_count = 0;
+    m_stats.triangle_count = 0;
+
     int width, height;
     glfwGetFramebufferSize(m_window.getGlfwWindow(), &width, &height); // high DPI bugfix
     glViewport(0, 0, width, height);
@@ -208,6 +214,8 @@ void Application::renderMainPass()
         m_instancedModelShader->setMat4("projection", projection);
         m_instancedModelShader->setMat4("view", view);
         m_icosahedron->drawInstanced(*m_instancedModelShader, numAsteroids);
+        m_stats.drawcall_count++;
+        m_stats.triangle_count += (m_icosahedron->getTotalIndexCount() / 3) * numAsteroids;
     }
     // non-instanced path
     else
@@ -238,6 +246,8 @@ void Application::renderMainPass()
             m_modelShader->setMat4("model", T * R * S);
             m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
                                 glm::vec3(0.0f));
+            m_stats.drawcall_count++;
+            m_stats.triangle_count += m_icosahedron->getTotalIndexCount() / 3;
         }
     }
     // wrap around every 2 pi because of floating point precision
@@ -252,6 +262,8 @@ void Application::renderMainPass()
     glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
     m_modelShader->setMat4("model", model);
     m_planet->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
+    m_stats.drawcall_count++;
+    m_stats.triangle_count += m_planet->getTotalIndexCount() / 3;
 }
 
 void Application::renderImGui()
@@ -264,32 +276,84 @@ void Application::renderImGui()
     ImGui::SetNextWindowSize(ImVec2(261, 190), ImGuiCond_FirstUseEver);
     ImGui::Begin("Stats");
 
-    // ImGui::Text("frametime %f ms", stats.frametime);
-    // ImGui::Text("drawtime %f ms", stats.mesh_draw_time);
-    // ImGui::Text("triangles %i", stats.triangle_count);
-    // ImGui::Text("draws %i", stats.drawcall_count);
-    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-    ImGui::Text("avg FPS (5s): %.1f", m_avgFps);
-    // ImGui::Text("swap time: %.2f ms", m_swapTime);
-    ImGui::Separator();
-    ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &numAsteroids, &kSliderMin, &kSliderMax, "%u");
-    ImGui::Checkbox("Instancing (I)", &useInstancing);
+    if (ImGui::BeginTable("stats_table", 2, ImGuiTableFlags_SizingFixedFit))
+    {
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 130.0f);
+        ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("frametime");
+        ImGui::TableNextColumn();
+        ImGui::Text("%0.3f ms", m_stats.frametime);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("drawtime");
+        ImGui::TableNextColumn();
+        ImGui::Text("%0.3f ms", m_stats.mesh_draw_time);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("triangles");
+        ImGui::TableNextColumn();
+        ImGui::Text("%i", m_stats.triangle_count);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("draws");
+        ImGui::TableNextColumn();
+        ImGui::Text("%i", m_stats.drawcall_count);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("FPS");
+        ImGui::TableNextColumn();
+        ImGui::Text("%.1f", ImGui::GetIO().Framerate);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("avg FPS (5 sec)");
+        ImGui::TableNextColumn();
+        ImGui::Text("%.1f", m_avgFps);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::Separator();
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Separator();
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("num of asteroids");
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(-FLT_MIN);
+        ImGui::SliderScalar("##num_asteroids", ImGuiDataType_S32, &numAsteroids, &kSliderMin, &kSliderMax, "%u");
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted("instancing (I)");
+        ImGui::TableNextColumn();
+        ImGui::Checkbox("##instancing", &useInstancing);
+
+        ImGui::EndTable();
+    }
+
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(411, 190), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(411, 150), ImGuiCond_FirstUseEver);
     ImGui::Begin("Controls");
     if (ImGui::BeginTable("controls_table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
         ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
         ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
         ImGui::TableHeadersRow();
-        const std::array<std::pair<const char*, const char*>, 5> controls = {{
+        const std::array<std::pair<const char*, const char*>, 4> controls = {{
             {"WASD", "Move camera"},
-            {"Mouse drag", "Pan camera"},
             {"J / K", "Increase / Decrease num of asteroids"},
-            {"Left Shift", "Run / speed boost while moving"},
-            {"I", "Toggle instanced rendering"},
+            {"Left Shift", "Speed boost while moving"},
+            {"I", "Toggle instancing"},
         }};
         for (const auto& [key, desc] : controls)
         {

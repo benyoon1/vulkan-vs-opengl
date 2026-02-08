@@ -14,6 +14,14 @@
 #include <imgui.h>
 #include <memory>
 
+struct EngineStats
+{
+    float frametime{0.f};
+    float mesh_draw_time{0.f};
+    int triangle_count{0};
+    int drawcall_count{0};
+};
+
 class Application
 {
 public:
@@ -46,6 +54,7 @@ private:
     int m_fpsFrameCount{0};
     float m_avgFps{0.0f};
     float _asteroidTime{0.0f};
+    EngineStats m_stats{};
 
     // asteroid belt parameters
     float _majorRadius{25.0f};  // distance from center to the inside of tube

@@ -422,7 +422,7 @@ void VulkanEngine::draw()
     // draw_shadow_map(cmd);
     // draw_debug_texture(cmd);
 
-    // 2) Main pass (compute background + geometry sampling the shadow map)
+    // 2) Main pass (compute background + geometry)
     drawMain(cmd);
 
     // transtion the draw image and the swapchain image into their correct
@@ -947,16 +947,69 @@ void VulkanEngine::run()
         ImGui::SetNextWindowSize(ImVec2(261, 190), ImGuiCond_FirstUseEver);
         ImGui::Begin("Stats");
 
-        ImGui::Text("frametime %f ms", _stats.frametime);
-        ImGui::Text("drawtime %f ms", _stats.mesh_draw_time);
-        ImGui::Text("triangles %i", _stats.triangle_count);
-        ImGui::Text("draws %i", _stats.drawcall_count);
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::Text("avg FPS (5s): %.1f", _stats.avg_fps);
-        ImGui::Separator();
-        ImGui::SliderScalar("num of asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
-                            &scene.kSliderMax, "%u");
-        ImGui::Checkbox("Instancing (I)", &scene.useInstancing);
+        if (ImGui::BeginTable("stats_table", 2, ImGuiTableFlags_SizingFixedFit))
+        {
+            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 130.0f);
+            ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("frametime");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.frametime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("drawtime");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.mesh_draw_time);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("triangles");
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", _stats.triangle_count);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("draws");
+            ImGui::TableNextColumn();
+            ImGui::Text("%i", _stats.drawcall_count);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("FPS");
+            ImGui::TableNextColumn();
+            ImGui::Text("%.1f", ImGui::GetIO().Framerate);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("avg FPS (5 sec)");
+            ImGui::TableNextColumn();
+            ImGui::Text("%.1f", _stats.avg_fps);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Separator();
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Separator();
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("num of asteroids");
+            ImGui::TableNextColumn();
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::SliderScalar("##num_asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
+                                &scene.kSliderMax, "%u");
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("instancing (I)");
+            ImGui::TableNextColumn();
+            ImGui::Checkbox("##instancing", &scene.useInstancing);
+
+            ImGui::EndTable();
+        }
         // ImGui::Text("fence: %.2f ms", _stats.fence_time);
         // ImGui::Text("flush: %.2f ms", _stats.flush_time);
         // ImGui::Text("submit: %.2f ms", _stats.submit_time);
@@ -964,19 +1017,18 @@ void VulkanEngine::run()
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(411, 190), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(411, 150), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls");
         if (ImGui::BeginTable("controls_table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
             ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
             ImGui::TableHeadersRow();
-            const std::array<std::pair<const char*, const char*>, 5> controls = {{
+            const std::array<std::pair<const char*, const char*>, 4> controls = {{
                 {"WASD", "Move camera"},
-                {"Mouse drag", "Pan camera"},
                 {"J / K", "Increase / Decrease num of asteroids"},
-                {"Left Shift", "Run / speed boost while moving"},
-                {"I", "Toggle instanced rendering"},
+                {"Left Shift", "Speed boost while moving"},
+                {"I", "Toggle instancing"},
             }};
             for (const auto& [key, desc] : controls)
             {

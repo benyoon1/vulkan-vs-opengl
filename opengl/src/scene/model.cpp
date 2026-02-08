@@ -122,6 +122,16 @@ void Model::drawShadowMapInstanced(Shader& depthShader, const glm::mat4& lightSp
     }
 }
 
+uint32_t Model::getTotalIndexCount() const
+{
+    uint32_t total = 0;
+    for (const auto& mesh : m_meshes)
+    {
+        total += mesh.indexCount();
+    }
+    return total;
+}
+
 void Model::loadModel(std::string const& path)
 {
     Assimp::Importer importer;

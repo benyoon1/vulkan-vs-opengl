@@ -29,6 +29,7 @@ public:
     void drawShadowMapInstanced(Shader& depthShader, const glm::mat4& lightSpaceMatrix, uint32_t instanceCount);
     void setModelMatrix(const glm::mat4& modelMatrix) { m_modelMatrix = modelMatrix; }
     glm::mat4 getModelMatrix() const { return m_modelMatrix; }
+    uint32_t getTotalIndexCount() const;
 
 private:
     std::vector<Texture> m_texturesLoaded;
