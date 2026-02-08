@@ -19,6 +19,7 @@ class Application
 public:
     static constexpr ImS32 kSliderMin{0};
     static constexpr ImS32 kSliderMax{30000};
+    static constexpr float kRotationSpeed{10.f};
 
     Application();
     ~Application();

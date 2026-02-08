@@ -110,9 +110,9 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
 
                 float scale = scaleDist(rng);
 
-                float rotX = rotDist(rng) + _asteroidTime;
-                float rotY = rotDist(rng) + _asteroidTime;
-                float rotZ = rotDist(rng) + _asteroidTime;
+                float rotX = rotDist(rng) + _asteroidTime * kRotationSpeed;
+                float rotY = rotDist(rng) + _asteroidTime * kRotationSpeed;
+                float rotZ = rotDist(rng) + _asteroidTime * kRotationSpeed;
 
                 glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
                 glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
@@ -147,9 +147,9 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
 
                 float scale = scaleDist(rng);
 
-                float rotX = rotDist(rng) + _asteroidTime;
-                float rotY = rotDist(rng) + _asteroidTime;
-                float rotZ = rotDist(rng) + _asteroidTime;
+                float rotX = rotDist(rng) + _asteroidTime * kRotationSpeed;
+                float rotY = rotDist(rng) + _asteroidTime * kRotationSpeed;
+                float rotZ = rotDist(rng) + _asteroidTime * kRotationSpeed;
 
                 glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
                 glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotX, glm::vec3(1, 0, 0));
