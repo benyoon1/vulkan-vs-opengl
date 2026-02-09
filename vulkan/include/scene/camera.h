@@ -14,10 +14,10 @@ enum CameraMovement
 class Camera
 {
 public:
-    static constexpr glm::vec3 kPosition{0.f, 10.f, 10.f};
-    static constexpr float kYaw{-90.0f};
+    static constexpr glm::vec3 kPosition{5.f, 0.f, 23.f};
+    static constexpr float kYaw{-70.0f};
     static constexpr float kPitch{0.0f};
-    static constexpr float kSpeed{10.0f};
+    static constexpr float kSpeed{5.0f};
     static constexpr float kSensitivity{0.1f};
     static constexpr float kZoom{60.0f};
 

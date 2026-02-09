@@ -35,8 +35,7 @@ Window::Window() : m_lastX(kScreenWidth / 2.0f), m_lastY(kScreenHeight / 2.0f)
     glfwSetCursorPosCallback(m_window, mouseCallback);
     glfwSetScrollCallback(m_window, scrollCallback);
 
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Window::setCamera(Camera* camera)
@@ -119,20 +118,15 @@ void Window::mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
         float xpos = static_cast<float>(xposIn);
         float ypos = static_cast<float>(yposIn);
 
-        if (instance->m_firstMouse)
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && !ImGui::GetIO().WantCaptureMouse)
         {
-            instance->m_lastX = xpos;
-            instance->m_lastY = ypos;
-            instance->m_firstMouse = false;
+            float xoffset = xpos - instance->m_lastX;
+            float yoffset = instance->m_lastY - ypos;
+            instance->m_camera->processMouseMovement(xoffset, yoffset);
         }
-
-        float xoffset = xpos - instance->m_lastX;
-        float yoffset = instance->m_lastY - ypos;
 
         instance->m_lastX = xpos;
         instance->m_lastY = ypos;
-
-        instance->m_camera->processMouseMovement(xoffset, yoffset);
     }
 }
 

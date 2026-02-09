@@ -66,6 +66,11 @@ void Camera::processMouseMovement()
 
     Uint32 buttons = SDL_GetRelativeMouseState(&mouseX, &mouseY);
 
+    if (!(buttons & SDL_BUTTON_LMASK))
+    {
+        return;
+    }
+
     m_yaw += (float)mouseX * Camera::kSensitivity;
     m_pitch -= (float)mouseY * Camera::kSensitivity;
 

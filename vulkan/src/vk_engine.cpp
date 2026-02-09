@@ -1024,8 +1024,9 @@ void VulkanEngine::run()
             ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
             ImGui::TableHeadersRow();
-            const std::array<std::pair<const char*, const char*>, 4> controls = {{
+            const std::array<std::pair<const char*, const char*>, 5> controls = {{
                 {"WASD", "Move camera"},
+                {"Mouse drag", "Pan camera"},
                 {"J / K", "Increase / Decrease num of asteroids"},
                 {"Left Shift", "Speed boost while moving"},
                 {"I", "Toggle instancing"},

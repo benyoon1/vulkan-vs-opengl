@@ -90,9 +90,10 @@ void VulkanContext::init()
     window = SDL_CreateWindow("Vulkan Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowExtent.width,
                               windowExtent.height, window_flags);
 
-    SDL_ShowCursor(SDL_DISABLE);
-    SDL_SetWindowGrab(window, SDL_TRUE);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // show cursor on screen
+    // SDL_ShowCursor(SDL_DISABLE);
+    // SDL_SetWindowGrab(window, SDL_TRUE);
+    // SDL_SetRelativeMouseMode(SDL_TRUE);
 
     initVulkan();
     initImmediateSubmit();
