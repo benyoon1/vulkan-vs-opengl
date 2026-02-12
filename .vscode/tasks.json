@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Vulkan: CMake configure (Debug)",
+            "label": "Vulkan: CMake generate build files (Debug)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -24,9 +24,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: configure && build && run (Debug)",
+            "label": "Vulkan: generate build files && build && run (Debug)",
             "dependsOn": [
-                "Vulkan: CMake configure (Debug)",
+                "Vulkan: CMake generate build files (Debug)",
                 "Vulkan: CMake build (Debug)",
                 "Vulkan: Run vulkan (Debug)"
             ],
@@ -41,7 +41,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: CMake configure (Release)",
+            "label": "Vulkan: CMake generate build files (Release)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -63,9 +63,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: configure && build && run (Release)",
+            "label": "Vulkan: generate build files && build && run (Release)",
             "dependsOn": [
-                "Vulkan: CMake configure (Release)",
+                "Vulkan: CMake generate build files (Release)",
                 "Vulkan: CMake build (Release)",
                 "Vulkan: Run vulkan (Release)"
             ],
@@ -80,7 +80,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: CMake configure (RelWithDebInfo)",
+            "label": "Vulkan: CMake generate build files (RelWithDebInfo)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -102,9 +102,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: configure && build && run (RelWithDebInfo)",
+            "label": "Vulkan: generate build files && build && run (RelWithDebInfo)",
             "dependsOn": [
-                "Vulkan: CMake configure (RelWithDebInfo)",
+                "Vulkan: CMake generate build files (RelWithDebInfo)",
                 "Vulkan: CMake build (RelWithDebInfo)",
                 "Vulkan: Run vulkan (RelWithDebInfo)"
             ],
@@ -173,7 +173,7 @@
             }
         },
         {
-            "label": "OpenGL: CMake configure (Debug)",
+            "label": "OpenGL: CMake generate build files (Debug)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -195,9 +195,9 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: configure && build && run (Debug)",
+            "label": "OpenGL: generate build files && build && run (Debug)",
             "dependsOn": [
-                "OpenGL: CMake configure (Debug)",
+                "OpenGL: CMake generate build files (Debug)",
                 "OpenGL: CMake build (Debug)",
                 "OpenGL: Run opengl (Debug)"
             ],
@@ -212,7 +212,7 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: CMake configure (Release)",
+            "label": "OpenGL: CMake generate build files (Release)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -234,9 +234,9 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: configure && build && run (Release)",
+            "label": "OpenGL: generate build files && build && run (Release)",
             "dependsOn": [
-                "OpenGL: CMake configure (Release)",
+                "OpenGL: CMake generate build files (Release)",
                 "OpenGL: CMake build (Release)",
                 "OpenGL: Run opengl (Release)"
             ],
@@ -251,7 +251,7 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: CMake configure (RelWithDebInfo)",
+            "label": "OpenGL: CMake generate build files (RelWithDebInfo)",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -273,9 +273,9 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: configure && build && run (RelWithDebInfo)",
+            "label": "OpenGL: generate build files && build && run (RelWithDebInfo)",
             "dependsOn": [
-                "OpenGL: CMake configure (RelWithDebInfo)",
+                "OpenGL: CMake generate build files (RelWithDebInfo)",
                 "OpenGL: CMake build (RelWithDebInfo)",
                 "OpenGL: Run opengl (RelWithDebInfo)"
             ],
