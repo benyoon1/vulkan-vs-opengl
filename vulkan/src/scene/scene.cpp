@@ -12,10 +12,75 @@
 
 #include <random>
 
-void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material)
+void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material,
+                            Camera& camera, DirectionalLight& sunLight)
 {
-    const std::string icosahedron = asset_path("icosahedron-low.obj");
-    auto asset1 = loadAssimpAssets(ctx, resources, material, icosahedron);
+    _ctx = &ctx;
+    _resources = &resources;
+    _material = &material;
+    _camera = &camera;
+    _sunLight = &sunLight;
+
+    // clang-format off
+    sceneRegistry.push_back({
+        .name       = "planet & asteroids",
+        .assetPath  = "icosahedron-low.obj",
+        .type       = SceneType::PlanetAndAsteroids,
+        .scale      = 1.0f,
+        .cameraStartPos = glm::vec3(5.0f, 0.0f, 23.0f),
+        .sunStartPos    = glm::vec3(0.0f, 0.0f, 100.0f),
+    });
+    sceneRegistry.push_back({
+        .name       = "amazon bistro",
+        .assetPath  = "bistro/bistro.obj",
+        .type       = SceneType::AmazonBistro,
+        .scale      = 0.5f,
+        .cameraStartPos = glm::vec3(-5.0f, 3.0f, 0.0f),
+        .sunStartPos    = glm::vec3(0.0f, 150.0f, 0.0f),
+    });
+    // clang-format on
+
+    loadScene(currentSceneIndex);
+}
+
+void Scene::loadScene(int index)
+{
+    if (index < 0 || index >= static_cast<int>(sceneRegistry.size()))
+        return;
+
+    // cleanup existing assets
+    _icosahedronMesh.reset();
+    loadedAssets.clear();
+    asteroidTransforms.clear();
+    instancedMeshInfo = {};
+
+    currentSceneIndex = index;
+    const auto& entry = sceneRegistry[index];
+
+    if (_camera)
+    {
+        _camera->setPosition(entry.cameraStartPos);
+    }
+    if (_sunLight)
+    {
+        _sunLight->setSunPosition(entry.sunStartPos);
+    }
+
+    switch (entry.type)
+    {
+        case SceneType::PlanetAndAsteroids:
+            loadPlanetAndAsteroids(entry.assetPath);
+            break;
+        case SceneType::AmazonBistro:
+            loadAmazonBistro(entry.assetPath);
+            break;
+    }
+}
+
+void Scene::loadPlanetAndAsteroids(const std::string& assetPath)
+{
+    const std::string icosahedron = asset_path(assetPath);
+    auto asset1 = loadAssimpAssets(*_ctx, *_resources, *_material, icosahedron);
     if (asset1.has_value())
     {
         loadedAssets["icosahedron"] = *asset1;
@@ -35,7 +100,7 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
     }
 
     const std::string planet = asset_path("planet/planet.obj");
-    auto asset2 = loadAssimpAssets(ctx, resources, material, planet);
+    auto asset2 = loadAssimpAssets(*_ctx, *_resources, *_material, planet);
     if (asset2.has_value())
     {
         loadedAssets["planet"] = *asset2;
@@ -43,6 +108,20 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
     else
     {
         fmt::print("Warning: failed to load planet/planet.obj from '{}'.\n", planet);
+    }
+}
+
+void Scene::loadAmazonBistro(const std::string& assetPath)
+{
+    const std::string fullPath = asset_path(assetPath);
+    auto asset = loadAssimpAssets(*_ctx, *_resources, *_material, fullPath);
+    if (asset.has_value())
+    {
+        loadedAssets["bistro"] = *asset;
+    }
+    else
+    {
+        fmt::print("Warning: failed to load '{}' from '{}'.\n", assetPath, fullPath);
     }
 }
 
@@ -74,15 +153,24 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
 
     sceneData.sunlightViewProj = sunLight.getLightSpaceMatrix();
 
-    // spotlight
-    // sceneData.spotColor = glm::vec4(SpotlightConstants::kSpotColor, 1.0f);
-    // float innerCutoff = glm::cos(glm::radians(SpotlightConstants::kInnerCutDeg));
-    // float outerCutoff = glm::cos(glm::radians(SpotlightConstants::kOuterCutDeg));
-    // float intensity = SpotlightConstants::kIntensity * spotlight.spotGain;
-    // sceneData.spotCutoffAndIntensity = glm::vec4(innerCutoff, outerCutoff, intensity, 0.0f);
-
     drawCommands.viewProj = projection * view;
 
+    if (currentSceneIndex >= 0 && currentSceneIndex < static_cast<int>(sceneRegistry.size()))
+    {
+        switch (sceneRegistry[currentSceneIndex].type)
+        {
+            case SceneType::PlanetAndAsteroids:
+                updatePlanetAndAsteroids(drawCommands);
+                break;
+            case SceneType::AmazonBistro:
+                updateAmazonBistro(drawCommands);
+                break;
+        }
+    }
+}
+
+void Scene::updatePlanetAndAsteroids(DrawContext& drawCommands)
+{
     auto it = loadedAssets.find("icosahedron");
     if (it != loadedAssets.end() && it->second)
     {
@@ -172,6 +260,16 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
     if (it != loadedAssets.end() && it->second)
     {
         glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
+        it->second->addToDrawCommands(model, drawCommands);
+    }
+}
+
+void Scene::updateAmazonBistro(DrawContext& drawCommands)
+{
+    auto it = loadedAssets.find("bistro");
+    if (it != loadedAssets.end() && it->second)
+    {
+        glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(sceneRegistry[currentSceneIndex].scale));
         it->second->addToDrawCommands(model, drawCommands);
     }
 }

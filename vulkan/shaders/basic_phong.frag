@@ -38,8 +38,8 @@ vec3 calcLight(vec3 lightPos, vec3 fragPos, vec3 normal, vec3 viewDir)
 
 void main()
 {
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * vec3(0.5, 0.5, 0.5);
+    float ambientStrength = 0.3;
+    vec3 ambient = ambientStrength * vec3(1.0);
     vec3 viewDir = normalize(sceneData.cameraPosition.xyz - inWorldPos);
 
     vec3 sunResult = calcLight(sceneData.sunlightPosition.xyz, inWorldPos, inNormal, viewDir);
@@ -47,7 +47,9 @@ void main()
     vec3 phongLighting = ambient + sunResult;
 
     int colorID = materialData.colorTexID;
-    vec3 color = texture(allTextures[colorID], inUV).xyz;
+    vec4 color = texture(allTextures[colorID], inUV);
+    if (color.a < 0.5)
+        discard;
 
-    outFragColor = vec4(color * phongLighting, 1.0);
+    outFragColor = vec4(color.rgb * phongLighting, 1.0);
 }

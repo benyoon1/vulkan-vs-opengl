@@ -9,6 +9,14 @@ glm::mat4 Camera::getViewMatrix() const
     return glm::lookAt(m_position, m_position + m_front, m_up);
 }
 
+void Camera::setPosition(const glm::vec3& pos)
+{
+    m_position = pos;
+    m_yaw = kYaw;
+    m_pitch = kPitch;
+    updateCameraVectors();
+}
+
 void Camera::processInput(float deltaTime)
 {
     const Uint8* keys = SDL_GetKeyboardState(NULL);

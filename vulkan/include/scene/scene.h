@@ -5,14 +5,32 @@
 #include "vk_loader.h"
 #include "vk_types.h"
 
+#include <glm/ext/vector_float3.hpp>
 #include <imgui.h>
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class ResourceManager;
 class VulkanContext;
 struct GLTFMetallic_Roughness;
+
+enum class SceneType
+{
+    PlanetAndAsteroids,
+    AmazonBistro,
+};
+
+struct SceneEntry
+{
+    std::string name;
+    std::string assetPath;
+    SceneType type;
+    float scale{1.0f};
+    glm::vec3 cameraStartPos{0.0f, 0.0f, 0.0f};
+    glm::vec3 sunStartPos{0.0f, 0.0f, 0.0f};
+};
 
 struct InstancedMeshInfo
 {
@@ -47,7 +65,13 @@ public:
     std::vector<glm::mat4> asteroidTransforms;
     InstancedMeshInfo instancedMeshInfo;
 
-    void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material);
+    // scene selection
+    std::vector<SceneEntry> sceneRegistry;
+    int currentSceneIndex{1};
+
+    void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material,
+                         Camera& camera, DirectionalLight& sunLight);
+    void loadScene(int index);
     void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight);
     void processSliderEvent();
     void updateFrame();
@@ -62,4 +86,16 @@ private:
     float _lastFrame{0.0f};
 
     std::shared_ptr<MeshAsset> _icosahedronMesh;
+
+    // stored references for scene reloading
+    VulkanContext* _ctx{nullptr};
+    ResourceManager* _resources{nullptr};
+    GLTFMetallic_Roughness* _material{nullptr};
+    Camera* _camera{nullptr};
+    DirectionalLight* _sunLight{nullptr};
+
+    void loadPlanetAndAsteroids(const std::string& assetPath);
+    void loadAmazonBistro(const std::string& assetPath);
+    void updatePlanetAndAsteroids(DrawContext& drawCommands);
+    void updateAmazonBistro(DrawContext& drawCommands);
 };

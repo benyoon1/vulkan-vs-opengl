@@ -22,6 +22,7 @@ public:
     glm::mat4 getLightView() const { return m_lightView; }
     float getSunSpeed() const { return m_sunSpeed; }
     void setSunSpeed(float speed) { m_sunSpeed = speed; }
+    void setSunPosition(const glm::vec3& pos) { m_sunPos = pos; }
 
 private:
     float m_simTime{0.0f};

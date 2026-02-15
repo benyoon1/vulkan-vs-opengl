@@ -47,7 +47,7 @@ void VulkanEngine::init()
     initShadowResources();
     initPipelines();
     initDefaultData();
-    scene.initRenderables(ctx, resources, metalRoughMaterial);
+    scene.initRenderables(ctx, resources, metalRoughMaterial, _mainCamera, _sunLight);
     initImgui();
 
     // everything went fine
@@ -944,8 +944,40 @@ void VulkanEngine::run()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(15, 18), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(261, 190), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(261, 220), ImGuiCond_FirstUseEver);
         ImGui::Begin("Stats");
+
+        // scene selector dropdown
+        {
+            ImGui::TextUnformatted("current scene:");
+            const auto& registry = scene.sceneRegistry;
+            const char* currentName =
+                (scene.currentSceneIndex >= 0 && scene.currentSceneIndex < static_cast<int>(registry.size()))
+                    ? registry[scene.currentSceneIndex].name.c_str()
+                    : "Unknown";
+
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            if (ImGui::BeginCombo("##scene_select", currentName))
+            {
+                for (int i = 0; i < static_cast<int>(registry.size()); ++i)
+                {
+                    bool isSelected = (i == scene.currentSceneIndex);
+                    if (ImGui::Selectable(registry[i].name.c_str(), isSelected))
+                    {
+                        if (i != scene.currentSceneIndex)
+                        {
+                            // wait for GPU to finish before unloading assets
+                            vkDeviceWaitIdle(ctx.device);
+                            scene.loadScene(i);
+                        }
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::Separator();
+        }
 
         if (ImGui::BeginTable("stats_table", 2, ImGuiTableFlags_SizingFixedFit))
         {
@@ -994,19 +1026,26 @@ void VulkanEngine::run()
             ImGui::TableSetColumnIndex(1);
             ImGui::Separator();
 
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted("num of asteroids");
-            ImGui::TableNextColumn();
-            ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::SliderScalar("##num_asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
-                                &scene.kSliderMax, "%u");
+            // scene-specific controls
+            if (scene.currentSceneIndex >= 0 && scene.currentSceneIndex < static_cast<int>(scene.sceneRegistry.size()))
+            {
+                if (scene.sceneRegistry[scene.currentSceneIndex].type == SceneType::PlanetAndAsteroids)
+                {
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("num of asteroids");
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(-FLT_MIN);
+                    ImGui::SliderScalar("##num_asteroids", ImGuiDataType_S32, &scene.numAsteroids, &scene.kSliderMin,
+                                        &scene.kSliderMax, "%u");
 
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted("instancing (I)");
-            ImGui::TableNextColumn();
-            ImGui::Checkbox("##instancing", &scene.useInstancing);
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("instancing (I)");
+                    ImGui::TableNextColumn();
+                    ImGui::Checkbox("##instancing", &scene.useInstancing);
+                }
+            }
 
             ImGui::EndTable();
         }

@@ -25,6 +25,7 @@ public:
     glm::vec3 getPosition() const { return m_position; }
     float getZoom() const { return m_zoom; }
     float getFOV() const { return m_FOV; }
+    void setPosition(const glm::vec3& pos);
     void processKeyboard(CameraMovement direction, float deltaTime);
     void processMouseMovement();
     void processInput(float deltaTime);

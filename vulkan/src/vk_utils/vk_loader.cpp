@@ -125,7 +125,7 @@ std::shared_ptr<Node> build_assimp_node(const aiNode* ainode, LoadedGLTF& file,
 std::optional<std::shared_ptr<LoadedGLTF>> loadAssimpAssets(VulkanContext& ctx, ResourceManager& resources,
                                                             GLTFMetallic_Roughness& material, std::string_view filePath)
 {
-    fmt::print("Loading Assimp scene: {}\n", filePath);
+    fmt::print("Loading Assimp: {}\n", filePath);
 
     Assimp::Importer importer;
     const unsigned int importFlags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality |
