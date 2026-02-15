@@ -20,11 +20,11 @@
         {
             "label": "Vulkan: CMake build (Debug)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/Debug --parallel && ln -sf ../vulkan/build/Debug/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/Debug --parallel & ln -sf ../vulkan/build/Debug/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: generate build files && build && run (Debug)",
+            "label": "Vulkan: generate build files & build & run (Debug)",
             "dependsOn": [
                 "Vulkan: CMake generate build files (Debug)",
                 "Vulkan: CMake build (Debug)",
@@ -59,11 +59,11 @@
         {
             "label": "Vulkan: CMake build (Release)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/Release --parallel && ln -sf ../vulkan/build/Release/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/Release --parallel & ln -sf ../vulkan/build/Release/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: generate build files && build && run (Release)",
+            "label": "Vulkan: generate build files & build & run (Release)",
             "dependsOn": [
                 "Vulkan: CMake generate build files (Release)",
                 "Vulkan: CMake build (Release)",
@@ -98,11 +98,11 @@
         {
             "label": "Vulkan: CMake build (RelWithDebInfo)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/RelWithDebInfo --parallel && ln -sf ../vulkan/build/RelWithDebInfo/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/RelWithDebInfo --parallel & ln -sf ../vulkan/build/RelWithDebInfo/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "Vulkan: generate build files && build && run (RelWithDebInfo)",
+            "label": "Vulkan: generate build files & build & run (RelWithDebInfo)",
             "dependsOn": [
                 "Vulkan: CMake generate build files (RelWithDebInfo)",
                 "Vulkan: CMake build (RelWithDebInfo)",
@@ -191,11 +191,11 @@
         {
             "label": "OpenGL: CMake build (Debug)",
             "type": "shell",
-            "command": "cmake --build opengl/build/Debug --parallel && ln -sf ../opengl/build/Debug/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/Debug --parallel & ln -sf ../opengl/build/Debug/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: generate build files && build && run (Debug)",
+            "label": "OpenGL: generate build files & build & run (Debug)",
             "dependsOn": [
                 "OpenGL: CMake generate build files (Debug)",
                 "OpenGL: CMake build (Debug)",
@@ -230,11 +230,11 @@
         {
             "label": "OpenGL: CMake build (Release)",
             "type": "shell",
-            "command": "cmake --build opengl/build/Release --parallel && ln -sf ../opengl/build/Release/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/Release --parallel & ln -sf ../opengl/build/Release/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: generate build files && build && run (Release)",
+            "label": "OpenGL: generate build files & build & run (Release)",
             "dependsOn": [
                 "OpenGL: CMake generate build files (Release)",
                 "OpenGL: CMake build (Release)",
@@ -269,11 +269,11 @@
         {
             "label": "OpenGL: CMake build (RelWithDebInfo)",
             "type": "shell",
-            "command": "cmake --build opengl/build/RelWithDebInfo --parallel && ln -sf ../opengl/build/RelWithDebInfo/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/RelWithDebInfo --parallel & ln -sf ../opengl/build/RelWithDebInfo/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
-            "label": "OpenGL: generate build files && build && run (RelWithDebInfo)",
+            "label": "OpenGL: generate build files & build & run (RelWithDebInfo)",
             "dependsOn": [
                 "OpenGL: CMake generate build files (RelWithDebInfo)",
                 "OpenGL: CMake build (RelWithDebInfo)",
