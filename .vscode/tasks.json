@@ -20,7 +20,7 @@
         {
             "label": "Vulkan: CMake build (Debug)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/Debug --parallel & ln -sf ../vulkan/build/Debug/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/Debug --parallel && ln -sf ../vulkan/build/Debug/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
@@ -59,7 +59,7 @@
         {
             "label": "Vulkan: CMake build (Release)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/Release --parallel & ln -sf ../vulkan/build/Release/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/Release --parallel && ln -sf ../vulkan/build/Release/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
@@ -98,7 +98,7 @@
         {
             "label": "Vulkan: CMake build (RelWithDebInfo)",
             "type": "shell",
-            "command": "cmake --build vulkan/build/RelWithDebInfo --parallel & ln -sf ../vulkan/build/RelWithDebInfo/compile_commands.json vulkan/compile_commands.json",
+            "command": "cmake --build vulkan/build/RelWithDebInfo --parallel && ln -sf ../vulkan/build/RelWithDebInfo/compile_commands.json vulkan/compile_commands.json",
             "problemMatcher": []
         },
         {
@@ -191,7 +191,7 @@
         {
             "label": "OpenGL: CMake build (Debug)",
             "type": "shell",
-            "command": "cmake --build opengl/build/Debug --parallel & ln -sf ../opengl/build/Debug/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/Debug --parallel && ln -sf ../opengl/build/Debug/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
@@ -230,7 +230,7 @@
         {
             "label": "OpenGL: CMake build (Release)",
             "type": "shell",
-            "command": "cmake --build opengl/build/Release --parallel & ln -sf ../opengl/build/Release/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/Release --parallel && ln -sf ../opengl/build/Release/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
@@ -269,7 +269,7 @@
         {
             "label": "OpenGL: CMake build (RelWithDebInfo)",
             "type": "shell",
-            "command": "cmake --build opengl/build/RelWithDebInfo --parallel & ln -sf ../opengl/build/RelWithDebInfo/compile_commands.json opengl/compile_commands.json",
+            "command": "cmake --build opengl/build/RelWithDebInfo --parallel && ln -sf ../opengl/build/RelWithDebInfo/compile_commands.json opengl/compile_commands.json",
             "problemMatcher": []
         },
         {
