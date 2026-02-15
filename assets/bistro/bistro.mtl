@@ -1,0 +1,1454 @@
+# Blender 4.2.1 LTS MTL File: 'bistro.blend'
+# www.blender.org
+
+newmtl Antenna_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Antenna_Metal_BaseColor.png
+map_Ks Antenna_Metal_Specular.png
+map_d Antenna_Metal_BaseColor.png
+map_Bump -bm 1.000000 Antenna_Metal_Normal.png
+
+newmtl Antenna_Plastic
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Antenna_Plastic_BaseColor.png
+map_Ks Antenna_Plastic_Specular.png
+map_d Antenna_Plastic_BaseColor.png
+map_Bump -bm 1.000000 Antenna_Plastic_Normal.png
+
+newmtl Antenna_Plastic_Blue
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Antenna_Plastic_Blue_BaseColor.png
+map_Ks Antenna_Plastic_Blue_Specular.png
+map_d Antenna_Plastic_Blue_BaseColor.png
+map_Bump -bm 1.000000 Antenna_Plastic_Blue_Normal.png
+
+newmtl Ashtray
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Ashtray_BaseColor.png
+map_Ks Ashtray_Specular.png
+map_d Ashtray_BaseColor.png
+map_Bump -bm 1.000000 Ashtray_Normal.png
+
+newmtl Awnings_Beams
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Awnings_Beams_BaseColor.png
+map_Ks Awnings_Beams_Specular.png
+map_d Awnings_Beams_BaseColor.png
+map_Bump -bm 1.000000 Awnings_Beams_Normal.png
+
+newmtl Awnings_Fabric
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Awnings_Fabric_BaseColor.png
+map_Ks Awnings_Fabric_Specular.png
+map_d Awnings_Fabric_BaseColor.png
+map_Bump -bm 1.000000 Awnings_Fabric_Normal.png
+
+newmtl Awnings_Hotel_Fabric
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Awnings_Hotel_Fabric_BaseColor.png
+map_Ks Awnings_Hotel_Fabric_Specular.png
+map_d Awnings_Hotel_Fabric_BaseColor.png
+map_Bump -bm 1.000000 Awnings_Hotel_Fabric_Normal.png
+
+newmtl Balcony_Concrete
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Balcony_Concrete_BaseColor.png
+map_Ks Balcony_Concrete_Specular.png
+map_d Balcony_Concrete_BaseColor.png
+map_Bump -bm 1.000000 Balcony_Concrete_Normal.png
+
+newmtl Balcony_Green_Wood
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Balcony_Green_Wood_BaseColor.png
+map_Ks Balcony_Green_Wood_Specular.png
+map_d Balcony_Green_Wood_BaseColor.png
+map_Bump -bm 1.000000 Balcony_Green_Wood_Normal.png
+
+newmtl Balcony_Ornaments
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Balcony_Ornaments_BaseColor.png
+map_Ks Balcony_Ornaments_Specular.png
+map_d Balcony_Ornaments_BaseColor.png
+map_Bump -bm 1.000000 Balcony_Ornaments_Normal.png
+
+newmtl Balcony_Trims
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Balcony_Trims_BaseColor.png
+map_Ks Balcony_Trims_Specular.png
+map_d Balcony_Trims_BaseColor.png
+map_Bump -bm 1.000000 Balcony_Trims_Normal.png
+
+newmtl Banner_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Banner_Metal_BaseColor.png
+map_Ks Banner_Metal_Specular.png
+map_d Banner_Metal_BaseColor.png
+map_Bump -bm 1.000000 Banner_Metal_Normal.png
+
+newmtl Bistro_Sign_Letters
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Bistro_Sign_Letters_BaseColor.png
+map_Ks Bistro_Sign_Letters_Specular.png
+map_d Bistro_Sign_Letters_BaseColor.png
+map_Bump -bm 1.000000 Bistro_Sign_Letters_Normal.png
+
+newmtl Bistro_Sign_Main
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Bistro_Sign_Main_BaseColor.png
+map_Ks Bistro_Sign_Main_Specular.png
+map_d Bistro_Sign_Main_BaseColor.png
+map_Bump -bm 1.000000 Bistro_Sign_Main_Normal.png
+
+newmtl Bollards
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Bollards_BaseColor.png
+map_Ks Bollards_Specular.png
+map_d Bollards_BaseColor.png
+map_Bump -bm 1.000000 Bollards_Normal.png
+
+newmtl Chimneys_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Chimneys_Metal_BaseColor.png
+map_Ks Chimneys_Metal_Specular.png
+map_d Chimneys_Metal_BaseColor.png
+map_Bump -bm 1.000000 Chimneys_Metal_Normal.png
+
+newmtl Concrete
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Concrete_BaseColor.png
+map_Ks Concrete_Specular.png
+map_d Concrete_BaseColor.png
+map_Bump -bm 1.000000 Concrete_Normal.png
+
+newmtl Concrete2
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Concrete2_BaseColor.png
+map_Ks Concrete2_Specular.png
+map_d Concrete2_BaseColor.png
+map_Bump -bm 1.000000 Concrete2_Normal.png
+
+newmtl Concrete3
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Concrete3_BaseColor.png
+map_Ks Concrete3_Specular.png
+map_d Concrete3_BaseColor.png
+map_Bump -bm 1.000000 Concrete3_Normal.png
+
+newmtl Concrete_Striped
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Concrete_Striped_BaseColor.png
+map_Ks Concrete_Striped_Specular.png
+map_d Concrete_Striped_BaseColor.png
+map_Bump -bm 1.000000 Concrete_Striped_Normal.png
+
+newmtl ElectricBox
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd ElectricBox_BaseColor.png
+map_Ks ElectricBox_Specular.png
+map_d ElectricBox_BaseColor.png
+map_Bump -bm 1.000000 ElectricBox_Normal.png
+
+newmtl Emissive_StreetLight
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Emissive_StreetLight_BaseColor.png
+map_Ks Emissive_StreetLight_Specular.png
+map_Ke Emissive_StreetLight_Emissive.png
+map_d Emissive_StreetLight_BaseColor.png
+map_Bump -bm 1.000000 Emissive_StreetLight_Normal.png
+
+newmtl Foliage_Bux_Hedges46.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Bux_Hedges46_BaseColor.png
+map_Ks Foliage_Bux_Hedges46_Specular.png
+map_d Foliage_Bux_Hedges46_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Bux_Hedges46_Normal.png
+
+newmtl Foliage_Flowers.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Flowers_BaseColor.png
+map_Ks Foliage_Flowers_Specular.png
+map_d Foliage_Flowers_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Flowers_Normal.png
+
+newmtl Foliage_Ivy_branches
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Ivy_branches_BaseColor.png
+map_Ks Foliage_Ivy_branches_Specular.png
+map_d Foliage_Ivy_branches_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Ivy_branches_Normal.png
+
+newmtl Foliage_Ivy_leaf_a.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Ivy_leaf_a_BaseColor.png
+map_Ks Foliage_Ivy_leaf_a_Specular.png
+map_d Foliage_Ivy_leaf_a_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Ivy_leaf_a_Normal.png
+
+newmtl Foliage_Leaves.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Leaves_BaseColor.png
+map_Ks Foliage_Leaves_Specular.png
+map_d Foliage_Leaves_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Leaves_Normal.png
+
+newmtl Foliage_Linde_Tree_Large_Green_Leaves.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Linde_Tree_Large_Green_Leaves_BaseColor.png
+map_Ks Foliage_Linde_Tree_Large_Green_Leaves_Specular.png
+map_d Foliage_Linde_Tree_Large_Green_Leaves_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Linde_Tree_Large_Green_Leaves_Normal.png
+
+newmtl Foliage_Linde_Tree_Large_Orange_Leaves.DoubleSided
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Linde_Tree_Large_Orange_Leaves_BaseColor.png
+map_Ks Foliage_Linde_Tree_Large_Orange_Leaves_Specular.png
+map_d Foliage_Linde_Tree_Large_Orange_Leaves_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Linde_Tree_Large_Orange_Leaves_Normal.png
+
+newmtl Foliage_Linde_Tree_Large_Trunk
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Linde_Tree_Large_Trunk_BaseColor.png
+map_Ks Foliage_Linde_Tree_Large_Trunk_Specular.png
+map_d Foliage_Linde_Tree_Large_Trunk_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Linde_Tree_Large_Trunk_Normal.png
+
+newmtl Foliage_Paris_Flowers
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Paris_Flowers_BaseColor.png
+map_Ks Foliage_Paris_Flowers_Specular.png
+map_d Foliage_Paris_Flowers_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Paris_Flowers_Normal.png
+
+newmtl Foliage_Trunk
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Foliage_Trunk_BaseColor.png
+map_Ks Foliage_Trunk_Specular.png
+map_d Foliage_Trunk_BaseColor.png
+map_Bump -bm 1.000000 Foliage_Trunk_Normal.png
+
+newmtl LanternEmissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd LanternEmissive_BaseColor.png
+map_Ks LanternEmissive_Specular.png
+map_d LanternEmissive_BaseColor.png
+map_Bump -bm 1.000000 LanternEmissive_Normal.png
+
+newmtl MASTER_Awning_Beams
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Awning_Beams_BaseColor.png
+map_Ks MASTER_Awning_Beams_Specular.png
+map_d MASTER_Awning_Beams_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Awning_Beams_Normal.png
+
+newmtl MASTER_Awning_Fabric_Cyan
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Awning_Fabric_Cyan_BaseColor.png
+map_Ks MASTER_Awning_Fabric_Cyan_Specular.png
+map_d MASTER_Awning_Fabric_Cyan_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Awning_Fabric_Cyan_Normal.png
+
+newmtl MASTER_Awning_Fabric_Red
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Awning_Fabric_Red_BaseColor.png
+map_Ks MASTER_Awning_Fabric_Red_Specular.png
+map_d MASTER_Awning_Fabric_Red_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Awning_Fabric_Red_Normal.png
+
+newmtl MASTER_Bistro_Main_Door
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Bistro_Main_Door_BaseColor.png
+map_Ks MASTER_Bistro_Main_Door_Specular.png
+map_d MASTER_Bistro_Main_Door_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Bistro_Main_Door_Normal.png
+
+newmtl MASTER_Black_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Black_Metal_BaseColor.png
+map_Ks MASTER_Black_Metal_Specular.png
+map_d MASTER_Black_Metal_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Black_Metal_Normal.png
+
+newmtl MASTER_Book_Covers
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Book_Covers_BaseColor.png
+map_Ks MASTER_Book_Covers_Specular.png
+map_d MASTER_Book_Covers_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Book_Covers_Normal.png
+
+newmtl MASTER_Boulangerie
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Boulangerie_BaseColor.png
+map_Ks MASTER_Boulangerie_Specular.png
+map_d MASTER_Boulangerie_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Boulangerie_Normal.png
+
+newmtl MASTER_Brick_Large_Beige_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Brick_Large_Beige_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Brick_Large_Beige_BLENDSHADER_Specular.png
+map_d MASTER_Brick_Large_Beige_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Brick_Large_Beige_BLENDSHADER_Normal.png
+
+newmtl MASTER_Brick_Large_White
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Brick_Large_White_BaseColor.png
+map_Ks MASTER_Brick_Large_White_Specular.png
+map_d MASTER_Brick_Large_White_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Brick_Large_White_Normal.png
+
+newmtl MASTER_Brick_Small_Red
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Brick_Small_Red_BaseColor.png
+map_Ks MASTER_Brick_Small_Red_Specular.png
+map_d MASTER_Brick_Small_Red_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Brick_Small_Red_Normal.png
+
+newmtl MASTER_Brick_Small_Red_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Brick_Small_Red_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Brick_Small_Red_BLENDSHADER_Specular.png
+map_d MASTER_Brick_Small_Red_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Brick_Small_Red_BLENDSHADER_Normal.png
+
+newmtl MASTER_Bronze_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Bronze_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Bronze_BLENDSHADER_Specular.png
+map_d MASTER_Bronze_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Bronze_BLENDSHADER_Normal.png
+
+newmtl MASTER_Building_Details
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Building_Details_BaseColor.png
+map_Ks MASTER_Building_Details_Specular.png
+map_d MASTER_Building_Details_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Building_Details_Normal.png
+
+newmtl MASTER_Concrete
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_BaseColor.png
+map_Ks MASTER_Concrete_Specular.png
+map_d MASTER_Concrete_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Normal.png
+
+newmtl MASTER_Concrete1
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete1_BaseColor.png
+map_Ks MASTER_Concrete1_Specular.png
+map_d MASTER_Concrete1_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete1_Normal.png
+
+newmtl MASTER_Concrete_Grooved
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Grooved_BaseColor.png
+map_Ks MASTER_Concrete_Grooved_Specular.png
+map_d MASTER_Concrete_Grooved_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Grooved_Normal.png
+
+newmtl MASTER_Concrete_Plaster
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Plaster_BaseColor.png
+map_Ks MASTER_Concrete_Plaster_Specular.png
+map_d MASTER_Concrete_Plaster_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Plaster_Normal.png
+
+newmtl MASTER_Concrete_Plaster1_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Plaster1_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Concrete_Plaster1_BLENDSHADER_Specular.png
+map_d MASTER_Concrete_Plaster1_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Plaster1_BLENDSHADER_Normal.png
+
+newmtl MASTER_Concrete_Smooth
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Smooth_BaseColor.png
+map_Ks MASTER_Concrete_Smooth_Specular.png
+map_d MASTER_Concrete_Smooth_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Smooth_Normal.png
+
+newmtl MASTER_Concrete_Smooth_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Smooth_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Concrete_Smooth_BLENDSHADER_Specular.png
+map_d MASTER_Concrete_Smooth_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Smooth_BLENDSHADER_Normal.png
+
+newmtl MASTER_Concrete_White
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_White_BaseColor.png
+map_Ks MASTER_Concrete_White_Specular.png
+map_d MASTER_Concrete_White_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_White_Normal.png
+
+newmtl MASTER_Concrete_Yellow
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Concrete_Yellow_BaseColor.png
+map_Ks MASTER_Concrete_Yellow_Specular.png
+map_d MASTER_Concrete_Yellow_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Concrete_Yellow_Normal.png
+
+newmtl MASTER_Curtains
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Curtains_BaseColor.png
+map_Ks MASTER_Curtains_Specular.png
+map_d MASTER_Curtains_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Curtains_Normal.png
+
+newmtl MASTER_Details_Dark
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Details_Dark_BaseColor.png
+map_Ks MASTER_Details_Dark_Specular.png
+map_d MASTER_Details_Dark_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Details_Dark_Normal.png
+
+newmtl MASTER_Doors
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Doors_BaseColor.png
+map_Ks MASTER_Doors_Specular.png
+map_d MASTER_Doors_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Doors_Normal.png
+
+newmtl MASTER_Focus
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Focus_BaseColor.png
+map_Ks MASTER_Focus_Specular.png
+map_d MASTER_Focus_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Focus_Normal.png
+
+newmtl MASTER_Focus_Ornament
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Focus_Ornament_BaseColor.png
+map_Ks MASTER_Focus_Ornament_Specular.png
+map_d MASTER_Focus_Ornament_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Focus_Ornament_Normal.png
+
+newmtl MASTER_Forge_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Forge_Metal_BaseColor.png
+map_Ks MASTER_Forge_Metal_Specular.png
+map_d MASTER_Forge_Metal_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Forge_Metal_Normal.png
+
+newmtl MASTER_Frosted_Glass
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Frosted_Glass_BaseColor.png
+map_Ks MASTER_Frosted_Glass_Specular.png
+map_d MASTER_Frosted_Glass_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Frosted_Glass_Normal.png
+
+newmtl MASTER_Glass_Dirty
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Glass_Dirty_BaseColor.png
+map_Ks MASTER_Glass_Dirty_Specular.png
+map_d MASTER_Glass_Dirty_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Glass_Dirty_Normal.png
+
+newmtl MASTER_Glass_Dirty_MASKED
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Glass_Dirty_MASKED_BaseColor.png
+map_Ks MASTER_Glass_Dirty_MASKED_Specular.png
+map_d MASTER_Glass_Dirty_MASKED_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Glass_Dirty_MASKED_Normal.png
+
+newmtl MASTER_Glass_Exterior
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Glass_Exterior_BaseColor.png
+map_Ks MASTER_Glass_Exterior_Specular.png
+map_d MASTER_Glass_Exterior_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Glass_Exterior_Normal.png
+
+newmtl MASTER_Grain_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Grain_Metal_BaseColor.png
+map_Ks MASTER_Grain_Metal_Specular.png
+map_d MASTER_Grain_Metal_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Grain_Metal_Normal.png
+
+newmtl MASTER_Light_Bulb
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Light_Bulb_BaseColor.png
+map_Ks MASTER_Light_Bulb_Specular.png
+map_d MASTER_Light_Bulb_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Light_Bulb_Normal.png
+
+newmtl MASTER_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Metal_BaseColor.png
+map_Ks MASTER_Metal_Specular.png
+map_d MASTER_Metal_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Metal_Normal.png
+
+newmtl MASTER_Metal_Pipe
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Metal_Pipe_BaseColor.png
+map_Ks MASTER_Metal_Pipe_Specular.png
+map_d MASTER_Metal_Pipe_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Metal_Pipe_Normal.png
+
+newmtl MASTER_Plastic
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Plastic_BaseColor.png
+map_Ks MASTER_Plastic_Specular.png
+map_d MASTER_Plastic_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Plastic_Normal.png
+
+newmtl MASTER_Rollup_Door
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Rollup_Door_BaseColor.png
+map_Ks MASTER_Rollup_Door_Specular.png
+map_d MASTER_Rollup_Door_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Rollup_Door_Normal.png
+
+newmtl MASTER_Roofing_Metal_01
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Roofing_Metal_01_BaseColor.png
+map_Ks MASTER_Roofing_Metal_01_Specular.png
+map_d MASTER_Roofing_Metal_01_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Roofing_Metal_01_Normal.png
+
+newmtl MASTER_Roofing_Shingle_Green
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Roofing_Shingle_Green_BaseColor.png
+map_Ks MASTER_Roofing_Shingle_Green_Specular.png
+map_d MASTER_Roofing_Shingle_Green_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Roofing_Shingle_Green_Normal.png
+
+newmtl MASTER_Roofing_Shingle_Grey
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Roofing_Shingle_Grey_BaseColor.png
+map_Ks MASTER_Roofing_Shingle_Grey_Specular.png
+map_d MASTER_Roofing_Shingle_Grey_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Roofing_Shingle_Grey_Normal.png
+
+newmtl MASTER_Room_Interior
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Room_Interior_BaseColor.png
+map_Ks MASTER_Room_Interior_Specular.png
+map_d MASTER_Room_Interior_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Room_Interior_Normal.png
+
+newmtl MASTER_Side_Letters
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Side_Letters_BaseColor.png
+map_Ks MASTER_Side_Letters_Specular.png
+map_d MASTER_Side_Letters_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Side_Letters_Normal.png
+
+newmtl MASTER_Trim_Cornice
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Trim_Cornice_BaseColor.png
+map_Ks MASTER_Trim_Cornice_Specular.png
+map_d MASTER_Trim_Cornice_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Trim_Cornice_Normal.png
+
+newmtl MASTER_Wood_Brown
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Brown_BaseColor.png
+map_Ks MASTER_Wood_Brown_Specular.png
+map_d MASTER_Wood_Brown_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Brown_Normal.png
+
+newmtl MASTER_Wood_Painted3
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Painted3_BaseColor.png
+map_Ks MASTER_Wood_Painted3_Specular.png
+map_d MASTER_Wood_Painted3_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Painted3_Normal.png
+
+newmtl MASTER_Wood_Painted_Cyan
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Painted_Cyan_BaseColor.png
+map_Ks MASTER_Wood_Painted_Cyan_Specular.png
+map_d MASTER_Wood_Painted_Cyan_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Painted_Cyan_Normal.png
+
+newmtl MASTER_Wood_Painted_Green
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Painted_Green_BaseColor.png
+map_Ks MASTER_Wood_Painted_Green_Specular.png
+map_d MASTER_Wood_Painted_Green_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Painted_Green_Normal.png
+
+newmtl MASTER_Wood_Painted_Green_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Painted_Green_BLENDSHADER_BaseColor.png
+map_Ks MASTER_Wood_Painted_Green_BLENDSHADER_Specular.png
+map_d MASTER_Wood_Painted_Green_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Painted_Green_BLENDSHADER_Normal.png
+
+newmtl MASTER_Wood_Polished
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MASTER_Wood_Polished_BaseColor.png
+map_Ks MASTER_Wood_Polished_Specular.png
+map_d MASTER_Wood_Polished_BaseColor.png
+map_Bump -bm 1.000000 MASTER_Wood_Polished_Normal.png
+
+newmtl MenuSign_01
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MenuSign_01_BaseColor.png
+map_Ks MenuSign_01_Specular.png
+map_d MenuSign_01_BaseColor.png
+map_Bump -bm 1.000000 MenuSign_01_Normal.png
+
+newmtl MenuSign_02_Glass
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MenuSign_02_Glass_BaseColor.png
+map_Ks MenuSign_02_Glass_Specular.png
+map_d MenuSign_02_Glass_BaseColor.png
+map_Bump -bm 1.000000 MenuSign_02_Glass_Normal.png
+
+newmtl MenuSign_02_Mesh
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd MenuSign_02_Mesh_BaseColor.png
+map_Ks MenuSign_02_Mesh_Specular.png
+map_d MenuSign_02_Mesh_BaseColor.png
+map_Bump -bm 1.000000 MenuSign_02_Mesh_Normal.png
+
+newmtl NapkinHolder
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd NapkinHolder_BaseColor.png
+map_Ks NapkinHolder_Specular.png
+map_d NapkinHolder_BaseColor.png
+map_Bump -bm 1.000000 NapkinHolder_Normal.png
+
+newmtl Paris_Chair_01
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_Chair_01_BaseColor.png
+map_Ks Paris_Chair_01_Specular.png
+map_d Paris_Chair_01_BaseColor.png
+map_Bump -bm 1.000000 Paris_Chair_01_Normal.png
+
+newmtl Paris_LiquorBottle_01_Caps
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_LiquorBottle_01_Caps_BaseColor.png
+map_Ks Paris_LiquorBottle_01_Caps_Specular.png
+map_d Paris_LiquorBottle_01_Caps_BaseColor.png
+map_Bump -bm 1.000000 Paris_LiquorBottle_01_Caps_Normal.png
+
+newmtl Paris_LiquorBottle_01_Glass_Wine
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_LiquorBottle_01_Glass_Wine_BaseColor.png
+map_Ks Paris_LiquorBottle_01_Glass_Wine_Specular.png
+map_d Paris_LiquorBottle_01_Glass_Wine_BaseColor.png
+map_Bump -bm 1.000000 Paris_LiquorBottle_01_Glass_Wine_Normal.png
+
+newmtl Paris_LiquorBottle_01_Labels
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_LiquorBottle_01_Labels_BaseColor.png
+map_d Paris_LiquorBottle_01_Labels_BaseColor.png
+map_Bump -bm 1.000000 Paris_LiquorBottle_01_Labels_Normal.png
+
+newmtl Paris_StreetPivot
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StreetPivot_BaseColor.png
+map_Ks Paris_StreetPivot_Specular.png
+map_d Paris_StreetPivot_BaseColor.png
+map_Bump -bm 1.000000 Paris_StreetPivot_Normal.png
+
+newmtl Paris_StreetSign_01
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StreetSign_01_BaseColor.png
+map_Ks Paris_StreetSign_01_Specular.png
+map_d Paris_StreetSign_01_BaseColor.png
+map_Bump -bm 1.000000 Paris_StreetSign_01_Normal.png
+
+newmtl Paris_StringLights_01_Blue_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_Blue_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_Blue_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_Blue_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_Blue_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_Blue_Color_Emissive_Normal.png
+
+newmtl Paris_StringLights_01_Green_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_Green_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_Green_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_Green_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_Green_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_Green_Color_Emissive_Normal.png
+
+newmtl Paris_StringLights_01_Orange_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_Orange_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_Orange_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_Orange_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_Orange_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_Orange_Color_Emissive_Normal.png
+
+newmtl Paris_StringLights_01_Pink_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_Pink_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_Pink_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_Pink_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_Pink_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_Pink_Color_Emissive_Normal.png
+
+newmtl Paris_StringLights_01_Red_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_Red_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_Red_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_Red_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_Red_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_Red_Color_Emissive_Normal.png
+
+newmtl Paris_StringLights_01_White_Color
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_White_Color_BaseColor.png
+map_Ks Paris_StringLights_01_White_Color_Specular.png
+map_d Paris_StringLights_01_White_Color_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_White_Color_Normal.png
+
+newmtl Paris_StringLights_01_White_Color_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_StringLights_01_White_Color_Emissive_BaseColor.png
+map_Ks Paris_StringLights_01_White_Color_Emissive_Specular.png
+map_Ke Paris_StringLights_01_White_Color_Emissive_Emissive.png
+map_d Paris_StringLights_01_White_Color_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Paris_StringLights_01_White_Color_Emissive_Normal.png
+
+newmtl Paris_Table_Terrace
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_Table_Terrace_BaseColor.png
+map_Ks Paris_Table_Terrace_Specular.png
+map_d Paris_Table_Terrace_BaseColor.png
+map_Bump -bm 1.000000 Paris_Table_Terrace_Normal.png
+
+newmtl Paris_TrafficSign_A
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Paris_TrafficSign_A_BaseColor.png
+map_Ks Paris_TrafficSign_A_Specular.png
+map_d Paris_TrafficSign_A_BaseColor.png
+map_Bump -bm 1.000000 Paris_TrafficSign_A_Normal.png
+
+newmtl Pavement_Brick_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Brick_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Brick_BLENDSHADER_Specular.png
+map_d Pavement_Brick_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Brick_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobble_Leaves_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobble_Leaves_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobble_Leaves_BLENDSHADER_Specular.png
+map_d Pavement_Cobble_Leaves_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobble_Leaves_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobblestone_01_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_01_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobblestone_01_BLENDSHADER_Specular.png
+map_d Pavement_Cobblestone_01_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_01_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobblestone_02
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_02_BaseColor.png
+map_Ks Pavement_Cobblestone_02_Specular.png
+map_d Pavement_Cobblestone_02_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_02_Normal.png
+
+newmtl Pavement_Cobblestone_Big_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_Big_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobblestone_Big_BLENDSHADER_Specular.png
+map_d Pavement_Cobblestone_Big_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_Big_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobblestone_Small_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_Small_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobblestone_Small_BLENDSHADER_Specular.png
+map_d Pavement_Cobblestone_Small_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_Small_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobblestone_Wet_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_Wet_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobblestone_Wet_BLENDSHADER_Specular.png
+map_d Pavement_Cobblestone_Wet_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_Wet_BLENDSHADER_Normal.png
+
+newmtl Pavement_Cobblestone_Wet_Leaves_BLENDSHADER
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_BaseColor.png
+map_Ks Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_Specular.png
+map_d Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_Normal.png
+
+newmtl Pavement_Curbstones
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Curbstones_BaseColor.png
+map_Ks Pavement_Curbstones_Specular.png
+map_d Pavement_Curbstones_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Curbstones_Normal.png
+
+newmtl Pavement_Ground_Wet
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Ground_Wet_BaseColor.png
+map_Ks Pavement_Ground_Wet_Specular.png
+map_d Pavement_Ground_Wet_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Ground_Wet_Normal.png
+
+newmtl Pavement_Manhole_Cover
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Pavement_Manhole_Cover_BaseColor.png
+map_Ks Pavement_Manhole_Cover_Specular.png
+map_d Pavement_Manhole_Cover_BaseColor.png
+map_Bump -bm 1.000000 Pavement_Manhole_Cover_Normal.png
+
+newmtl Plantpots
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Plantpots_BaseColor.png
+map_Ks Plantpots_Specular.png
+map_d Plantpots_BaseColor.png
+map_Bump -bm 1.000000 Plantpots_Normal.png
+
+newmtl Plaster
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Plaster_BaseColor.png
+map_Ks Plaster_Specular.png
+map_d Plaster_BaseColor.png
+map_Bump -bm 1.000000 Plaster_Normal.png
+
+newmtl Shopsign_Bakery
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Shopsign_Bakery_BaseColor.png
+map_Ks Shopsign_Bakery_Specular.png
+map_d Shopsign_Bakery_BaseColor.png
+map_Bump -bm 1.000000 Shopsign_Bakery_Normal.png
+
+newmtl Shopsign_Book_Store_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Shopsign_Book_Store_Emissive_BaseColor.png
+map_Ks Shopsign_Book_Store_Emissive_Specular.png
+map_Ke Shopsign_Book_Store_Emissive_Emissive.png
+map_d Shopsign_Book_Store_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Shopsign_Book_Store_Emissive_Normal.png
+
+newmtl Shopsign_Pharmacy_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Shopsign_Pharmacy_Emissive_BaseColor.png
+map_Ks Shopsign_Pharmacy_Emissive_Specular.png
+map_Ke Shopsign_Pharmacy_Emissive_Emissive.png
+map_d Shopsign_Pharmacy_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Shopsign_Pharmacy_Emissive_Normal.png
+
+newmtl Shopsign_Ties_Shop
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Shopsign_Ties_Shop_BaseColor.png
+map_Ks Shopsign_Ties_Shop_Specular.png
+map_d Shopsign_Ties_Shop_BaseColor.png
+map_Bump -bm 1.000000 Shopsign_Ties_Shop_Normal.png
+
+newmtl Sidewalkbarrier
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Sidewalkbarrier_BaseColor.png
+map_Ks Sidewalkbarrier_Specular.png
+map_d Sidewalkbarrier_BaseColor.png
+map_Bump -bm 1.000000 Sidewalkbarrier_Normal.png
+
+newmtl Spotlight_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Spotlight_Emissive_BaseColor.png
+map_Ks Spotlight_Emissive_Specular.png
+map_d Spotlight_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Spotlight_Emissive_Normal.png
+
+newmtl Spotlight_Glass_Emissive
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ni 1.500000
+illum 3
+map_Kd Spotlight_Glass_Emissive_BaseColor.png
+map_Ks Spotlight_Glass_Emissive_Specular.png
+map_Ke Spotlight_Glass_Emissive_Emissive.png
+map_d Spotlight_Glass_Emissive_BaseColor.png
+map_Bump -bm 1.000000 Spotlight_Glass_Emissive_Normal.png
+
+newmtl Spotlight_Main
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Spotlight_Main_BaseColor.png
+map_Ks Spotlight_Main_Specular.png
+map_d Spotlight_Main_BaseColor.png
+map_Bump -bm 1.000000 Spotlight_Main_Normal.png
+
+newmtl Streetlight_Chains
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Streetlight_Chains_BaseColor.png
+map_Ks Streetlight_Chains_Specular.png
+map_d Streetlight_Chains_BaseColor.png
+map_Bump -bm 1.000000 Streetlight_Chains_Normal.png
+
+newmtl Streetlight_Metal
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Streetlight_Metal_BaseColor.png
+map_Ks Streetlight_Metal_Specular.png
+map_d Streetlight_Metal_BaseColor.png
+map_Bump -bm 1.000000 Streetlight_Metal_Normal.png
+
+newmtl Streetlight_Support_Bulb
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Streetlight_Support_Bulb_BaseColor.png
+map_Ks Streetlight_Support_Bulb_Specular.png
+map_d Streetlight_Support_Bulb_BaseColor.png
+map_Bump -bm 1.000000 Streetlight_Support_Bulb_Normal.png
+
+newmtl Stringlights
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Stringlights_BaseColor.png
+map_Ks Stringlights_Specular.png
+map_d Stringlights_BaseColor.png
+map_Bump -bm 1.000000 Stringlights_Normal.png
+
+newmtl Trashcan
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Trashcan_BaseColor.png
+map_Ks Trashcan_Specular.png
+map_d Trashcan_BaseColor.png
+map_Bump -bm 1.000000 Trashcan_Normal.png
+
+newmtl Vespa
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Vespa_BaseColor.png
+map_Ks Vespa_Specular.png
+map_d Vespa_BaseColor.png
+map_Bump -bm 1.000000 Vespa_Normal.png
+
+newmtl Vespa_Headlight
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Vespa_Headlight_BaseColor.png
+map_Ks Vespa_Headlight_Specular.png
+map_d Vespa_Headlight_BaseColor.png
+map_Bump -bm 1.000000 Vespa_Headlight_Normal.png
+
+newmtl Vespa_Odometer
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Vespa_Odometer_BaseColor.png
+map_Ks Vespa_Odometer_Specular.png
+map_d Vespa_Odometer_BaseColor.png
+map_Bump -bm 1.000000 Vespa_Odometer_Normal.png
+
+newmtl Vespa_Odometer_Glass
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd Vespa_Odometer_Glass_BaseColor.png
+map_Ks Vespa_Odometer_Glass_Specular.png
+map_d Vespa_Odometer_Glass_BaseColor.png
+map_Bump -bm 1.000000 Vespa_Odometer_Glass_Normal.png
