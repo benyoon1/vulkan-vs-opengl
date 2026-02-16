@@ -101,7 +101,7 @@ public:
 
     VkDescriptorSetLayout gpuSceneDataDescriptorLayout{VK_NULL_HANDLE};
 
-    void init();
+    void init(int initialScene = 0);
     void run();
     void cleanup();
 

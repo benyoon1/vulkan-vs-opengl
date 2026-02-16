@@ -31,7 +31,7 @@ VulkanEngine& VulkanEngine::Get()
     return *loadedEngine;
 }
 
-void VulkanEngine::init()
+void VulkanEngine::init(int initialScene)
 {
     // only one engine initialization is allowed with the application.
     assert(loadedEngine == nullptr);
@@ -47,6 +47,7 @@ void VulkanEngine::init()
     initShadowResources();
     initPipelines();
     initDefaultData();
+    scene.currentSceneIndex = initialScene;
     scene.initRenderables(ctx, resources, metalRoughMaterial, _mainCamera, _sunLight);
     initImgui();
 

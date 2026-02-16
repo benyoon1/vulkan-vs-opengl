@@ -67,7 +67,7 @@ public:
 
     // scene selection
     std::vector<SceneEntry> sceneRegistry;
-    int currentSceneIndex{1};
+    int currentSceneIndex{0};
 
     void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material,
                          Camera& camera, DirectionalLight& sunLight);
