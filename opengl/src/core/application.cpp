@@ -329,7 +329,7 @@ void Application::renderImGui()
     ImGui::NewFrame();
 
     ImGui::SetNextWindowPos(ImVec2(15, 18), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(261, 190), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(261, 250), ImGuiCond_FirstUseEver);
     ImGui::Begin("Stats");
 
     // scene selector
@@ -421,19 +421,17 @@ void Application::renderImGui()
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(411, 150), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(411, 120), ImGuiCond_FirstUseEver);
     ImGui::Begin("Controls");
     if (ImGui::BeginTable("controls_table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
         ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.3f);
         ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthStretch, 0.7f);
         ImGui::TableHeadersRow();
-        const std::array<std::pair<const char*, const char*>, 5> controls = {{
+        const std::array<std::pair<const char*, const char*>, 3> controls = {{
             {"WASD", "Move camera"},
             {"Mouse drag", "Pan camera"},
-            {"J / K", "Increase / Decrease num of asteroids"},
             {"Left Shift", "Speed boost while moving"},
-            {"I", "Toggle instancing"},
         }};
         for (const auto& [key, desc] : controls)
         {
