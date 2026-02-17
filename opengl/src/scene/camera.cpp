@@ -70,6 +70,14 @@ void Camera::processMouseScroll(float yoffset)
     }
 }
 
+void Camera::setPosition(const glm::vec3& pos)
+{
+    m_position = pos;
+    m_yaw = kYaw;
+    m_pitch = kPitch;
+    updateCameraVectors();
+}
+
 void Camera::updateCameraVectors()
 {
     // calculate the new Front vector

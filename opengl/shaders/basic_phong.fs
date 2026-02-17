@@ -47,14 +47,15 @@ void main() {
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * vec3(0.5, 0.5, 0.5);
+    float ambientStrength = 0.3;
+    vec3 ambient = ambientStrength * vec3(1.0);
 
     vec3 sunResult = calcLight(sunPos, lightColor, FragPos, Normal, viewDir);
 
     vec3 phongLighting = ambient + sunResult;
 
-    vec3 baseColor = hasTexture == 1 ? texture(texture_diffuse1, TexCoords).rgb : vec3(1.0);
+    vec4 texColor = hasTexture == 1 ? texture(texture_diffuse1, TexCoords) : vec4(1.0);
+    if (texColor.a < 0.5) discard;
 
-    FragColor = vec4(baseColor * phongLighting, 1.0);
+    FragColor = vec4(texColor.rgb * phongLighting, 1.0);
 }

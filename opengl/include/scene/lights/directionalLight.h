@@ -19,11 +19,12 @@ public:
     glm::mat4 getLightSpaceMatrix() const;
     glm::mat4 getLightProjection() const { return m_lightProjection; }
     glm::mat4 getLightView() const { return m_lightView; }
+    void setSunPosition(const glm::vec3& pos) { m_sunPos = pos; }
 
 private:
     float m_simTime{0.0f};
     double m_lastTime{0.0f};
-    glm::vec3 m_sunPos{0.0f};
+    glm::vec3 m_sunPos{0.0f, 0.0f, 100.0f};
     glm::vec3 m_sunDirection{0.0f};
     glm::mat4 m_lightProjection{1.0f};
     glm::mat4 m_lightView{1.0f};

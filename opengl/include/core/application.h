@@ -13,6 +13,8 @@
 #include <chrono>
 #include <imgui.h>
 #include <memory>
+#include <string>
+#include <vector>
 
 struct EngineStats
 {
@@ -22,6 +24,22 @@ struct EngineStats
     int drawcallCount{0};
 };
 
+enum class SceneType
+{
+    PlanetAndAsteroids,
+    AmazonBistro,
+};
+
+struct SceneEntry
+{
+    std::string name;
+    std::string assetPath;
+    SceneType type;
+    float scale{1.0f};
+    glm::vec3 cameraStartPos;
+    glm::vec3 sunStartPos;
+};
+
 class Application
 {
 public:
@@ -29,7 +47,7 @@ public:
     static constexpr ImS32 kSliderMax{30000};
     static constexpr float kRotationSpeed{10.f};
 
-    Application();
+    Application(int initialScene = 0);
     ~Application();
 
     ImS32 numAsteroids{15000};
@@ -42,6 +60,7 @@ public:
     void renderDepthPass();
     void renderMainPass();
     void renderImGui();
+    void loadScene(int index);
 
 private:
     Window m_window;
@@ -68,9 +87,13 @@ private:
 
     std::chrono::high_resolution_clock::time_point m_fpsWindowStart{};
 
+    std::vector<SceneEntry> m_sceneRegistry;
+    int m_currentSceneIndex{0};
+
     // GL-dependent resources are deferred
     std::unique_ptr<Model> m_icosahedron;
     std::unique_ptr<Model> m_planet;
+    std::unique_ptr<Model> m_bistro;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<ShadowMap> m_sunShadow;
     std::unique_ptr<ShadowMap> m_spotShadow;

@@ -30,6 +30,7 @@ public:
     void processKeyboard(CameraMovement direction, float deltaTime);
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void processMouseScroll(float yoffset);
+    void setPosition(const glm::vec3& pos);
 
 private:
     glm::vec3 m_position{kPosition};
