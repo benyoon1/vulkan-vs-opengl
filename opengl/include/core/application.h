@@ -38,6 +38,7 @@ struct SceneEntry
     float scale{1.0f};
     glm::vec3 cameraStartPos;
     glm::vec3 sunStartPos;
+    std::string skyboxDir;
 };
 
 class Application
@@ -99,6 +100,7 @@ private:
     std::unique_ptr<ShadowMap> m_spotShadow;
     std::unique_ptr<Shader> m_modelShader;
     std::unique_ptr<Shader> m_skyboxShader;
+    std::unique_ptr<Shader> m_skyboxCubemapShader;
     std::unique_ptr<Shader> m_depthShader;
     std::unique_ptr<Shader> m_instancedModelShader;
     std::unique_ptr<Shader> m_instancedDepthShader;

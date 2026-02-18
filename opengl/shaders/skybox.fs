@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec3 TexCoords;
+
 uniform mat4 u_inverseProjection;
 uniform mat4 u_inverseView;
 uniform vec2 u_screenSize;

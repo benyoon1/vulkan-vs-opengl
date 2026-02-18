@@ -16,6 +16,7 @@
 #include <random>
 
 #include "core/application.h"
+#include "core/utils.h"
 // clang-format on
 
 Application::Application(int initialScene) : m_window(), m_camera(), m_sunLight(), m_spotlight()
@@ -52,6 +53,7 @@ Application::Application(int initialScene) : m_window(), m_camera(), m_sunLight(
 
     m_modelShader = std::make_unique<Shader>("shaders/model.vs", "shaders/basic_phong.fs");
     m_skyboxShader = std::make_unique<Shader>("shaders/skybox.vs", "shaders/skybox.fs");
+    m_skyboxCubemapShader = std::make_unique<Shader>("shaders/skybox.vs", "shaders/skybox_cubemap.fs");
     m_depthShader = std::make_unique<Shader>("shaders/shadowMapping.vs", "shaders/shadowMapping.fs");
     m_instancedModelShader = std::make_unique<Shader>("shaders/model_instanced.vs", "shaders/basic_phong.fs");
     m_instancedDepthShader = std::make_unique<Shader>("shaders/shadowMapping_instanced.vs", "shaders/shadowMapping.fs");
@@ -61,9 +63,9 @@ Application::Application(int initialScene) : m_window(), m_camera(), m_sunLight(
     // scene registry
     m_sceneRegistry = {
         {"planet & asteroids", "../assets/icosahedron-low.obj", SceneType::PlanetAndAsteroids, 1.0f,
-         glm::vec3(5.0f, 0.0f, 23.0f), glm::vec3(0.0f, 0.0f, 100.0f)},
+         glm::vec3(5.0f, 0.0f, 23.0f), glm::vec3(0.0f, 0.0f, 100.0f), ""},
         {"amazon bistro", "../assets/bistro/bistro.obj", SceneType::AmazonBistro, 0.5f, glm::vec3(-5.0f, 3.0f, 0.0f),
-         glm::vec3(0.0f, 150.0f, 0.0f)},
+         glm::vec3(0.0f, 150.0f, 0.0f), "../assets/skybox"},
     };
 
     loadScene(initialScene);
@@ -79,6 +81,17 @@ void Application::loadScene(int index)
 
     m_camera.setPosition(entry.cameraStartPos);
     m_sunLight.setSunPosition(entry.sunStartPos);
+
+    if (entry.skyboxDir.empty())
+    {
+        m_skybox->loadCubemap({"", "", "", "", "", ""});
+    }
+    else
+    {
+        std::string d = Utils::getPath(entry.skyboxDir);
+        m_skybox->loadCubemap(
+            {d + "/px.png", d + "/nx.png", d + "/py.png", d + "/ny.png", d + "/pz.png", d + "/nz.png"});
+    }
 
     // reset scene-specific resources
     m_icosahedron.reset();
@@ -317,6 +330,9 @@ void Application::renderMainPass()
             m_bistro->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
             m_stats.drawcallCount++;
             m_stats.triangleCount += m_bistro->getTotalIndexCount() / 3;
+
+            m_skybox->draw(*m_skyboxCubemapShader, projection, m_camera, m_sunLight.getSunDirection(),
+                           glm::vec2(width, height));
             break;
         }
     }
