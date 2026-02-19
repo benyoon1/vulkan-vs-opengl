@@ -146,6 +146,13 @@ private:
     VkPipeline _instancedPipeline{VK_NULL_HANDLE};
     VkPipelineLayout _instancedPipelineLayout{VK_NULL_HANDLE};
 
+    // Skybox cubemap
+    AllocatedImage _skyboxCubemap{};
+    VkSampler _skyboxSampler{VK_NULL_HANDLE};
+    VkDescriptorSetLayout _skyboxDescriptorLayout{VK_NULL_HANDLE};
+    VkPipeline _skyboxPipeline{VK_NULL_HANDLE};
+    VkPipelineLayout _skyboxCubemapPipelineLayout{VK_NULL_HANDLE};
+
     GPUMeshBuffers _debugRectangle;
     DrawContext _drawCommands;
 
@@ -185,6 +192,10 @@ private:
     void initInstancedPipeline();
     void initLightDebugPipeline();
     void initDebugTexturePipeline();
+    void initSkyboxPipeline();
+    void loadSkyboxCubemap(const std::string& dir);
+    void destroySkyboxCubemap();
+    void drawSkybox(VkCommandBuffer cmd);
 
     FrameData& getCurrentFrame();
     FrameData& getLastFrame();

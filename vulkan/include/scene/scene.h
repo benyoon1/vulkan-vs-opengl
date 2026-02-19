@@ -30,6 +30,7 @@ struct SceneEntry
     float scale{1.0f};
     glm::vec3 cameraStartPos{0.0f, 0.0f, 0.0f};
     glm::vec3 sunStartPos{0.0f, 0.0f, 0.0f};
+    std::string skyboxDir;
 };
 
 struct InstancedMeshInfo

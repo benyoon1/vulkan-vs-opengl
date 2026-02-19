@@ -29,6 +29,7 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
         .scale      = 1.0f,
         .cameraStartPos = glm::vec3(5.0f, 0.0f, 23.0f),
         .sunStartPos    = glm::vec3(0.0f, 0.0f, 100.0f),
+        .skyboxDir      = "",
     });
     sceneRegistry.push_back({
         .name       = "amazon bistro",
@@ -37,6 +38,7 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
         .scale      = 0.5f,
         .cameraStartPos = glm::vec3(-5.0f, 3.0f, 0.0f),
         .sunStartPos    = glm::vec3(0.0f, 150.0f, 0.0f),
+        .skyboxDir      = "skybox",
     });
     // clang-format on
 
@@ -152,6 +154,10 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
     sceneData.sunlightColor = glm::vec4(1.0f);
 
     sceneData.sunlightViewProj = sunLight.getLightSpaceMatrix();
+
+    sceneData.view = view;
+    sceneData.proj = projection;
+    sceneData.viewproj = projection * view;
 
     drawCommands.viewProj = projection * view;
 
