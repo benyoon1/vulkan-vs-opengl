@@ -17,6 +17,7 @@
 #include <imgui.h>
 #include <vk_mem_alloc.h>
 
+#include <array>
 #include <chrono>
 
 #include <vector>
@@ -60,6 +61,8 @@ struct FrameData
 
     VkCommandPool _commandPool;
     VkCommandBuffer _mainCommandBuffer;
+
+    VkQueryPool _timestampQueryPool{VK_NULL_HANDLE};
 };
 
 constexpr unsigned int FRAME_OVERLAP = 2;
@@ -70,24 +73,39 @@ struct EngineStats
     int triangleCount;
     int drawcallCount;
     float meshDrawTime;
+    float gpuDrawTime{0.f};
     float fenceTime;
     float flushTime;
     float submitTime;
     float presentTime;
 
     // accumulators for averaging
-    float fenceTimeAccum = 0.f;
-    float flushTimeAccum = 0.f;
-    float submitTimeAccum = 0.f;
-    float presentTimeAccum = 0.f;
-    int sampleCount = 0;
+    float fenceTimeAccum{0.f};
+    float flushTimeAccum{0.f};
+    float submitTimeAccum{0.f};
+    float presentTimeAccum{0.f};
+    int sampleCount{0};
 
     // fps averaging
     float avgFps{0.f};
     uint32_t fpsFrameCount{0};
     std::chrono::high_resolution_clock::time_point fpsWindowStart{};
 
-    static constexpr int kSampleInterval = 30; // Update display every N frames
+    // 1% low / 0.1% low fps
+    static constexpr int kPercentileWindow{1000};
+    // std::array lives on the stack whereas std::vector needs heap allocation
+    std::array<float, kPercentileWindow> frameTimeHistory{};
+    int frameTimeHistoryIndex{0};
+    bool frameTimeHistoryFilled{false};
+    float fps1Low{0.f};
+    float fps01Low{0.f};
+
+    // frame time graph
+    static constexpr int kGraphSize{1000};
+    std::array<float, kGraphSize> frameTimeGraph{};
+    int frameTimeGraphIndex{0};
+
+    static constexpr int kSampleInterval{30}; // update display every N frames
 };
 
 class VulkanEngine
@@ -161,6 +179,7 @@ private:
     SpotlightState _spotlight;
 
     EngineStats _stats;
+    float _timestampPeriod{0.f};
 
     std::vector<ComputeEffect> _backgroundEffects;
     int _currentBackgroundEffect{0};

@@ -387,6 +387,26 @@ void VulkanEngine::draw()
     // VK_CHECK(vkWaitForFences(_device, 1, &get_current_frame()._renderFence, true, 1000000000));
     VK_CHECK(vkWaitForFences(ctx.device, 1, &getCurrentFrame()._renderFence, true, UINT64_MAX));
 
+    /* read GPU timestamp results from the current frame (fence just signaled = results ready)
+    CPU:  [record frame 0]  [record frame 1]  [record frame 0]
+           |  submit  |      |  submit  |      | wait fence 0 → read pool 0 |
+    GPU:              [==execute frame 0==]  [==execute frame 1==]
+                      ^                   ^
+                      timestamp[0]       timestamp[1]
+    */
+    if (_timestampPeriod > 0.f)
+    {
+        uint64_t timestamps[2]{};
+        VkResult tsResult =
+            vkGetQueryPoolResults(ctx.device, getCurrentFrame()._timestampQueryPool, 0, 2, sizeof(timestamps),
+                                  timestamps, sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);
+        if (tsResult == VK_SUCCESS)
+        {
+            // (end_ticks - start_ticks) * nanoseconds_per_tick / 1,000,000 = milliseconds
+            _stats.gpuDrawTime = static_cast<float>(timestamps[1] - timestamps[0]) * _timestampPeriod / 1e6f;
+        }
+    }
+
     auto t1 = std::chrono::high_resolution_clock::now();
 
     getCurrentFrame()._deletionQueue.flush();
@@ -424,6 +444,9 @@ void VulkanEngine::draw()
 
     VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBeginInfo));
 
+    // reset and begin GPU timestamp queries
+    vkCmdResetQueryPool(cmd, getCurrentFrame()._timestampQueryPool, 0, 2);
+
     // transition our main draw image into general layout so we can write into it
     // we will overwrite it all so we dont care about what was the older layout
     vkutil::transition_image(cmd, swapchain.drawImage.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
@@ -434,8 +457,12 @@ void VulkanEngine::draw()
     // draw_shadow_map(cmd);
     // draw_debug_texture(cmd);
 
-    // 2) Main pass (compute background + geometry)
+    // 2) Main pass (skybox + geometry)
+    // TOP_OF_PIPE: writes the GPU clock before any of the subsequent work begins
+    // BOTTOM_OF_PIPE: writes the GPU clock after all preceding work has completed
+    vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 0);
     drawMain(cmd);
+    vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 1);
 
     // transtion the draw image and the swapchain image into their correct
     // transfer layouts
@@ -956,7 +983,7 @@ void VulkanEngine::run()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(15, 18), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(261, 250), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(261, 310), ImGuiCond_FirstUseEver);
         ImGui::Begin("Stats");
 
         // scene selector dropdown
@@ -1005,9 +1032,15 @@ void VulkanEngine::run()
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            ImGui::TextUnformatted("drawtime");
+            ImGui::TextUnformatted("CPU draw");
             ImGui::TableNextColumn();
             ImGui::Text("%0.3f ms", _stats.meshDrawTime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("GPU draw");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.gpuDrawTime);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
@@ -1032,6 +1065,18 @@ void VulkanEngine::run()
             ImGui::TextUnformatted("avg FPS (5 sec)");
             ImGui::TableNextColumn();
             ImGui::Text("%.1f", _stats.avgFps);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("1% low FPS");
+            ImGui::TableNextColumn();
+            ImGui::Text("%.1f", _stats.fps1Low);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("0.1% low FPS");
+            ImGui::TableNextColumn();
+            ImGui::Text("%.1f", _stats.fps01Low);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
@@ -1093,6 +1138,70 @@ void VulkanEngine::run()
         }
         ImGui::End();
 
+        // frame time graph window
+        {
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            float graphHeight{150.f};
+            float padding{10.f};
+            ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + padding,
+                                           viewport->WorkPos.y + viewport->WorkSize.y - graphHeight - padding),
+                                    ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(viewport->WorkSize.x - padding * 2.f, graphHeight), ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.8f);
+            ImGui::Begin("##frametime_window", nullptr,
+                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoFocusOnAppearing |
+                             ImGuiWindowFlags_NoNav);
+
+            constexpr float graphMax{32.f};
+            constexpr float ticks[] = {0.f, 8.f, 16.f, 24.f, 32.f};
+            constexpr int numTicks = sizeof(ticks) / sizeof(ticks[0]);
+
+            float tickLabelWidth = ImGui::CalcTextSize("32ms").x + 8.f;
+            ImVec2 contentMin = ImGui::GetCursorScreenPos();
+            float availWidth = ImGui::GetContentRegionAvail().x;
+            float availHeight = ImGui::GetContentRegionAvail().y;
+
+            // graph area (right of tick labels)
+            float graphX = contentMin.x + tickLabelWidth;
+            float graphW = availWidth - tickLabelWidth;
+            float graphY = contentMin.y;
+            float graphH = availHeight;
+
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + tickLabelWidth);
+            int offset = _stats.frameTimeGraphIndex % EngineStats::kGraphSize;
+            ImGui::PlotLines("##frametime_graph", _stats.frameTimeGraph.data(), EngineStats::kGraphSize, offset,
+                             "frame time (ms)", 0.f, graphMax, ImVec2(graphW, graphH));
+
+            // draw y-axis tick labels and horizontal guide lines
+            {
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+                ImU32 textColor = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+                ImU32 lineColor = ImGui::GetColorU32(ImGuiCol_TextDisabled, 0.3f);
+
+                for (int i = 0; i < numTicks; i++)
+                {
+                    // plotLines maps value 0 to bottom, graphMax to top
+                    float t = ticks[i] / graphMax;
+                    float y = graphY + graphH - t * graphH;
+
+                    // tick label
+                    char tickLabel[16];
+                    snprintf(tickLabel, sizeof(tickLabel), "%.0fms", ticks[i]);
+                    ImVec2 labelSize = ImGui::CalcTextSize(tickLabel);
+                    drawList->AddText(ImVec2(graphX - labelSize.x - 4.f, y - labelSize.y / 2.f), textColor, tickLabel);
+
+                    // horizontal guide line across graph area
+                    if (ticks[i] > 0.f)
+                    {
+                        drawList->AddLine(ImVec2(graphX, y), ImVec2(graphX + graphW, y), lineColor);
+                    }
+                }
+            }
+
+            ImGui::End();
+        }
+
         ImGui::Render();
 
         // imgui commands
@@ -1106,6 +1215,42 @@ void VulkanEngine::run()
         auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
         _stats.frameTime = elapsed.count() / 1000.f;
+
+        // record frame time for graph
+        _stats.frameTimeGraph[_stats.frameTimeGraphIndex % EngineStats::kGraphSize] = _stats.frameTime;
+        _stats.frameTimeGraphIndex++;
+
+        // record frame time for percentile FPS
+        _stats.frameTimeHistory[_stats.frameTimeHistoryIndex % EngineStats::kPercentileWindow] = _stats.frameTime;
+        _stats.frameTimeHistoryIndex++;
+        if (_stats.frameTimeHistoryIndex >= EngineStats::kPercentileWindow)
+            _stats.frameTimeHistoryFilled = true;
+
+        // compute 1% low and 0.1% low FPS every kSampleInterval frames
+        if (_stats.frameTimeHistoryIndex % EngineStats::kSampleInterval == 0)
+        {
+            int count = _stats.frameTimeHistoryFilled ? EngineStats::kPercentileWindow : _stats.frameTimeHistoryIndex;
+            if (count > 0)
+            {
+                std::array<float, EngineStats::kPercentileWindow> sorted;
+                std::copy_n(_stats.frameTimeHistory.begin(), count, sorted.begin());
+                std::sort(sorted.begin(), sorted.begin() + count, std::greater<float>());
+
+                // 1% low: average of the worst 1% frame times -> convert to FPS
+                int n1 = std::max(1, count / 100);
+                float sum1 = 0.f;
+                for (int i = 0; i < n1; i++)
+                    sum1 += sorted[i];
+                _stats.fps1Low = 1000.f / (sum1 / static_cast<float>(n1));
+
+                // 0.1% low: average of the worst 0.1% frame times
+                int n01 = std::max(1, count / 1000);
+                float sum01 = 0.f;
+                for (int i = 0; i < n01; i++)
+                    sum01 += sorted[i];
+                _stats.fps01Low = 1000.f / (sum01 / static_cast<float>(n01));
+            }
+        }
     }
 }
 
@@ -1155,11 +1300,14 @@ void VulkanEngine::initCommands()
 
 void VulkanEngine::initSyncStructures()
 {
-    // create syncronization structures
-    // one fence to control when the gpu has finished rendering the frame,
-    // and 2 semaphores to syncronize rendering with swapchain
-    // we want the fence to start signalled so we can wait on it on the first
-    // frame
+    // query timestamp period for GPU timing
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(ctx.chosenGPU, &deviceProperties);
+    _timestampPeriod = deviceProperties.limits.timestampPeriod;
+
+    // create syncronization structures one fence to control when the gpu has finished rendering the frame, and 2
+    // semaphores to syncronize rendering with swapchain we want the fence to start signalled so we can wait on it on
+    // the first frame
     VkFenceCreateInfo fenceCreateInfo = vkinit::fence_create_info(VK_FENCE_CREATE_SIGNALED_BIT);
 
     for (int i = 0; i < FRAME_OVERLAP; i++)
@@ -1172,6 +1320,13 @@ void VulkanEngine::initSyncStructures()
         VK_CHECK(vkCreateSemaphore(ctx.device, &semaphoreCreateInfo, nullptr, &_frames[i]._swapchainSemaphore));
         // Per-frame renderSemaphore is not used anymore; present waits on per-image
         // semaphores
+
+        // timestamp query pool (2 queries: begin + end of draw)
+        VkQueryPoolCreateInfo queryPoolInfo{};
+        queryPoolInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+        queryPoolInfo.queryType = VK_QUERY_TYPE_TIMESTAMP;
+        queryPoolInfo.queryCount = 2;
+        VK_CHECK(vkCreateQueryPool(ctx.device, &queryPoolInfo, nullptr, &_frames[i]._timestampQueryPool));
 
         VkFence renderFence = _frames[i]._renderFence;
         VkSemaphore swapSemaphore = _frames[i]._swapchainSemaphore;
@@ -1191,6 +1346,7 @@ void VulkanEngine::initSyncStructures()
                 resources.destroyBuffer(ctx, _frames[i].sceneDataBuffer);
                 resources.destroyBuffer(ctx, _frames[i].shadowSceneDataBuffer);
                 resources.destroyBuffer(ctx, _frames[i].instanceBuffer);
+                vkDestroyQueryPool(ctx.device, _frames[i]._timestampQueryPool, nullptr);
                 vkDestroyFence(ctx.device, renderFence, nullptr);
                 vkDestroySemaphore(ctx.device, swapSemaphore, nullptr);
                 // no per-frame render semaphore
