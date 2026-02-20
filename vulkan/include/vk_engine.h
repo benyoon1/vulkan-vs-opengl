@@ -19,7 +19,7 @@
 
 #include <array>
 #include <chrono>
-
+#include <string>
 #include <vector>
 
 struct MeshAsset;
@@ -69,11 +69,18 @@ constexpr unsigned int FRAME_OVERLAP = 2;
 
 struct EngineStats
 {
+    std::string gpuName;
+    std::string macModel;
+    std::string vulkanApiVersion;
+    std::string driverName;
+    std::string driverInfo;
+
     float frameTime;
     int triangleCount;
     int drawcallCount;
-    float meshDrawTime;
+    float cpuDrawTime;
     float gpuDrawTime{0.f};
+
     float fenceTime;
     float flushTime;
     float submitTime;
@@ -194,6 +201,7 @@ private:
     void initDescriptors();
     void initSyncStructures();
     void initImgui();
+    void initDeviceInfo();
     void initDefaultData();
 
     void updateScene();

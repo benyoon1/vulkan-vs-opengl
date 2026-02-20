@@ -19,6 +19,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include <chrono>
+#ifdef __APPLE__
+#include <sys/sysctl.h>
+#endif
 
 #ifndef ENABLE_VALIDATION_LAYERS
 #define ENABLE_VALIDATION_LAYERS 0
@@ -53,6 +56,7 @@ void VulkanEngine::init(int initialScene)
     scene.initRenderables(ctx, resources, metalRoughMaterial, _mainCamera, _sunLight);
     loadSkyboxCubemap(scene.sceneRegistry[scene.currentSceneIndex].skyboxDir);
     initImgui();
+    initDeviceInfo();
 
     // everything went fine
     _isInitialized = true;
@@ -277,7 +281,7 @@ void VulkanEngine::drawMain(VkCommandBuffer cmd)
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    _stats.meshDrawTime = elapsed.count() / 1000.f;
+    _stats.cpuDrawTime = elapsed.count() / 1000.f;
 
     vkCmdEndRendering(cmd);
 }
@@ -509,11 +513,13 @@ void VulkanEngine::draw()
 
     VkSubmitInfo2 submit = vkinit::submit_info(&cmdinfo, &signalInfo, &waitInfo);
 
+    auto t3 = std::chrono::high_resolution_clock::now();
+
     // submit command buffer to the queue and execute it.
     //  _renderFence will now block until the graphic commands finish execution
     VK_CHECK(vkQueueSubmit2(ctx.graphicsQueue, 1, &submit, getCurrentFrame()._renderFence));
 
-    auto t3 = std::chrono::high_resolution_clock::now();
+    auto t4 = std::chrono::high_resolution_clock::now();
 
     // prepare present
     //  this will put the image we just rendered to into the visible window.
@@ -532,13 +538,13 @@ void VulkanEngine::draw()
 
     VkResult presentResult = vkQueuePresentKHR(ctx.graphicsQueue, &presentInfo);
 
-    auto t4 = std::chrono::high_resolution_clock::now();
+    auto t5 = std::chrono::high_resolution_clock::now();
 
-    // Accumulate timing stats and update display values periodically
+    // accumulate timing stats and update display values periodically
     _stats.fenceTimeAccum += std::chrono::duration<float, std::milli>(t1 - t0).count();
     _stats.flushTimeAccum += std::chrono::duration<float, std::milli>(t2 - t1).count();
-    _stats.submitTimeAccum += std::chrono::duration<float, std::milli>(t3 - t2).count();
-    _stats.presentTimeAccum += std::chrono::duration<float, std::milli>(t4 - t3).count();
+    _stats.submitTimeAccum += std::chrono::duration<float, std::milli>(t4 - t3).count();
+    _stats.presentTimeAccum += std::chrono::duration<float, std::milli>(t5 - t4).count();
     _stats.sampleCount++;
 
     if (_stats.sampleCount >= EngineStats::kSampleInterval)
@@ -983,7 +989,7 @@ void VulkanEngine::run()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(15, 18), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(261, 310), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(285, 480), ImGuiCond_FirstUseEver);
         ImGui::Begin("Stats");
 
         // scene selector dropdown
@@ -1019,9 +1025,17 @@ void VulkanEngine::run()
             ImGui::Separator();
         }
 
+        // device info
+        ImGui::Text("GPU: %s", _stats.gpuName.c_str());
+        ImGui::Text("Mac: %s", _stats.macModel.c_str());
+        ImGui::Text("Vulkan: %s", _stats.vulkanApiVersion.c_str());
+        ImGui::Text("%s: %s", _stats.driverName.c_str(), _stats.driverInfo.c_str());
+        ImGui::Text("resolution: %ux%u", swapchain.extent.width, swapchain.extent.height);
+        ImGui::Separator();
+
         if (ImGui::BeginTable("stats_table", 2, ImGuiTableFlags_SizingFixedFit))
         {
-            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 130.0f);
+            ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 150.0f);
             ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
             ImGui::TableNextRow();
@@ -1034,13 +1048,43 @@ void VulkanEngine::run()
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("CPU draw");
             ImGui::TableNextColumn();
-            ImGui::Text("%0.3f ms", _stats.meshDrawTime);
+            ImGui::Text("%0.3f ms", _stats.cpuDrawTime);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             ImGui::TextUnformatted("GPU draw");
             ImGui::TableNextColumn();
             ImGui::Text("%0.3f ms", _stats.gpuDrawTime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("API overhead");
+            ImGui::TableNextColumn();
+            ImGui::Text("");
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("  fence");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.fenceTime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("  flush");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.flushTime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("  submit");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.submitTime);
+
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("  present");
+            ImGui::TableNextColumn();
+            ImGui::Text("%0.3f ms", _stats.presentTime);
 
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
@@ -1107,14 +1151,11 @@ void VulkanEngine::run()
 
             ImGui::EndTable();
         }
-        // ImGui::Text("fence: %.2f ms", _stats.fence_time);
-        // ImGui::Text("flush: %.2f ms", _stats.flush_time);
-        // ImGui::Text("submit: %.2f ms", _stats.submit_time);
-        // ImGui::Text("present: %.2f ms", _stats.present_time);
+
         ImGui::End();
 
-        ImGui::SetNextWindowPos(ImVec2(289, 19), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(411, 120), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(315, 18), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls");
         if (ImGui::BeginTable("controls_table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
@@ -1560,6 +1601,35 @@ void VulkanEngine::initImgui()
             ImGui_ImplVulkan_Shutdown();
             vkDestroyDescriptorPool(ctx.device, imguiPool, nullptr);
         });
+}
+
+void VulkanEngine::initDeviceInfo()
+{
+    VkPhysicalDeviceDriverProperties driverProps{.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES};
+    VkPhysicalDeviceProperties2 props2{.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, .pNext = &driverProps};
+    vkGetPhysicalDeviceProperties2(ctx.chosenGPU, &props2);
+
+    _stats.gpuName = props2.properties.deviceName;
+
+    uint32_t api = props2.properties.apiVersion;
+    _stats.vulkanApiVersion =
+        fmt::format("{}.{}.{}", VK_VERSION_MAJOR(api), VK_VERSION_MINOR(api), VK_VERSION_PATCH(api));
+
+    _stats.driverName = driverProps.driverName;
+    _stats.driverInfo = driverProps.driverInfo;
+
+#ifdef __APPLE__
+    // macOS hardware model
+    char model[256]{};
+    size_t modelLen = sizeof(model);
+    if (sysctlbyname("hw.model", model, &modelLen, nullptr, 0) == 0)
+        _stats.macModel = model;
+    else
+        _stats.macModel = "Unknown Mac";
+#else
+    // TODO: model info on Linux/Windows
+    _stats.macModel = "Linux/Windows PC";
+#endif
 }
 
 void VulkanEngine::initPipelines()
