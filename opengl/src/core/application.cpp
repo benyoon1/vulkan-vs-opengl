@@ -167,15 +167,17 @@ void Application::run()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (useShadowMap)
-        {
-            renderDepthPass();
-        }
-        // measure main pass only for CPU/GPU time
+        // measure shadow pass + main pass for CPU/GPU time
         {
             auto drawStart = std::chrono::system_clock::now();
             glBeginQuery(GL_TIME_ELAPSED, m_gpuTimerQuery);
+
+            if (useShadowMap)
+            {
+                renderDepthPass();
+            }
             renderMainPass();
+
             glEndQuery(GL_TIME_ELAPSED);
             auto drawEnd = std::chrono::system_clock::now();
             auto drawElapsed = std::chrono::duration_cast<std::chrono::microseconds>(drawEnd - drawStart);

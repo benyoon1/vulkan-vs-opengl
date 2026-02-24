@@ -269,7 +269,6 @@ void VulkanEngine::drawMain(VkCommandBuffer cmd)
     VkRenderingInfo renderInfo = vkinit::rendering_info(swapchain.drawExtent, &colorAttachment, &depthAttachment);
 
     vkCmdBeginRendering(cmd, &renderInfo);
-    auto start = std::chrono::system_clock::now();
 
     if (_skyboxCubemap.image != VK_NULL_HANDLE)
     {
@@ -277,11 +276,6 @@ void VulkanEngine::drawMain(VkCommandBuffer cmd)
     }
 
     drawGeometry(cmd);
-
-    auto end = std::chrono::system_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-
-    _stats.cpuDrawTime = elapsed.count() / 1000.f;
 
     vkCmdEndRendering(cmd);
 }
@@ -457,6 +451,12 @@ void VulkanEngine::draw()
     vkutil::transition_image(cmd, swapchain.depthImage.image, VK_IMAGE_LAYOUT_UNDEFINED,
                              VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL);
 
+    // TOP_OF_PIPE: writes the GPU clock before any of the subsequent work begins
+    // BOTTOM_OF_PIPE: writes the GPU clock after all preceding work has completed
+    // measure shadow pass + main pass for CPU/GPU time
+    vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 0);
+    auto cpuDrawStart = std::chrono::system_clock::now();
+
     // 1) Render shadow map
     if (_useShadowMap)
     {
@@ -464,12 +464,13 @@ void VulkanEngine::draw()
     }
 
     // 2) Main pass (skybox + geometry)
-    // TOP_OF_PIPE: writes the GPU clock before any of the subsequent work begins
-    // BOTTOM_OF_PIPE: writes the GPU clock after all preceding work has completed
-    // measure main pass only for CPU/GPU time
-    vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 0);
     drawMain(cmd);
+
+    auto cpuDrawEnd = std::chrono::system_clock::now();
     vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 1);
+
+    auto cpuDrawElapsed = std::chrono::duration_cast<std::chrono::microseconds>(cpuDrawEnd - cpuDrawStart);
+    _stats.cpuDrawTime = cpuDrawElapsed.count() / 1000.f;
 
     // transtion the draw image and the swapchain image into their correct
     // transfer layouts
