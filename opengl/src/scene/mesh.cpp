@@ -1,6 +1,7 @@
 #include "scene/mesh.h"
 #include <glad/glad.h>
 #include <render/shader.h>
+#include <render/shadowMap.h>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<Texture> textures)
 {
@@ -74,7 +75,8 @@ void Mesh::draw(Shader& shader)
     uint32_t heightNr = 1;
     for (uint32_t i = 0; i < m_textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        uint32_t unit = ShadowMap::kMeshTextureUnitOffset + i;
+        glActiveTexture(GL_TEXTURE0 + unit);
         std::string number;
         std::string name = m_textures[i].type;
         if (name == "texture_diffuse")
@@ -86,7 +88,7 @@ void Mesh::draw(Shader& shader)
         else if (name == "texture_height")
             number = std::to_string(heightNr++);
 
-        shader.setInt(name + number, static_cast<int>(i));
+        shader.setInt(name + number, static_cast<int>(unit));
         glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
     }
 
@@ -142,7 +144,8 @@ void Mesh::drawInstanced(Shader& shader, uint32_t instanceCount)
     uint32_t heightNr = 1;
     for (uint32_t i = 0; i < m_textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        uint32_t unit = ShadowMap::kMeshTextureUnitOffset + i;
+        glActiveTexture(GL_TEXTURE0 + unit);
         std::string number;
         std::string name = m_textures[i].type;
         if (name == "texture_diffuse")
@@ -154,7 +157,7 @@ void Mesh::drawInstanced(Shader& shader, uint32_t instanceCount)
         else if (name == "texture_height")
             number = std::to_string(heightNr++);
 
-        shader.setInt(name + number, static_cast<int>(i));
+        shader.setInt(name + number, static_cast<int>(unit));
         glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
     }
 

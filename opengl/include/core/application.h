@@ -10,6 +10,7 @@
 #include "scene/model.h"
 #include "scene/skybox.h"
 #include "scene/sphere.h"
+#include <array>
 #include <chrono>
 #include <imgui.h>
 #include <memory>
@@ -18,10 +19,30 @@
 
 struct EngineStats
 {
+    std::string gpuName;
+    std::string macModel;
+    std::string glVersion;
+
     float frameTime{0.f};
-    float meshDrawTime{0.f};
+    float cpuDrawTime{0.f};
+    float gpuDrawTime{0.f};
     int triangleCount{0};
     int drawcallCount{0};
+
+    // 1% low / 0.1% low fps
+    static constexpr int kPercentileWindow{1000};
+    std::array<float, kPercentileWindow> frameTimeHistory{};
+    int frameTimeHistoryIndex{0};
+    bool frameTimeHistoryFilled{false};
+    float fps1Low{0.f};
+    float fps01Low{0.f};
+
+    // frame time graph
+    static constexpr int kGraphSize{1000};
+    std::array<float, kGraphSize> frameTimeGraph{};
+    int frameTimeGraphIndex{0};
+
+    static constexpr int kSampleInterval{30};
 };
 
 enum class SceneType
@@ -53,6 +74,7 @@ public:
 
     ImS32 numAsteroids{15000};
     bool useInstancing{false};
+    bool useShadowMap{false};
     float deltaTime{0.0f};
 
     void run();
@@ -75,6 +97,7 @@ private:
     float m_avgFps{0.0f};
     float _asteroidTime{0.0f};
     EngineStats m_stats{};
+    GLuint m_gpuTimerQuery{0};
 
     // asteroid belt parameters
     float _majorRadius{25.0f};  // distance from center to the inside of tube
@@ -106,6 +129,8 @@ private:
     std::unique_ptr<Shader> m_instancedDepthShader;
 
     std::vector<glm::mat4> m_asteroidTransforms;
+
+    void initDeviceInfo();
 };
 
 #endif // APPLICATION_H

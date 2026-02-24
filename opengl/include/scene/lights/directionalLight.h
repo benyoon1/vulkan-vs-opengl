@@ -10,7 +10,7 @@ public:
 
     static constexpr float kNearPlane{1.0f};
     static constexpr float kFarPlane{400.0f};
-    static constexpr float kOrthoSize{100.0f};
+    static constexpr float kOrthoSize{50.0f};
     static constexpr glm::vec3 kSunColor{1.0f, 1.0f, 1.0f};
 
     void update(float sunSpeed);

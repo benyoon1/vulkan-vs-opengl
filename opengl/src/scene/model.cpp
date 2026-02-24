@@ -37,7 +37,6 @@ void Model::configureShader(Shader& shader, const Camera& camera, const Directio
 {
     shader.use();
     shader.setInt("sunShadowMapTextureNum", ShadowMap::kSunShadowTextureNum);
-    shader.setInt("spotlightShadowMapTextureNum", ShadowMap::kSpotShadowTextureNum);
 
     shader.setMat4("sunLightSpaceMatrix", sunLight.getLightSpaceMatrix());
     shader.setMat4("spotLightSpaceMatrix", spotlight.getSpotLightSpaceMatrix());

@@ -466,6 +466,7 @@ void VulkanEngine::draw()
     // 2) Main pass (skybox + geometry)
     // TOP_OF_PIPE: writes the GPU clock before any of the subsequent work begins
     // BOTTOM_OF_PIPE: writes the GPU clock after all preceding work has completed
+    // measure main pass only for CPU/GPU time
     vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 0);
     drawMain(cmd);
     vkCmdWriteTimestamp(cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, getCurrentFrame()._timestampQueryPool, 1);

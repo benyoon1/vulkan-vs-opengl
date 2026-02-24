@@ -9,10 +9,10 @@ public:
     ShadowMap();
     ~ShadowMap();
 
-    static constexpr uint32_t kShadowWidth{2048};
-    static constexpr uint32_t kShadowHeight{2048};
-    static constexpr uint8_t kSunShadowTextureNum{1};
-    static constexpr uint8_t kSpotShadowTextureNum{2};
+    static constexpr uint32_t kShadowWidth{4096};
+    static constexpr uint32_t kShadowHeight{4096};
+    static constexpr uint8_t kSunShadowTextureNum{0};
+    static constexpr uint8_t kMeshTextureUnitOffset{1};
 
     void reset();
     void bind();
