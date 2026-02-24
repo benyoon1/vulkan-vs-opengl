@@ -132,6 +132,7 @@ void VulkanContext::initVulkan()
     features12.descriptorBindingPartiallyBound = VK_TRUE;
     features12.descriptorBindingVariableDescriptorCount = VK_TRUE;
     features12.runtimeDescriptorArray = VK_TRUE;
+    features12.hostQueryReset = VK_TRUE;
 
     VkPhysicalDeviceFeatures features{};
     // features.samplerAnisotropy = VK_TRUE;

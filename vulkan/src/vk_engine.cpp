@@ -372,7 +372,7 @@ void VulkanEngine::drawShadowMap(VkCommandBuffer cmd)
 void VulkanEngine::drawImgui(VkCommandBuffer cmd, VkImageView targetImageView)
 {
     VkRenderingAttachmentInfo colorAttachment =
-        vkinit::attachment_info(targetImageView, nullptr, VK_IMAGE_LAYOUT_GENERAL);
+        vkinit::attachment_info(targetImageView, nullptr, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     VkRenderingInfo renderInfo = vkinit::rendering_info(ctx.windowExtent, &colorAttachment, nullptr);
 
     vkCmdBeginRendering(cmd, &renderInfo);
@@ -1377,6 +1377,7 @@ void VulkanEngine::initSyncStructures()
         queryPoolInfo.queryType = VK_QUERY_TYPE_TIMESTAMP;
         queryPoolInfo.queryCount = 2;
         VK_CHECK(vkCreateQueryPool(ctx.device, &queryPoolInfo, nullptr, &_frames[i]._timestampQueryPool));
+        vkResetQueryPool(ctx.device, _frames[i]._timestampQueryPool, 0, 2);
 
         VkFence renderFence = _frames[i]._renderFence;
         VkSemaphore swapSemaphore = _frames[i]._swapchainSemaphore;
