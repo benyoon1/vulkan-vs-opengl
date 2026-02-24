@@ -23,7 +23,7 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
 
     // clang-format off
     sceneRegistry.push_back({
-        .name       = "planet & asteroids",
+        .name       = "synthetic scene (planet & asteroids)",
         .assetPath  = "icosahedron-low.obj",
         .type       = SceneType::PlanetAndAsteroids,
         .scale      = 1.0f,
@@ -37,7 +37,7 @@ void Scene::initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTF
         .type       = SceneType::AmazonBistro,
         .scale      = 0.5f,
         .cameraStartPos = glm::vec3(-5.0f, 3.0f, 0.0f),
-        .sunStartPos    = glm::vec3(0.0f, 150.0f, 0.0f),
+        .sunStartPos    = glm::vec3(0.0f, 50.0f, 20.0f),
         .skyboxDir      = "skybox",
     });
     // clang-format on
@@ -134,7 +134,8 @@ void Scene::updateFrame()
     _lastFrame = _currentFrame;
 }
 
-void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight)
+void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight,
+                   uint32_t shadowTexIndex)
 {
     updateFrame();
     mainCamera.processInput(_deltaTime);
@@ -154,6 +155,8 @@ void Scene::update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& 
     sceneData.sunlightColor = glm::vec4(1.0f);
 
     sceneData.sunlightViewProj = sunLight.getLightSpaceMatrix();
+    // make shadow map index visible to shaders
+    sceneData.shadowParams = glm::uvec4(shadowTexIndex, 0, 0, 0);
 
     sceneData.view = view;
     sceneData.proj = projection;

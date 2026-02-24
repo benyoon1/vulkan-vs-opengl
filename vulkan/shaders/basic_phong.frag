@@ -15,7 +15,7 @@ layout(location = 0) out vec4 outFragColor;
 
 vec3 calcLight(vec3 lightPos, vec3 fragPos, vec3 normal, vec3 viewDir)
 {
-    vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    vec3 lightColor = vec3(1.0, 1.0, 1.0); // white light
     // Diffuse
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - fragPos);
@@ -24,8 +24,8 @@ vec3 calcLight(vec3 lightPos, vec3 fragPos, vec3 normal, vec3 viewDir)
 
     // Specular
     vec3 specular = vec3(0.0);
-    if (diff > 0.0 // This check prevents highlights on surfaces not facing the light
-    )
+    // This check prevents highlights on surfaces not facing the light
+    if (diff > 0.0)
     {
         float specularStrength = 0.5;
         vec3 reflectDir = reflect(-lightDir, norm);

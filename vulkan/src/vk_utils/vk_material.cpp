@@ -8,7 +8,7 @@ void GLTFMetallic_Roughness::build_pipelines(VkDevice device, VkDescriptorSetLay
                                              VkFormat drawImageFormat, VkFormat depthImageFormat)
 {
     VkShaderModule meshFragShader;
-    if (!vkutil::load_shader_module(shader_path("basic_phong.frag.spv").c_str(), device, &meshFragShader))
+    if (!vkutil::load_shader_module(shader_path("mesh.frag.spv").c_str(), device, &meshFragShader))
     {
         fmt::println("Error when building the triangle fragment shader module");
     }

@@ -387,9 +387,9 @@ void VulkanEngine::draw()
     auto t0 = std::chrono::high_resolution_clock::now();
 
     // wait until the gpu has finished rendering the last frame. Timeout of 1 second
-    // set UINT64_MAX to debug in renderdoc/XCode
+    // set 10sec to debug in renderdoc/XCode
     // VK_CHECK(vkWaitForFences(_device, 1, &get_current_frame()._renderFence, true, 1000000000));
-    VK_CHECK(vkWaitForFences(ctx.device, 1, &getCurrentFrame()._renderFence, true, UINT64_MAX));
+    VK_CHECK(vkWaitForFences(ctx.device, 1, &getCurrentFrame()._renderFence, true, 10'000'000'000));
 
     /* read GPU timestamp results from the current frame (fence just signaled = results ready)
     CPU:  [record frame 0]  [record frame 1]  [record frame 0]
@@ -421,8 +421,8 @@ void VulkanEngine::draw()
     // request image from the swapchain
     uint32_t swapchainImageIndex;
 
-    // set UINT64_MAX to debug in renderdoc/XCode
-    VkResult e = vkAcquireNextImageKHR(ctx.device, swapchain.swapchain, UINT64_MAX,
+    // set 10sec to debug in renderdoc/XCode
+    VkResult e = vkAcquireNextImageKHR(ctx.device, swapchain.swapchain, 10'000'000'000,
                                        getCurrentFrame()._swapchainSemaphore, nullptr, &swapchainImageIndex);
     if (e == VK_ERROR_OUT_OF_DATE_KHR)
     {
@@ -458,8 +458,10 @@ void VulkanEngine::draw()
                              VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL);
 
     // 1) Render shadow map
-    // draw_shadow_map(cmd);
-    // draw_debug_texture(cmd);
+    if (_useShadowMap)
+    {
+        drawShadowMap(cmd);
+    }
 
     // 2) Main pass (skybox + geometry)
     // TOP_OF_PIPE: writes the GPU clock before any of the subsequent work begins
@@ -1149,6 +1151,12 @@ void VulkanEngine::run()
                 }
             }
 
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted("shadow map");
+            ImGui::TableNextColumn();
+            ImGui::Checkbox("##shadowmap", &_useShadowMap);
+
             ImGui::EndTable();
         }
 
@@ -1248,7 +1256,8 @@ void VulkanEngine::run()
         // imgui commands
         // ImGui::ShowDemoWindow();
 
-        scene.update(ctx.windowExtent, _drawCommands, _mainCamera, _sunLight);
+        scene.update(ctx.windowExtent, _drawCommands, _mainCamera, _sunLight, _shadowTexId.Index);
+        scene.sceneData.shadowParams.y = _useShadowMap ? 1u : 0u;
 
         draw();
 
@@ -1606,12 +1615,12 @@ void VulkanEngine::initImgui()
 void VulkanEngine::initDeviceInfo()
 {
     VkPhysicalDeviceDriverProperties driverProps{.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES};
-    VkPhysicalDeviceProperties2 props2{.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, .pNext = &driverProps};
-    vkGetPhysicalDeviceProperties2(ctx.chosenGPU, &props2);
+    VkPhysicalDeviceProperties2 props{.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, .pNext = &driverProps};
+    vkGetPhysicalDeviceProperties2(ctx.chosenGPU, &props);
 
-    _stats.gpuName = props2.properties.deviceName;
+    _stats.gpuName = props.properties.deviceName;
 
-    uint32_t api = props2.properties.apiVersion;
+    uint32_t api = props.properties.apiVersion;
     _stats.vulkanApiVersion =
         fmt::format("{}.{}.{}", VK_VERSION_MAJOR(api), VK_VERSION_MINOR(api), VK_VERSION_PATCH(api));
 

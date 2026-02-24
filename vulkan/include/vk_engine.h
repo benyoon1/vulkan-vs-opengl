@@ -155,7 +155,7 @@ private:
 
     // Shadow map
     AllocatedImage _shadowImage{};
-    VkExtent2D _shadowExtent{2048, 2048};
+    VkExtent2D _shadowExtent{4096, 4096};
     VkSampler _shadowSampler{VK_NULL_HANDLE};
     TextureID _shadowTexId{};
     VkPipeline _shadowPipeline{VK_NULL_HANDLE};
@@ -192,6 +192,7 @@ private:
     int _currentBackgroundEffect{0};
     bool resizeRequested{false};
     bool freezeRendering{false};
+    bool _useShadowMap{false};
 
     void initSwapchain();
     void resizeSwapchain();

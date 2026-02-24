@@ -52,14 +52,10 @@ struct GPUSceneData
     glm::vec4 cameraPosition;
     glm::vec4 ambientColor;
     glm::vec4 sunlightPosition;
-    glm::vec4 sunlightDirection; // w for sun power
+    glm::vec4 sunlightDirection;
     glm::vec4 sunlightColor;
     glm::mat4 sunlightViewProj;
-    glm::uvec4 shadowParams;
-    glm::vec4 spotlightPos;
-    glm::vec4 spotlightDir;
-    glm::vec4 spotColor;
-    glm::vec4 spotCutoffAndIntensity;
+    glm::uvec4 shadowParams; // shadowParmams.y for shadow map on/off, shadowParams.x for shadow map index
 };
 
 //> mat_types

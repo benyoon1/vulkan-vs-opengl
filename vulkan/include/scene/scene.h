@@ -73,7 +73,8 @@ public:
     void initRenderables(VulkanContext& ctx, ResourceManager& resources, GLTFMetallic_Roughness& material,
                          Camera& camera, DirectionalLight& sunLight);
     void loadScene(int index);
-    void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight);
+    void update(VkExtent2D& windowExtent, DrawContext& drawCommands, Camera& mainCamera, DirectionalLight& sunLight,
+                uint32_t shadowTexIndex);
     void processSliderEvent();
     void updateFrame();
     void cleanup();
