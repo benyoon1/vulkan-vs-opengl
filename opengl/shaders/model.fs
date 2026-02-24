@@ -19,7 +19,6 @@ uniform sampler2D spotlightShadowMapTextureNum;
 uniform vec3 sunPos;
 uniform vec3 sunColor;
 
-// TODO: temporary fix shadow control
 uniform int receiveShadow;
 uniform int hasTexture;
 
