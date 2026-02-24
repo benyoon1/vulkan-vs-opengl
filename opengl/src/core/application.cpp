@@ -383,7 +383,7 @@ void Application::renderMainPass()
                 m_instancedModelShader->setMat4("view", view);
                 m_instancedModelShader->setInt("useShadowMap", useShadowMap ? 1 : 0);
                 m_icosahedron->drawInstanced(*m_instancedModelShader, numAsteroids);
-                m_stats.drawcallCount++;
+                m_stats.drawcallCount += m_icosahedron->getMeshCount();
                 m_stats.triangleCount += (m_icosahedron->getTotalIndexCount() / 3) * numAsteroids;
             }
             // non-instanced path
@@ -416,7 +416,7 @@ void Application::renderMainPass()
                     m_modelShader->setMat4("model", T * R * S);
                     m_icosahedron->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(),
                                         glm::vec3(0.0f));
-                    m_stats.drawcallCount++;
+                    m_stats.drawcallCount += m_icosahedron->getMeshCount();
                     m_stats.triangleCount += m_icosahedron->getTotalIndexCount() / 3;
                 }
             }
@@ -433,7 +433,7 @@ void Application::renderMainPass()
             glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
             m_modelShader->setMat4("model", model);
             m_planet->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
-            m_stats.drawcallCount++;
+            m_stats.drawcallCount += m_planet->getMeshCount();
             m_stats.triangleCount += m_planet->getTotalIndexCount() / 3;
             break;
         }
@@ -444,7 +444,7 @@ void Application::renderMainPass()
             glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(sceneEntry.scale));
             m_modelShader->setMat4("model", model);
             m_bistro->draw(*m_modelShader, projection, view, m_camera, m_sunLight.getSunPosition(), glm::vec3(0.0f));
-            m_stats.drawcallCount++;
+            m_stats.drawcallCount += m_bistro->getMeshCount();
             m_stats.triangleCount += m_bistro->getTotalIndexCount() / 3;
 
             m_skybox->draw(*m_skyboxCubemapShader, projection, m_camera, m_sunLight.getSunDirection(),

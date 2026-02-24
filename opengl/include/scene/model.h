@@ -30,6 +30,7 @@ public:
     void setModelMatrix(const glm::mat4& modelMatrix) { m_modelMatrix = modelMatrix; }
     glm::mat4 getModelMatrix() const { return m_modelMatrix; }
     uint32_t getTotalIndexCount() const;
+    uint32_t getMeshCount() const { return static_cast<uint32_t>(m_meshes.size()); }
 
 private:
     std::vector<Texture> m_texturesLoaded;
