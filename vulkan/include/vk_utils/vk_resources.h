@@ -22,6 +22,7 @@ struct TextureCache
     uint32_t maxDescriptors = std::numeric_limits<uint32_t>::max();
     bool limitWarningEmitted = false;
     TextureID fallbackTexture{0};
+    uint32_t engineBaselineCount{0};
 
     void set_max(uint32_t max)
     {
@@ -30,6 +31,20 @@ struct TextureCache
     }
 
     void set_fallback(TextureID id) { fallbackTexture = id; }
+
+    // mark the current cache size as the engine baseline.
+    // clearSceneTextures() will truncate back to this point.
+    void markEngineBaseline() { engineBaselineCount = static_cast<uint32_t>(Cache.size()); }
+
+    // remove all textures added after the engine baseline (scene textures).
+    void clearSceneTextures()
+    {
+        if (engineBaselineCount < Cache.size())
+        {
+            Cache.resize(engineBaselineCount);
+        }
+        NameMap.clear();
+    }
 
     TextureID AddTexture(const VkImageView& image, VkSampler sampler);
 };

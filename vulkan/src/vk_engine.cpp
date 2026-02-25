@@ -52,6 +52,7 @@ void VulkanEngine::init(int initialScene)
     initShadowResources();
     initPipelines();
     initDefaultData();
+    resources.texCache.markEngineBaseline();
     scene.currentSceneIndex = initialScene;
     scene.initRenderables(ctx, resources, metalRoughMaterial, _mainCamera, _sunLight);
     loadSkyboxCubemap(scene.sceneRegistry[scene.currentSceneIndex].skyboxDir);
@@ -1017,6 +1018,9 @@ void VulkanEngine::run()
                         {
                             // wait for GPU to finish before unloading assets
                             vkDeviceWaitIdle(ctx.device);
+                            // clear scene textures from cache before destroying assets
+                            // to avoid dangling VkImageView/VkSampler handles
+                            resources.texCache.clearSceneTextures();
                             scene.loadScene(i);
                             loadSkyboxCubemap(scene.sceneRegistry[i].skyboxDir);
                         }
