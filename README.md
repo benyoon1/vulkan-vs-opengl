@@ -1,11 +1,11 @@
 # MoltenVK vs OpenGL 4.1 API Overhead Benchmark
 
-A simple benchmarking application that compares the CPU/GPU overhead and performance of Vulkan and OpenGL.
+A simple benchmarking application to compare the CPU overhead and performance of Vulkan (via MoltenVK) and OpenGL 4.1.
 
 It features two scenes:
 
-- Synthetic (asteroid belt) to stress test raw draw call overhead
-- Amazon Lumberyard Bistro to test in a more practical setting
+- Synthetic scene (asteroid belt): CPU-bound scenario to stress test raw draw call overhead using low-polygon models.
+- Amazon Lumberyard Bistro: to evaluate performance in a more practical setting.
 
 For now, the benchmark focuses on MoltenVK vs OpenGL 4.1 on macOS, but it can run on Linux and Windows. However, it won't be a fair comparison since modern AZDO techniques such as Multi-Draw Indirect or Bindless Textures in OpenGL 4.6 are not implemented in this project.
 
@@ -114,5 +114,5 @@ First, install the dependencies based on your operating system.
 
 ## Acknowledgements
 
-- [LearnOpenGL](https://learnopengl.com/) for OpenGL tutorials and code references
-- [Vulkan Guide](https://vkguide.dev/) for Vulkan tutorials and code references
+- [LearnOpenGL](https://learnopengl.com/) for OpenGL tutorials and code references.
+- [Vulkan Guide](https://vkguide.dev/) for Vulkan tutorials and code references.
