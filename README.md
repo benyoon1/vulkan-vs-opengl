@@ -7,7 +7,7 @@ It features two scenes:
 - Synthetic scene (asteroid belt): CPU-bound scenario to stress test and measure raw draw call overhead using low-polygon models.
 - Amazon Lumberyard Bistro: to evaluate performance in a more practical setting.
 
-For now, the benchmark focuses on MoltenVK vs OpenGL 4.1 on macOS, but it can run on Linux and Windows. However, it won't be a fair comparison since modern AZDO techniques such as Multi-Draw Indirect or Bindless Textures in OpenGL 4.6 are not implemented in this project.
+For now, this benchmark application focuses on MoltenVK vs OpenGL 4.1 on macOS, but it can also run on Linux and Windows. On those platforms, OpenGL can be upgraded to 4.6 and use modern AZDO techniques such as Multi-Draw Indirect from OpenGL 4.3 or Bindless Textures extension. However, these features are not implemented in this project, thus it wouldn't represent a fair comparison of what OpenGL is capable of today vs Vulkan using the same features.
 
 ## Features
 
@@ -39,7 +39,7 @@ Vulkan specific features:
 ### This project does NOT include the following features:
 
 - Multi-Draw Indirect
-- Bindless textures in OpenGL 4.1
+- Bindless textures (in OpenGL)
 - Frustum culling
 - Multi-threaded command buffer recording
 - MSAA
