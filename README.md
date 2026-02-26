@@ -4,13 +4,10 @@ A simple benchmarking application to compare the CPU overhead and performance of
 
 It features two scenes:
 
-- Synthetic scene (asteroid belt): CPU-bound scenario to stress test raw draw call overhead using low-polygon models.
+- Synthetic scene (asteroid belt): CPU-bound scenario to stress test and measure raw draw call overhead using low-polygon models.
 - Amazon Lumberyard Bistro: to evaluate performance in a more practical setting.
 
 For now, the benchmark focuses on MoltenVK vs OpenGL 4.1 on macOS, but it can run on Linux and Windows. However, it won't be a fair comparison since modern AZDO techniques such as Multi-Draw Indirect or Bindless Textures in OpenGL 4.6 are not implemented in this project.
-
-![synthetic-vk](assets/screenshots/synthetic-vk.png)
-![bistro-gl](assets/screenshots/bistro-gl.png)
 
 ## Features
 
@@ -39,6 +36,99 @@ Vulkan specific features:
   - submit time
   - present time
 
+### This project does NOT include the following features:
+
+- Multi-Draw Indirect
+- Bindless textures in OpenGL 4.1
+- Frustum culling
+- Multi-threaded command buffer recording
+- MSAA
+
+<br/>
+
+# Benchmarks
+
+Specs:
+
+- Hardware: Apple M1 Pro, 8-core CPU, 14-core GPU (MacBookPro18,3)
+- RAM: 16GB
+- OS: macOS Sequoia 15.7.4
+- MoltenVK 1.4.1 (Vulkan 1.3.334)
+- OpenGL 4.1
+- Resolution: 1920x1080
+
+### Scene 1: Synthetic Scene
+
+CPU-bound scene to stress test and measure draw call overheads using low-poly models.
+
+FPS is averaged over 5 seconds.
+
+![synthetic-vk](assets/screenshots/synthetic-vk.png)
+
+#### Test 1: 15,000 icosahedrons (non-instanced)
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 35.46 ms   | 6.09 ms        |
+| FPS          | 28.2       | 164.2          |
+| 1% low FPS   | 15.1       | 155.2          |
+| 0.1% low FPS | 9.5        | 152.5          |
+
+#### Test 2: 30,000 icosahedrons (non-instanced)
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 69.44 ms   | 12.17 ms       |
+| FPS          | 14.4       | 82.2           |
+| 1% low FPS   | 13.6       | 77.6           |
+| 0.1% low FPS | 12.8       | 74.6           |
+
+#### Test 3: 15,000 icosahedrons (instanced)
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 3.47 ms    | 1.70 ms        |
+| FPS          | 287.8      | 589.6          |
+| 1% low FPS   | 234.1      | 390.0          |
+| 0.1% low FPS | 222.6      | 303.9          |
+
+#### Test 4: 30,000 icosahedrons (instanced)
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 5.26 ms    | 3.20 ms        |
+| FPS          | 190.0      | 312.9          |
+| 1% low FPS   | 137.0      | 274.2          |
+| 0.1% low FPS | 100.6      | 159.1          |
+
+### Scene 2: Amazon Lumberyard Bistro
+
+Scene to evaluate performance in a more practical setting. 2,829,226 triangles and 132 draw calls (_aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph_ via assimp).
+
+FPS is averaged over 5 seconds.
+
+![bistro-gl](assets/screenshots/bistro-gl.png)
+
+#### Test 1: Bistro without shadow mapping
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 3.47 ms    | 2.24 ms        |
+| FPS          | 288.1      | 447.0          |
+| 1% low FPS   | 225.2      | 230.4          |
+| 0.1% low FPS | 218.6      | 206.8          |
+
+#### Test 2: Bistro with shadow mapping
+
+| Metric       | OpenGL 4.1 | MoltenVK 1.4.1 |
+| :----------- | :--------- | :------------- |
+| frame time   | 5.20 ms    | 3.54 ms        |
+| FPS          | 192.2      | 282.7          |
+| 1% low FPS   | 153.0      | 184.3          |
+| 0.1% low FPS | 140.4      | 152.3          |
+
+<br />
+
 ## Controls
 
 | Key        | Description              |
@@ -46,6 +136,10 @@ Vulkan specific features:
 | WASD       | Move camera              |
 | Mouse drag | Pan camera               |
 | Left Shift | Speed boost while moving |
+
+<br />
+
+# Building
 
 ## Prerequisites:
 
