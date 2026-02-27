@@ -4,7 +4,7 @@ A simple benchmarking application to compare the CPU overhead and performance of
 
 It features two scenes:
 
-- Synthetic scene (asteroid belt): CPU-bound scenario to stress test and measure raw draw call overhead using low-polygon models.
+- Synthetic scene (asteroid belt): CPU-bound scenario to stress test and measure raw draw call overhead with low-poly meshes (icosahedrons).
 - Amazon Lumberyard Bistro: to evaluate performance in a more practical setting.
 
 For now, this benchmark application focuses on MoltenVK vs OpenGL 4.1 on macOS, but it can also run on Linux and Windows. On those platforms, OpenGL can be upgraded to 4.6 and use modern AZDO techniques such as Multi-Draw Indirect from OpenGL 4.3 or Bindless Textures extension. However, these features are not implemented in this project, thus it wouldn't represent a fair comparison of what OpenGL is capable of today vs Vulkan using the same features.
@@ -59,7 +59,7 @@ Specs:
 
 ### Scene 1: Synthetic Scene
 
-CPU-bound scene to stress test and measure draw call overheads using low-poly models.
+CPU-bound scenario with 15k–30k low-poly meshes (icosahedrons) to measure raw draw call overhead.
 
 FPS is averaged over 5 seconds.
 
@@ -127,16 +127,7 @@ FPS is averaged over 5 seconds.
 | 1% low FPS   | 153.0      | 184.3          |
 | 0.1% low FPS | 140.4      | 152.3          |
 
-> **Takeaways**: In CPU-bound scenarios, MoltenVK is 3-6x faster than OpenGL 4.1, and ~1.5x faster in GPU-bound scenarios.
-> <br />
-
-## Controls
-
-| Key        | Description              |
-| ---------- | ------------------------ |
-| WASD       | Move camera              |
-| Mouse drag | Pan camera               |
-| Left Shift | Speed boost while moving |
+#### **Takeaways**: MoltenVK is 3-6x faster in CPU-bound scenarios and ~1.5x faster in GPU-bound scenarios on Apple M1 Pro.
 
 <br />
 
@@ -205,7 +196,15 @@ First, install the dependencies based on your operating system.
 1. In VS Code, press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux) to open the command palette.
 2. Type `Tasks: Run Task` and select it.
 3. Select `Vulkan: generate build files & build & run (Release)` (or `OpenGL: generate build files & build & run (Release)`) to generate build files via CMake, build, and run the executable in one step.
-4. If you do not want to build with `Tasks: Run Task` in VS Code, refer to `tasks.json` to generate build files, build, and run in the terminal.
+4. If you do not want to build with `Tasks: Run Task` in VS Code, refer to the commands `tasks.json` to generate build files, build, and run in the terminal.
+
+## Controls
+
+| Key        | Description              |
+| ---------- | ------------------------ |
+| WASD       | Move camera              |
+| Mouse drag | Pan camera               |
+| Left Shift | Speed boost while moving |
 
 ## Acknowledgements
 
