@@ -127,7 +127,8 @@ FPS is averaged over 5 seconds.
 | 1% low FPS   | 153.0      | 184.3          |
 | 0.1% low FPS | 140.4      | 152.3          |
 
-<br />
+> **Takeaways**: In CPU-bound scenarios, MoltenVK is 3-6x faster than OpenGL 4.1, and ~1.5x faster in GPU-bound scenarios.
+> <br />
 
 ## Controls
 
